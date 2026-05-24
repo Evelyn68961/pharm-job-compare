@@ -30,4 +30,5 @@ export type Job = {
   updatedDate: string | null;
   sourceUrl: string;
   tags: Tag[];
+  idolImageUrl: string | null;
 };

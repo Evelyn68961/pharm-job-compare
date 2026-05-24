@@ -13,25 +13,35 @@ export function JobCard({
 }) {
   return (
     <article className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-xl font-bold">
-          {job.hospitalName || '—'}
-          {job.publicPrivate && (
-            <span className="ml-2 text-sm font-normal text-gray-500">
-              ({job.publicPrivate})
-            </span>
-          )}
-        </h2>
-        {job.salaryTier && (
-          <span
-            className={`rounded-full border px-2 py-0.5 text-xs font-medium ${TIER_BADGE[job.salaryTier]}`}
-          >
-            薪資 {job.salaryTier}
-          </span>
+      <div className="flex items-start gap-4">
+        {job.idolImageUrl && (
+          <img
+            src={job.idolImageUrl}
+            alt={`${job.hospitalName} 吉祥物`}
+            className="h-16 w-16 flex-shrink-0 rounded-full border border-gray-200 bg-gray-50 object-cover"
+          />
         )}
+        <div className="flex-1">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-xl font-bold">
+              {job.hospitalName || '—'}
+              {job.publicPrivate && (
+                <span className="ml-2 text-sm font-normal text-gray-500">
+                  ({job.publicPrivate})
+                </span>
+              )}
+            </h2>
+            {job.salaryTier && (
+              <span
+                className={`rounded-full border px-2 py-0.5 text-xs font-medium ${TIER_BADGE[job.salaryTier]}`}
+              >
+                薪資 {job.salaryTier}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-gray-600">{job.location || '—'}</p>
+        </div>
       </div>
-
-      <p className="mt-1 text-sm text-gray-600">{job.location || '—'}</p>
 
       <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
         <Field label="薪資" value={job.salaryDisplay} />

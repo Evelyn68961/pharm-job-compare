@@ -62,12 +62,18 @@ function parseJob(page: NotionPage): Job {
     updatedDate: getDate(p['更新日期']),
     sourceUrl: getUrl(p['104 原始連結']),
     tags: getMultiSelect(p['特色標籤']) as Tag[],
+    idolImageUrl: getFileUrl(p['吉祥物圖片']),
   };
 }
 
 type RichTextItem = { plain_text?: string };
 type SelectValue = { name?: string };
 type DateValue = { start?: string };
+type FileItem = {
+  type?: 'file' | 'external';
+  file?: { url?: string };
+  external?: { url?: string };
+};
 
 function getTitle(prop: NotionProperty | undefined): string {
   const title = (prop as { title?: RichTextItem[] } | undefined)?.title;
@@ -97,4 +103,12 @@ function getDate(prop: NotionProperty | undefined): string | null {
 
 function getUrl(prop: NotionProperty | undefined): string {
   return (prop as { url?: string } | undefined)?.url ?? '';
+}
+
+function getFileUrl(prop: NotionProperty | undefined): string | null {
+  const files = (prop as { files?: FileItem[] } | undefined)?.files;
+  const first = files?.[0];
+  if (!first) return null;
+  const url = first.type === 'external' ? first.external?.url : first.file?.url;
+  return url ?? null;
 }

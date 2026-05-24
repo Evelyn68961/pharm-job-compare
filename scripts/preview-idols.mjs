@@ -1,5 +1,16 @@
 import { writeFileSync } from 'node:fs';
 
+function lighten(hex, amount = 0.85) {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.substring(0, 2), 16);
+  const g = parseInt(h.substring(2, 4), 16);
+  const b = parseInt(h.substring(4, 6), 16);
+  const nr = Math.round(r + (255 - r) * amount);
+  const ng = Math.round(g + (255 - g) * amount);
+  const nb = Math.round(b + (255 - b) * amount);
+  return `#${nr.toString(16).padStart(2, '0')}${ng.toString(16).padStart(2, '0')}${nb.toString(16).padStart(2, '0')}`;
+}
+
 function backHair(style, hair) {
   if (style !== 'longF') return '';
   return `
@@ -10,9 +21,7 @@ function backHair(style, hair) {
 
 function ponytailBehind(style, hair) {
   if (style !== 'ponytailF') return '';
-  return `
-    <path d="M 140 70 Q 170 82 172 130 Q 172 158 164 168 L 152 168 Q 160 152 158 130 Q 158 95 138 75 Z" fill="${hair}"/>
-  `;
+  return `<path d="M 140 70 Q 170 82 172 130 Q 172 158 164 168 L 152 168 Q 160 152 158 130 Q 158 95 138 75 Z" fill="${hair}"/>`;
 }
 
 function topHair(style, hair) {
@@ -27,6 +36,8 @@ function topHair(style, hair) {
       return `<path d="M 54 76 Q 56 32, 100 28 Q 144 32, 146 76 Q 132 74, 124 76 Q 100 64, 76 76 Q 68 74, 54 76 Z" fill="${hair}"/>`;
     case 'bobF':
       return `<path d="M 50 120 L 50 50 Q 60 28, 100 28 Q 140 28, 150 50 L 150 120 Q 148 125, 142 122 L 142 86 Q 125 78, 100 72 Q 75 78, 58 86 L 58 122 Q 52 125, 50 120 Z" fill="${hair}"/>`;
+    case 'spikyM':
+      return `<path d="M 54 80 L 60 48 L 72 64 L 80 36 L 92 58 L 100 30 L 108 58 L 120 36 L 128 64 L 140 48 L 146 80 Q 130 74, 122 80 Q 100 68, 78 80 Q 70 74, 54 80 Z" fill="${hair}"/>`;
     default:
       return '';
   }
@@ -93,14 +104,6 @@ function glassesSvg(enabled) {
   `;
 }
 
-function earringsSvg(enabled, accent) {
-  if (!enabled) return '';
-  return `
-    <circle cx="54" cy="108" r="2.5" fill="${accent}"/>
-    <circle cx="146" cy="108" r="2.5" fill="${accent}"/>
-  `;
-}
-
 function crossSvg(enabled) {
   if (!enabled) return '';
   return `
@@ -122,7 +125,9 @@ function monogramPin(monogram, accent) {
 }
 
 function renderIdol(p) {
-  const { accent, accentLight, hair, skin, hairStyle, glasses, expression, earrings, cross, lipstick, monogram } = p;
+  const accent = p.accent;
+  const accentLight = lighten(accent, 0.82);
+  const { hair, skin, hairStyle, glasses, expression, cross, lipstick, monogram } = p;
   return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
     <circle cx="100" cy="100" r="100" fill="${accentLight}"/>
 
@@ -157,104 +162,43 @@ function renderIdol(p) {
 
     ${mouthSvg(expression, lipstick)}
     ${glassesSvg(glasses)}
-    ${earringsSvg(earrings, accent)}
   </svg>`;
 }
 
 const idols = [
-  {
-    hospitalShort: '林口長庚',
-    monogram: '長',
-    sex: '女',
-    accent: '#1e6b3d',
-    accentLight: '#d4e8d8',
-    hair: '#3a2820',
-    skin: '#f5d5b0',
-    hairStyle: 'ponytailF',
-    glasses: false,
-    expression: 'grin',
-    earrings: true,
-    desc: '私立財團法人 ・ 高效率規模',
-    rationale: '主色採長庚體系深綠（源自台塑集團識別）。馬尾＋大笑代表大型私立醫院的高效率年輕氣質。',
-  },
-  {
-    hospitalShort: '北榮桃園',
-    monogram: '榮',
-    sex: '男',
-    accent: '#a93232',
-    accentLight: '#f4d8d8',
-    hair: '#3a3530',
-    skin: '#f0c896',
-    hairStyle: 'shortM',
-    glasses: true,
-    expression: 'smile',
-    desc: '榮總公立體系 ・ 沉穩傳統',
-    rationale: '主色採榮民系統紅。短髮＋眼鏡＋淺笑代表公立醫院的資深專業形象。',
-  },
-  {
-    hospitalShort: '三軍總院',
-    monogram: '三',
-    sex: '男',
-    accent: '#1f3a5c',
-    accentLight: '#d4dde9',
-    hair: '#1a1a1a',
-    skin: '#d9a37a',
-    hairStyle: 'buzzM',
-    glasses: false,
-    expression: 'serious',
-    desc: '國防醫學體系 ・ 軍紀嚴明',
-    rationale: '主色採軍方深藍。平頭＋嚴肅表情＋粗直眉代表軍醫院的紀律與權威。',
-  },
-  {
-    hospitalShort: '輔大附醫',
-    monogram: '輔',
-    sex: '女',
-    accent: '#1f3a78',
-    accentLight: '#dce2f0',
-    hair: '#d4a85a',
-    skin: '#ffe8d1',
-    hairStyle: 'bobF',
-    glasses: true,
-    expression: 'happyClosed',
-    cross: true,
-    desc: '天主教大學附設 ・ 學者氣質',
-    rationale: '主色採輔大深藍，搭配領口金色十字架。鮑伯髮＋眼鏡＋笑眼代表書卷氣與宗教溫和感。',
-  },
-  {
-    hospitalShort: '高雄榮總',
-    monogram: '高',
-    sex: '女',
-    accent: '#b53d3d',
-    accentLight: '#f4dada',
-    hair: '#8b6238',
-    skin: '#cc9966',
-    hairStyle: 'longF',
-    glasses: false,
-    expression: 'grin',
-    lipstick: '#c44d6e',
-    desc: '南部榮總 ・ 南台灣熱情',
-    rationale: '主色同樣是榮總紅但略偏南部明亮版。長髮＋深膚色＋大笑代表南台灣的熱情與陽光。',
-  },
+  { hospitalShort: '北榮桃園分院', monogram: '榮', sex: '男', accent: '#2a8b8b', hair: '#3a3530', skin: '#f0c896', hairStyle: 'shortM', glasses: true, expression: 'smile', desc: '榮民系統 ・ 沉穩' },
+  { hospitalShort: '萬芳醫院', monogram: '萬', sex: '女', accent: '#6a3d8e', hair: '#2d1f17', skin: '#f5d5b0', hairStyle: 'ponytailF', glasses: false, expression: 'grin', desc: '北醫體系 ・ 朝氣' },
+  { hospitalShort: '秉坤婦幼醫院', monogram: '秉', sex: '女', accent: '#e88faa', hair: '#5a3a20', skin: '#ffe0c4', hairStyle: 'longF', glasses: false, expression: 'smile', lipstick: '#c44d6e', desc: '婦幼專科 ・ 溫柔' },
+  { hospitalShort: '大里仁愛醫院', monogram: '仁', sex: '女', accent: '#c84545', hair: '#1a1a1a', skin: '#ffe8d1', hairStyle: 'bobF', glasses: false, expression: 'smile', desc: '私立中型 ・ 親切' },
+  { hospitalShort: '永和耕莘醫院', monogram: '耕', sex: '女', accent: '#1f4a8a', hair: '#3a2820', skin: '#ffe8d1', hairStyle: 'bobF', glasses: true, expression: 'happyClosed', cross: true, desc: '天主教耕莘 ・ 學者' },
+  { hospitalShort: '中山醫大附醫', monogram: '中', sex: '男', accent: '#1f5fa0', hair: '#1a1a1a', skin: '#f0c896', hairStyle: 'shortM', glasses: true, expression: 'smile', desc: '醫學中心 ・ 專業' },
+  { hospitalShort: '三總北投分院', monogram: '三', sex: '男', accent: '#1f3a5c', hair: '#1a1a1a', skin: '#d9a37a', hairStyle: 'buzzM', glasses: false, expression: 'serious', desc: '國防醫學 ・ 軍紀' },
+  { hospitalShort: '輔大附醫', monogram: '輔', sex: '女', accent: '#0d8a8a', hair: '#3a2820', skin: '#ffe0c4', hairStyle: 'longF', glasses: false, expression: 'smile', cross: true, desc: '天主教輔大 ・ 端莊' },
+  { hospitalShort: '國泰綜合醫院', monogram: '泰', sex: '男', accent: '#2d7a3d', hair: '#2d1f17', skin: '#f4c89b', hairStyle: 'shortM', glasses: false, expression: 'smile', desc: '國泰集團 ・ 沉穩' },
+  { hospitalShort: '中醫大臺北分院', monogram: '醫', sex: '女', accent: '#c44545', hair: '#1a1a1a', skin: '#f5d5b0', hairStyle: 'bobF', glasses: false, expression: 'grin', desc: '中國醫藥大學 ・ 親和' },
+  { hospitalShort: '安南醫院', monogram: '安', sex: '男', accent: '#c44545', hair: '#3a2820', skin: '#d9a37a', hairStyle: 'spikyM', glasses: false, expression: 'grin', desc: '台南市立 ・ 熱情' },
+  { hospitalShort: '新國民醫院', monogram: '新', sex: '女', accent: '#6a3d8e', hair: '#5a3a20', skin: '#ffe0c4', hairStyle: 'ponytailF', glasses: false, expression: 'happyClosed', desc: '北醫體系小院 ・ 溫暖' },
 ];
 
 const html = `<!doctype html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"/>
-<title>藥師吉祥物 v4 — 依醫院特性設計</title>
+<title>藥師吉祥物 v5 — 真實 12 院</title>
 <style>
   body { font-family: system-ui, -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif; background: #f7f7f8; padding: 32px; margin: 0; color: #1f2937; }
   h1 { font-size: 22px; margin: 0 0 8px; }
-  p.sub { color: #6b7280; margin: 0 0 28px; font-size: 13px; line-height: 1.7; max-width: 800px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 1200px; margin-bottom: 40px; }
-  .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
-  .card .avatar { width: 170px; height: 170px; margin: 0 auto; display: block; }
-  .card h3 { margin: 12px 0 4px; font-size: 16px; text-align: center; }
-  .sex { display: inline-block; padding: 1px 6px; border-radius: 4px; font-size: 11px; margin-left: 4px; vertical-align: middle; }
+  p.sub { color: #6b7280; margin: 0 0 28px; font-size: 13px; line-height: 1.7; max-width: 760px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; max-width: 1300px; margin-bottom: 40px; }
+  .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; text-align: center; }
+  .card .avatar { width: 150px; height: 150px; margin: 0 auto; }
+  .card h3 { margin: 8px 0 2px; font-size: 14px; }
+  .sex { display: inline-block; padding: 1px 5px; border-radius: 4px; font-size: 10px; margin-left: 3px; vertical-align: middle; }
   .sex-male { background: #dbeafe; color: #1e40af; }
   .sex-female { background: #fce7f3; color: #9d174d; }
-  .desc { color: #6b7280; font-size: 12px; text-align: center; margin-top: 4px; margin-bottom: 8px; }
-  .rationale { font-size: 11px; color: #4b5563; line-height: 1.55; padding: 8px 10px; background: #f9fafb; border-left: 3px solid; border-radius: 3px; margin-top: 8px; }
+  .desc { color: #6b7280; font-size: 11px; margin-top: 2px; }
+  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; margin-right: 3px; border: 1px solid rgba(0,0,0,0.08); }
+  .hex { font-family: ui-monospace, monospace; font-size: 10px; color: #6b7280; }
   .integrated { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; max-width: 760px; }
   .integrated h2 { font-size: 16px; margin: 0 0 14px; }
   .job-card { display: flex; gap: 16px; align-items: flex-start; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 10px; }
@@ -262,14 +206,13 @@ const html = `<!doctype html>
   .job-card h4 { margin: 0; font-size: 16px; }
   .job-card h4 small { color: #6b7280; font-weight: normal; font-size: 13px; margin-left: 4px; }
   .job-card p { margin: 4px 0 0; color: #6b7280; font-size: 13px; }
-  .warning { margin-top: 32px; padding: 14px 18px; background: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 13px; color: #78350f; max-width: 760px; line-height: 1.7; }
 </style>
 </head>
 <body>
-  <h1>藥師吉祥物 v4 — 依醫院特性設計</h1>
+  <h1>藥師吉祥物 v5 — 你 Notion 裡的 12 家醫院</h1>
   <p class="sub">
-    這版每個角色都根據醫院的<strong>品牌色</strong>、<strong>類型</strong>（公立/私立/軍醫/教會）、<strong>地理位置</strong>來決定設計：
-    主色取自醫院識別、領口別著該院標誌、髮型表情呼應該院氣質。
+    主色直接從 Notion 的「識別色」欄位讀取（目前是我預設值；你在 Notion 改任何 hex，下次刷新就會生效）。
+    背景淺色自動由主色生成。每家醫院的性別/髮型/表情/配件根據其體系（公立/私立、軍醫/教會/婦幼）來區分。
   </p>
 
   <div class="grid">
@@ -278,31 +221,22 @@ const html = `<!doctype html>
         <div class="avatar">${renderIdol(i)}</div>
         <h3>${i.hospitalShort}<span class="sex sex-${i.sex === '男' ? 'male' : 'female'}">${i.sex}</span></h3>
         <div class="desc">${i.desc}</div>
-        <div class="rationale" style="border-color: ${i.accent}">${i.rationale}</div>
+        <div style="margin-top:6px"><span class="swatch" style="background:${i.accent}"></span><span class="hex">${i.accent}</span></div>
       </div>
     `).join('')}
   </div>
 
   <div class="integrated">
-    <h2>JobCard 中的實際大小（64×64 圓形）</h2>
-    ${idols.map(i => `
+    <h2>JobCard 中的實際大小（64×64 圓形）— 前 5 家</h2>
+    ${idols.slice(0, 5).map(i => `
       <div class="job-card">
         <div class="avatar">${renderIdol(i)}</div>
         <div>
-          <h4>${i.hospitalShort}醫院 <small>${i.desc}</small></h4>
-          <p>桃園市 ・ 一般藥師 ・ 月薪約 50,000</p>
+          <h4>${i.hospitalShort} <small>${i.desc}</small></h4>
+          <p>${i.accent} ・ ${i.sex}</p>
         </div>
       </div>
     `).join('')}
-  </div>
-
-  <div class="warning">
-    <strong>誠實提醒：</strong> 我無法從容器存取台灣醫院官網（網路政策擋住了 .gov.tw / .edu.tw / .org.tw），
-    所以這些主色是我根據對醫院體系的<strong>一般認知</strong>推斷的：長庚 → 台塑深綠、榮總 → 系統紅、
-    三總 → 軍方深藍、輔大 → 天主教深藍 + 金十字。
-    <br/>
-    <strong>如果你知道正確的品牌色 hex code，請告訴我，我直接套用。</strong>
-    特別是長庚的綠是否正確？三總是用藍還是綠？輔大實際識別色？
   </div>
 </body>
 </html>`;

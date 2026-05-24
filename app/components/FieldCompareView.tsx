@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import type { Job, PublicPrivate, SalaryTier, Tag } from '../lib/types';
-import { TIER_BADGE, breakOnParens, rankCity } from '../lib/styles';
+import type { HospitalTier, Job, PublicPrivate, SalaryTier, Tag } from '../lib/types';
+import { HOSPITAL_TIER_BADGE, TIER_BADGE, breakOnParens, rankCity } from '../lib/styles';
 import { TagButton } from './TagButton';
 
 type FieldRenderer = (
@@ -20,17 +20,43 @@ type Field = {
 };
 
 const PUBLIC_PRIVATE_ORDER: Record<PublicPrivate, number> = { 公立: 0, 私立: 1 };
-const TIER_ORDER: Record<SalaryTier, number> = { 突出: 0, 一般: 1 };
+const SALARY_TIER_ORDER: Record<SalaryTier, number> = { 突出: 0, 一般: 1 };
+const HOSPITAL_TIER_ORDER: Record<HospitalTier, number> = {
+  醫學中心: 0,
+  區域醫院: 1,
+  地區醫院: 2,
+  其他: 3,
+};
 
 function rankPublicPrivate(value: PublicPrivate | null): number {
   return value ? PUBLIC_PRIVATE_ORDER[value] : 2;
 }
 
-function rankTier(value: SalaryTier | null): number {
-  return value ? TIER_ORDER[value] : 2;
+function rankSalaryTier(value: SalaryTier | null): number {
+  return value ? SALARY_TIER_ORDER[value] : 2;
+}
+
+function rankHospitalTier(value: HospitalTier | null): number {
+  return value ? HOSPITAL_TIER_ORDER[value] : 4;
 }
 
 const FIELDS: Field[] = [
+  {
+    key: 'hospitalTier',
+    label: '醫院等級',
+    render: (j) =>
+      j.hospitalTier ? (
+        <span
+          className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${HOSPITAL_TIER_BADGE[j.hospitalTier]}`}
+        >
+          {j.hospitalTier}
+        </span>
+      ) : (
+        dash()
+      ),
+    sort: (a, b) => rankHospitalTier(a.hospitalTier) - rankHospitalTier(b.hospitalTier),
+    defaultDirection: 'asc',
+  },
   {
     key: 'publicPrivate',
     label: '公/私立',
@@ -42,14 +68,13 @@ const FIELDS: Field[] = [
     key: 'location',
     label: '地點',
     render: (j) => textOrDash(j.location),
-    sort: (a, b) => rankCity(a.location) - rankCity(b.location),
+    sort: (a, b) => rankCity(a.city) - rankCity(b.city),
     defaultDirection: 'asc',
   },
   {
     key: 'salaryDisplay',
     label: '薪資',
     render: (j) => textOrDash(breakOnParens(j.salaryDisplay)),
-    // 薪資 display string is free text (月薪 / 年薪 / 面議 + bonuses) — no honest sort.
   },
   {
     key: 'salaryTier',
@@ -64,7 +89,7 @@ const FIELDS: Field[] = [
       ) : (
         dash()
       ),
-    sort: (a, b) => rankTier(a.salaryTier) - rankTier(b.salaryTier),
+    sort: (a, b) => rankSalaryTier(a.salaryTier) - rankSalaryTier(b.salaryTier),
     defaultDirection: 'asc',
   },
   {
@@ -152,9 +177,7 @@ export function FieldCompareView({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-blue-100 bg-blue-50 px-4 py-2 text-sm">
-        <span className="font-medium text-blue-900">
-          欄位：{activeField.label}
-        </span>
+        <span className="font-medium text-blue-900">欄位：{activeField.label}</span>
         {activeField.sort ? (
           <button
             type="button"
@@ -187,9 +210,7 @@ export function FieldCompareView({
                 </span>
               </div>
               {job.publicPrivate && (
-                <span className="text-xs font-normal text-gray-500">
-                  ({job.publicPrivate})
-                </span>
+                <span className="text-xs font-normal text-gray-500">({job.publicPrivate})</span>
               )}
             </div>
             <div className="mt-1 text-sm text-gray-700">

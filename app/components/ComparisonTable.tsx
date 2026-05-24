@@ -1,5 +1,6 @@
 import type { Job, Tag } from '../lib/types';
-import { TIER_BADGE, breakOnParens } from '../lib/styles';
+import { applyUrl } from '../lib/types';
+import { HOSPITAL_TIER_BADGE, TIER_BADGE, breakOnParens } from '../lib/styles';
 import { TagButton } from './TagButton';
 
 type RowDef = { label: string; render: (job: Job) => React.ReactNode };
@@ -14,8 +15,23 @@ export function ComparisonTable({
   onTagClick: (tag: Tag) => void;
 }) {
   const rows: RowDef[] = [
+    {
+      label: '醫院等級',
+      render: (j) =>
+        j.hospitalTier ? (
+          <span
+            className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${HOSPITAL_TIER_BADGE[j.hospitalTier]}`}
+          >
+            {j.hospitalTier}
+          </span>
+        ) : (
+          dash()
+        ),
+    },
     { label: '公/私立', render: (j) => textOrDash(j.publicPrivate) },
+    { label: '地區', render: (j) => textOrDash(j.region) },
     { label: '地點', render: (j) => textOrDash(j.location) },
+    { label: '電話', render: (j) => textOrDash(j.phone) },
     { label: '薪資', render: (j) => textOrDash(breakOnParens(j.salaryDisplay)) },
     {
       label: '薪資等級',
@@ -54,19 +70,20 @@ export function ComparisonTable({
     },
     {
       label: '連結',
-      render: (j) =>
-        j.sourceUrl ? (
+      render: (j) => {
+        const link = applyUrl(j);
+        if (!link) return dash();
+        return (
           <a
-            href={j.sourceUrl}
+            href={link}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium text-blue-600 hover:underline"
           >
-            104 →
+            {j.officialUrl ? '官網 →' : '104 →'}
           </a>
-        ) : (
-          dash()
-        ),
+        );
+      },
     },
   ];
 
@@ -122,8 +139,5 @@ function dash() {
 
 function textOrDash(value: string | null) {
   if (!value) return dash();
-  return (
-    <span className="whitespace-pre-wrap [text-wrap:balance]">{value}</span>
-  );
+  return <span className="whitespace-pre-wrap [text-wrap:balance]">{value}</span>;
 }
-

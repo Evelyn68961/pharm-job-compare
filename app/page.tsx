@@ -9,7 +9,7 @@ export default async function HomePage() {
       <header className="mb-8">
         <h1 className="text-3xl font-bold">藥師職缺比較</h1>
         <p className="mt-2 text-gray-600">
-          醫院藥師職缺，依薪資等級排序。點擊特色標籤即可篩選；點擊「查看 104 原始職缺」前往原始頁面。
+          全台灣醫院藥師職缺。先選地區、醫院等級或標籤縮小範圍，再點卡片連結前往醫院官網查看完整職缺與應徵方式。
         </p>
       </header>
 

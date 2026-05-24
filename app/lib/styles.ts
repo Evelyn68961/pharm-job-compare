@@ -1,8 +1,46 @@
-import type { SalaryTier, Tag } from './types';
+import type { HospitalTier, Region, SalaryTier, Tag } from './types';
 
 export const TIER_BADGE: Record<SalaryTier, string> = {
   突出: 'bg-orange-100 text-orange-900 border-orange-300',
   一般: 'bg-gray-100 text-gray-700 border-gray-300',
+};
+
+export const HOSPITAL_TIER_BADGE: Record<HospitalTier, string> = {
+  醫學中心: 'bg-red-100 text-red-900 border-red-300',
+  區域醫院: 'bg-orange-100 text-orange-900 border-orange-300',
+  地區醫院: 'bg-yellow-100 text-yellow-900 border-yellow-300',
+  其他: 'bg-gray-100 text-gray-700 border-gray-300',
+};
+
+export const REGION_PILL: Record<Region, { base: string; active: string }> = {
+  北北基: {
+    base: 'bg-white text-blue-700 border-blue-300 hover:bg-blue-50',
+    active: 'bg-blue-600 text-white border-blue-700',
+  },
+  桃竹苗: {
+    base: 'bg-white text-green-700 border-green-300 hover:bg-green-50',
+    active: 'bg-green-600 text-white border-green-700',
+  },
+  中彰投: {
+    base: 'bg-white text-orange-700 border-orange-300 hover:bg-orange-50',
+    active: 'bg-orange-600 text-white border-orange-700',
+  },
+  雲嘉南: {
+    base: 'bg-white text-yellow-700 border-yellow-300 hover:bg-yellow-50',
+    active: 'bg-yellow-600 text-white border-yellow-700',
+  },
+  高屏: {
+    base: 'bg-white text-red-700 border-red-300 hover:bg-red-50',
+    active: 'bg-red-600 text-white border-red-700',
+  },
+  宜花東: {
+    base: 'bg-white text-purple-700 border-purple-300 hover:bg-purple-50',
+    active: 'bg-purple-600 text-white border-purple-700',
+  },
+  離島: {
+    base: 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50',
+    active: 'bg-slate-600 text-white border-slate-700',
+  },
 };
 
 export const TAG_STYLE: Record<Tag, { base: string; active: string }> = {
@@ -52,14 +90,6 @@ export const TAG_STYLE: Record<Tag, { base: string; active: string }> = {
   },
 };
 
-export function extractCity(location: string | null): string | null {
-  if (!location) return null;
-  const match = location.search(/[·•・]/);
-  if (match === -1) return location.trim() || null;
-  const city = location.substring(0, match).trim();
-  return city || null;
-}
-
 export function breakOnParens(text: string | null): string | null {
   if (!text) return text;
   return text.replace(/\s*([(（])/g, (_match, paren: string, offset: number) =>
@@ -68,31 +98,42 @@ export function breakOnParens(text: string | null): string | null {
 }
 
 const TAIWAN_CITY_NORTH_TO_SOUTH: Record<string, number> = {
-  基隆: 1,
-  台北: 2,
-  新北: 3,
-  桃園: 4,
-  新竹: 5,
-  苗栗: 6,
-  台中: 7,
-  彰化: 8,
-  南投: 9,
-  雲林: 10,
-  嘉義: 11,
-  台南: 12,
-  高雄: 13,
-  屏東: 14,
-  宜蘭: 15,
-  花蓮: 16,
-  台東: 17,
-  澎湖: 18,
-  金門: 19,
-  連江: 20,
-  馬祖: 20,
+  基隆市: 1,
+  臺北市: 2,
+  台北市: 2,
+  新北市: 3,
+  桃園市: 4,
+  新竹市: 5,
+  新竹縣: 5,
+  苗栗縣: 6,
+  臺中市: 7,
+  台中市: 7,
+  彰化縣: 8,
+  南投縣: 9,
+  雲林縣: 10,
+  嘉義市: 11,
+  嘉義縣: 11,
+  臺南市: 12,
+  台南市: 12,
+  高雄市: 13,
+  屏東縣: 14,
+  宜蘭縣: 15,
+  花蓮縣: 16,
+  臺東縣: 17,
+  台東縣: 17,
+  澎湖縣: 18,
+  金門縣: 19,
+  連江縣: 20,
 };
 
-export function rankCity(location: string | null): number {
-  const city = extractCity(location);
+export function rankCity(city: string | null): number {
   if (!city) return 999;
   return TAIWAN_CITY_NORTH_TO_SOUTH[city] ?? 998;
+}
+
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+
+export function safeBrandColor(hex: string | null): string | null {
+  if (!hex) return null;
+  return HEX_COLOR.test(hex) ? hex : null;
 }

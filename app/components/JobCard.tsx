@@ -1,5 +1,6 @@
 import type { Job, Tag } from '../lib/types';
-import { TIER_BADGE } from '../lib/styles';
+import { applyUrl, hasJobDetail } from '../lib/types';
+import { HOSPITAL_TIER_BADGE, TIER_BADGE, safeBrandColor } from '../lib/styles';
 import { TagButton } from './TagButton';
 
 export function JobCard({
@@ -11,48 +12,64 @@ export function JobCard({
   activeTags: Set<Tag>;
   onTagClick: (tag: Tag) => void;
 }) {
+  const brand = safeBrandColor(job.brandColor);
+  const link = applyUrl(job);
+  const isFromOfficial = Boolean(job.officialUrl);
+  const showDetails = hasJobDetail(job);
+  const meta = [job.hospitalTier, job.publicPrivate, job.region, job.location]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
     <article className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="flex items-start gap-4">
-        {job.idolImageUrl && (
-          <img
-            src={job.idolImageUrl}
-            alt={`${job.hospitalName} 吉祥物`}
-            className="h-16 w-16 flex-shrink-0 rounded-full border border-gray-200 bg-gray-50 object-cover"
-          />
-        )}
-        <div className="flex-1">
+      <header className="flex items-start gap-3">
+        <div
+          aria-hidden
+          className="h-12 w-12 flex-shrink-0 rounded-full border border-gray-200"
+          style={{ backgroundColor: brand ?? '#e5e7eb' }}
+        />
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-xl font-bold">
-              {job.hospitalName || '—'}
-              {job.publicPrivate && (
-                <span className="ml-2 text-sm font-normal text-gray-500">
-                  ({job.publicPrivate})
+            <h2 className="text-xl font-bold">{job.hospitalName}</h2>
+            <div className="flex flex-wrap gap-1">
+              {job.hospitalTier && (
+                <span
+                  className={`rounded-full border px-2 py-0.5 text-xs font-medium ${HOSPITAL_TIER_BADGE[job.hospitalTier]}`}
+                >
+                  {job.hospitalTier}
                 </span>
               )}
-            </h2>
-            {job.salaryTier && (
-              <span
-                className={`rounded-full border px-2 py-0.5 text-xs font-medium ${TIER_BADGE[job.salaryTier]}`}
-              >
-                薪資 {job.salaryTier}
-              </span>
-            )}
+              {job.salaryTier && (
+                <span
+                  className={`rounded-full border px-2 py-0.5 text-xs font-medium ${TIER_BADGE[job.salaryTier]}`}
+                >
+                  薪資 {job.salaryTier}
+                </span>
+              )}
+            </div>
           </div>
-          <p className="mt-1 text-sm text-gray-600">{job.location || '—'}</p>
+          {meta && <p className="mt-1 text-sm text-gray-600">{meta}</p>}
+          {job.phone && (
+            <p className="mt-0.5 text-sm text-gray-500">
+              <a href={`tel:${job.phone}`} className="hover:text-gray-700">
+                📞 {job.phone}
+              </a>
+            </p>
+          )}
         </div>
-      </div>
+      </header>
 
-      <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-        <Field label="薪資" value={job.salaryDisplay} />
-        <Field label="輪班" value={job.shiftDescription} />
-        <Field label="職務內容" value={job.jobSummary} />
-        <Field label="學歷" value={job.educationRequirement} />
-        <Field label="證照" value={job.certification} />
-        <Field label="宿舍" value={job.dormitory} />
-        <Field label="需求人數" value={job.headcount} />
-        <Field label="更新" value={job.updatedDate} />
-      </dl>
+      {showDetails && (
+        <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+          {job.salaryDisplay && <Field label="薪資" value={job.salaryDisplay} />}
+          {job.shiftDescription && <Field label="輪班" value={job.shiftDescription} />}
+          {job.jobSummary && <Field label="職務內容" value={job.jobSummary} />}
+          {job.educationRequirement && <Field label="學歷" value={job.educationRequirement} />}
+          {job.certification && <Field label="證照" value={job.certification} />}
+          {job.dormitory && <Field label="宿舍" value={job.dormitory} />}
+          {job.headcount && <Field label="需求人數" value={job.headcount} />}
+        </dl>
+      )}
 
       {job.tags.length > 0 && (
         <ul className="mt-4 flex flex-wrap gap-1.5">
@@ -64,27 +81,32 @@ export function JobCard({
         </ul>
       )}
 
-      {job.sourceUrl && (
-        <div className="mt-4">
+      <footer className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm">
+        {job.updatedDate ? (
+          <span className="text-xs text-gray-500">更新於 {job.updatedDate}</span>
+        ) : (
+          <span />
+        )}
+        {link && (
           <a
-            href={job.sourceUrl}
+            href={link}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-medium text-blue-600 hover:underline"
+            className="font-medium text-blue-600 hover:underline"
           >
-            查看 104 原始職缺 →
+            {isFromOfficial ? '前往醫院官網職缺 →' : '查看原始職缺 →'}
           </a>
-        </div>
-      )}
+        )}
+      </footer>
     </article>
   );
 }
 
-function Field({ label, value }: { label: string; value: string | null }) {
+function Field({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <dt className="font-medium text-gray-500">{label}</dt>
-      <dd className="text-gray-900">{value || '—'}</dd>
+      <dd className="whitespace-pre-wrap text-gray-900">{value}</dd>
     </div>
   );
 }

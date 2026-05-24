@@ -114,12 +114,73 @@ function crossSvg(enabled) {
   `;
 }
 
-function monogramPin(monogram, accent) {
-  if (!monogram) return '';
+function iconSvg(name, accent) {
+  const icons = {
+    shield: `
+      <path d="M -5 -6 L 5 -6 L 5 1 Q 5 6 0 7 Q -5 6 -5 1 Z" fill="${accent}"/>
+      <path d="M -1 -3 L 1 -3 L 1 -1 L 3 -1 L 3 1 L 1 1 L 1 4 L -1 4 L -1 1 L -3 1 L -3 -1 L -1 -1 Z" fill="white"/>
+    `,
+    caduceus: `
+      <rect x="-0.7" y="-6.5" width="1.4" height="13" fill="${accent}"/>
+      <path d="M 0 -5 Q -4 -2, 0 0 Q 4 2, 0 5" stroke="${accent}" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <path d="M 0 -5 Q 4 -2, 0 0 Q -4 2, 0 5" stroke="${accent}" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <path d="M -3 -6 L 3 -6 L 0 -8 Z" fill="${accent}"/>
+    `,
+    heart: `<path d="M 0 -4 C -5 -10, -11 -3, 0 7 C 11 -3, 5 -10, 0 -4 Z" fill="${accent}" transform="scale(0.7)"/>`,
+    dove: `
+      <path d="M -7 1 Q -3 -5, 1 -2 Q 5 -6, 7 -1 L 5 3 L 2 1 L -1 3 L -4 1 Z" fill="${accent}"/>
+      <circle cx="6" cy="-1" r="0.6" fill="white"/>
+    `,
+    cross: `
+      <rect x="-1.3" y="-7" width="2.6" height="14" fill="${accent}"/>
+      <rect x="-5.5" y="-1.3" width="11" height="2.6" fill="${accent}"/>
+    `,
+    plumBlossom: `
+      <g fill="${accent}">
+        <circle cx="0" cy="-4.3" r="2.7"/>
+        <circle cx="4.1" cy="-1.3" r="2.7"/>
+        <circle cx="2.55" cy="3.5" r="2.7"/>
+        <circle cx="-2.55" cy="3.5" r="2.7"/>
+        <circle cx="-4.1" cy="-1.3" r="2.7"/>
+      </g>
+      <circle r="1.4" fill="white"/>
+    `,
+    star: `<polygon points="0,-7.5 2.1,-2.3 7.5,-2.3 3.2,1.4 4.8,7 0,3.7 -4.8,7 -3.2,1.4 -7.5,-2.3 -2.1,-2.3" fill="${accent}"/>`,
+    crossInHeart: `
+      <path d="M 0 -3 C -5 -10, -11 -3, 0 7 C 11 -3, 5 -10, 0 -3 Z" fill="${accent}" transform="scale(0.75)"/>
+      <rect x="-0.7" y="-2" width="1.4" height="5" fill="white"/>
+      <rect x="-2" y="-0.5" width="4" height="1.4" fill="white"/>
+    `,
+    tree: `
+      <rect x="-0.8" y="2" width="1.6" height="5" fill="#6b3e1f"/>
+      <path d="M 0 -7 L 6 0 L 4 0 L 7 4 L -7 4 L -4 0 L -6 0 Z" fill="${accent}"/>
+    `,
+    yinYang: `
+      <circle r="7" fill="${accent}"/>
+      <path d="M 0 -7 A 7 7 0 0 1 0 7 A 3.5 3.5 0 0 1 0 0 A 3.5 3.5 0 0 0 0 -7 Z" fill="white"/>
+      <circle cx="0" cy="-3.5" r="1.1" fill="white"/>
+      <circle cx="0" cy="3.5" r="1.1" fill="${accent}"/>
+    `,
+    circleCross: `
+      <circle r="7" fill="none" stroke="${accent}" stroke-width="1.5"/>
+      <rect x="-0.9" y="-4" width="1.8" height="8" fill="${accent}"/>
+      <rect x="-4" y="-0.9" width="8" height="1.8" fill="${accent}"/>
+    `,
+    starCross: `
+      <polygon points="0,-7.5 2.1,-2.3 7.5,-2.3 3.2,1.4 4.8,7 0,3.7 -4.8,7 -3.2,1.4 -7.5,-2.3 -2.1,-2.3" fill="${accent}"/>
+      <rect x="-0.6" y="-1.8" width="1.2" height="3.6" fill="white"/>
+      <rect x="-1.8" y="-0.6" width="3.6" height="1.2" fill="white"/>
+    `,
+  };
+  return icons[name] || '';
+}
+
+function logoPin(iconName, accent) {
+  if (!iconName) return '';
   return `
     <g transform="translate(66, 182)">
-      <rect x="-11" y="-8" width="22" height="16" rx="2" fill="white" stroke="${accent}" stroke-width="1"/>
-      <text x="0" y="4.5" text-anchor="middle" font-size="12" font-weight="bold" fill="${accent}" font-family="-apple-system, BlinkMacSystemFont, 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif">${monogram}</text>
+      <circle r="11" fill="white" stroke="${accent}" stroke-width="1.3"/>
+      ${iconSvg(iconName, accent)}
     </g>
   `;
 }
@@ -127,7 +188,7 @@ function monogramPin(monogram, accent) {
 function renderIdol(p) {
   const accent = p.accent;
   const accentLight = lighten(accent, 0.82);
-  const { hair, skin, hairStyle, glasses, expression, cross, lipstick, monogram } = p;
+  const { hair, skin, hairStyle, glasses, expression, cross, lipstick, icon } = p;
   return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
     <circle cx="100" cy="100" r="100" fill="${accentLight}"/>
 
@@ -145,7 +206,7 @@ function renderIdol(p) {
     <rect x="46" y="146" width="108" height="2.5" fill="#000" opacity="0.20"/>
 
     ${crossSvg(cross)}
-    ${monogramPin(monogram, accent)}
+    ${logoPin(icon, accent)}
 
     <rect x="86" y="138" width="28" height="10" fill="${skin}"/>
     <rect x="86" y="144" width="28" height="4" fill="#000" opacity="0.15"/>
@@ -166,18 +227,18 @@ function renderIdol(p) {
 }
 
 const idols = [
-  { hospitalShort: '北榮桃園分院', monogram: '榮', sex: '男', accent: '#2a8b8b', hair: '#3a3530', skin: '#f0c896', hairStyle: 'shortM', glasses: true, expression: 'smile', desc: '榮民系統 ・ 沉穩' },
-  { hospitalShort: '萬芳醫院', monogram: '萬', sex: '女', accent: '#6a3d8e', hair: '#2d1f17', skin: '#f5d5b0', hairStyle: 'ponytailF', glasses: false, expression: 'grin', desc: '北醫體系 ・ 朝氣' },
-  { hospitalShort: '秉坤婦幼醫院', monogram: '秉', sex: '女', accent: '#e88faa', hair: '#5a3a20', skin: '#ffe0c4', hairStyle: 'longF', glasses: false, expression: 'smile', lipstick: '#c44d6e', desc: '婦幼專科 ・ 溫柔' },
-  { hospitalShort: '大里仁愛醫院', monogram: '仁', sex: '女', accent: '#c84545', hair: '#1a1a1a', skin: '#ffe8d1', hairStyle: 'bobF', glasses: false, expression: 'smile', desc: '私立中型 ・ 親切' },
-  { hospitalShort: '永和耕莘醫院', monogram: '耕', sex: '女', accent: '#1f4a8a', hair: '#3a2820', skin: '#ffe8d1', hairStyle: 'bobF', glasses: true, expression: 'happyClosed', cross: true, desc: '天主教耕莘 ・ 學者' },
-  { hospitalShort: '中山醫大附醫', monogram: '中', sex: '男', accent: '#1f5fa0', hair: '#1a1a1a', skin: '#f0c896', hairStyle: 'shortM', glasses: true, expression: 'smile', desc: '醫學中心 ・ 專業' },
-  { hospitalShort: '三總北投分院', monogram: '三', sex: '男', accent: '#1f3a5c', hair: '#1a1a1a', skin: '#d9a37a', hairStyle: 'buzzM', glasses: false, expression: 'serious', desc: '國防醫學 ・ 軍紀' },
-  { hospitalShort: '輔大附醫', monogram: '輔', sex: '女', accent: '#0d8a8a', hair: '#3a2820', skin: '#ffe0c4', hairStyle: 'longF', glasses: false, expression: 'smile', cross: true, desc: '天主教輔大 ・ 端莊' },
-  { hospitalShort: '國泰綜合醫院', monogram: '泰', sex: '男', accent: '#2d7a3d', hair: '#2d1f17', skin: '#f4c89b', hairStyle: 'shortM', glasses: false, expression: 'smile', desc: '國泰集團 ・ 沉穩' },
-  { hospitalShort: '中醫大臺北分院', monogram: '醫', sex: '女', accent: '#c44545', hair: '#1a1a1a', skin: '#f5d5b0', hairStyle: 'bobF', glasses: false, expression: 'grin', desc: '中國醫藥大學 ・ 親和' },
-  { hospitalShort: '安南醫院', monogram: '安', sex: '男', accent: '#c44545', hair: '#3a2820', skin: '#d9a37a', hairStyle: 'spikyM', glasses: false, expression: 'grin', desc: '台南市立 ・ 熱情' },
-  { hospitalShort: '新國民醫院', monogram: '新', sex: '女', accent: '#6a3d8e', hair: '#5a3a20', skin: '#ffe0c4', hairStyle: 'ponytailF', glasses: false, expression: 'happyClosed', desc: '北醫體系小院 ・ 溫暖' },
+  { hospitalShort: '北榮桃園分院', icon: 'shield', sex: '男', accent: '#2a8b8b', hair: '#3a3530', skin: '#f0c896', hairStyle: 'shortM', glasses: true, expression: 'smile', desc: '榮民系統 ・ 沉穩', iconWhy: '盾牌：公立榮總體系權威' },
+  { hospitalShort: '萬芳醫院', icon: 'caduceus', sex: '女', accent: '#6a3d8e', hair: '#2d1f17', skin: '#f5d5b0', hairStyle: 'ponytailF', glasses: false, expression: 'grin', desc: '北醫體系 ・ 朝氣', iconWhy: '醫神杖：醫學中心級' },
+  { hospitalShort: '秉坤婦幼醫院', icon: 'heart', sex: '女', accent: '#e88faa', hair: '#5a3a20', skin: '#ffe0c4', hairStyle: 'longF', glasses: false, expression: 'smile', lipstick: '#c44d6e', desc: '婦幼專科 ・ 溫柔', iconWhy: '愛心：婦幼專科' },
+  { hospitalShort: '大里仁愛醫院', icon: 'dove', sex: '女', accent: '#c84545', hair: '#1a1a1a', skin: '#ffe8d1', hairStyle: 'bobF', glasses: false, expression: 'smile', desc: '私立中型 ・ 親切', iconWhy: '白鴿：仁愛博愛之意' },
+  { hospitalShort: '永和耕莘醫院', icon: 'cross', sex: '女', accent: '#1f4a8a', hair: '#3a2820', skin: '#ffe8d1', hairStyle: 'bobF', glasses: true, expression: 'happyClosed', cross: true, desc: '天主教耕莘 ・ 學者', iconWhy: '十字架：天主教耕莘' },
+  { hospitalShort: '中山醫大附醫', icon: 'plumBlossom', sex: '男', accent: '#1f5fa0', hair: '#1a1a1a', skin: '#f0c896', hairStyle: 'shortM', glasses: true, expression: 'smile', desc: '醫學中心 ・ 專業', iconWhy: '梅花：中山校徽核心元素' },
+  { hospitalShort: '三總北投分院', icon: 'star', sex: '男', accent: '#1f3a5c', hair: '#1a1a1a', skin: '#d9a37a', hairStyle: 'buzzM', glasses: false, expression: 'serious', desc: '國防醫學 ・ 軍紀', iconWhy: '五角星：軍方識別' },
+  { hospitalShort: '輔大附醫', icon: 'crossInHeart', sex: '女', accent: '#0d8a8a', hair: '#3a2820', skin: '#ffe0c4', hairStyle: 'longF', glasses: false, expression: 'smile', cross: true, desc: '天主教輔大 ・ 端莊', iconWhy: '聖心十字：天主教輔大' },
+  { hospitalShort: '國泰綜合醫院', icon: 'tree', sex: '男', accent: '#2d7a3d', hair: '#2d1f17', skin: '#f4c89b', hairStyle: 'shortM', glasses: false, expression: 'smile', desc: '國泰集團 ・ 沉穩', iconWhy: '樹：國泰集團識別主視覺' },
+  { hospitalShort: '中醫大臺北分院', icon: 'yinYang', sex: '女', accent: '#c44545', hair: '#1a1a1a', skin: '#f5d5b0', hairStyle: 'bobF', glasses: false, expression: 'grin', desc: '中國醫藥大學 ・ 親和', iconWhy: '太極：中醫傳統' },
+  { hospitalShort: '安南醫院', icon: 'circleCross', sex: '男', accent: '#c44545', hair: '#3a2820', skin: '#d9a37a', hairStyle: 'spikyM', glasses: false, expression: 'grin', desc: '台南市立 ・ 熱情', iconWhy: '圓中十字：市立公醫' },
+  { hospitalShort: '新國民醫院', icon: 'starCross', sex: '女', accent: '#6a3d8e', hair: '#5a3a20', skin: '#ffe0c4', hairStyle: 'ponytailF', glasses: false, expression: 'happyClosed', desc: '北醫體系小院 ・ 溫暖', iconWhy: '星十字：北醫小型院區' },
 ];
 
 const html = `<!doctype html>
@@ -222,6 +283,7 @@ const html = `<!doctype html>
         <h3>${i.hospitalShort}<span class="sex sex-${i.sex === '男' ? 'male' : 'female'}">${i.sex}</span></h3>
         <div class="desc">${i.desc}</div>
         <div style="margin-top:6px"><span class="swatch" style="background:${i.accent}"></span><span class="hex">${i.accent}</span></div>
+        <div style="margin-top:4px;font-size:10px;color:#9ca3af">${i.iconWhy}</div>
       </div>
     `).join('')}
   </div>

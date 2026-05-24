@@ -1,52 +1,48 @@
 import { writeFileSync } from 'node:fs';
 
-function renderIdol({ accent, accentLight, hair, skin = '#fde4cc' }) {
+function renderIdol({ accent, accentLight, hair, skin = '#fad9b8' }) {
   return `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
     <circle cx="100" cy="100" r="100" fill="${accentLight}"/>
 
-    <g fill="white" opacity="0.9">
-      <path d="M 28 32 L 30 28 L 32 32 L 36 34 L 32 36 L 30 40 L 28 36 L 24 34 Z"/>
-      <path d="M 170 35 L 172 31 L 174 35 L 178 37 L 174 39 L 172 43 L 170 39 L 166 37 Z"/>
-      <path d="M 22 145 L 24 141 L 26 145 L 30 147 L 26 149 L 24 153 L 22 149 L 18 147 Z"/>
-      <path d="M 175 150 L 177 146 L 179 150 L 183 152 L 179 154 L 177 158 L 175 154 L 171 152 Z"/>
-    </g>
+    <rect x="22" y="148" width="22" height="55" rx="4" fill="${skin}"/>
+    <rect x="40" y="148" width="4" height="55" fill="#000" opacity="0.12"/>
+    <rect x="156" y="148" width="22" height="55" rx="4" fill="${skin}"/>
+    <rect x="156" y="148" width="4" height="55" fill="#000" opacity="0.12"/>
 
-    <path d="M 15 200 Q 15 160 100 160 Q 185 160 185 200 Z" fill="white" stroke="${accent}" stroke-width="1.5"/>
-    <path d="M 80 160 L 100 178 L 88 188 Z" fill="${accent}" opacity="0.85"/>
-    <path d="M 120 160 L 100 178 L 112 188 Z" fill="${accent}" opacity="0.85"/>
+    <rect x="46" y="148" width="108" height="60" fill="${accent}"/>
+    <rect x="138" y="148" width="16" height="60" fill="#000" opacity="0.10"/>
+    <path d="M 80 148 L 100 170 L 120 148 Z" fill="white"/>
+    <path d="M 80 148 L 100 170 L 120 148" stroke="#000" stroke-width="0.6" fill="none" opacity="0.18"/>
 
-    <ellipse cx="100" cy="148" rx="13" ry="11" fill="${skin}"/>
+    <rect x="46" y="146" width="108" height="2.5" fill="#000" opacity="0.20"/>
 
-    <path d="M 55 92 C 55 44, 145 44, 145 92 L 145 128 C 134 120, 118 116, 100 116 C 82 116, 66 120, 55 128 Z" fill="${hair}"/>
+    <rect x="86" y="132" width="28" height="14" fill="${skin}"/>
+    <rect x="86" y="142" width="28" height="4" fill="#000" opacity="0.15"/>
 
-    <ellipse cx="100" cy="100" rx="40" ry="44" fill="${skin}"/>
+    <rect x="55" y="46" width="90" height="92" rx="14" fill="${skin}"/>
+    <rect x="130" y="46" width="15" height="92" rx="10" fill="#000" opacity="0.08"/>
+    <rect x="55" y="128" width="90" height="10" rx="6" fill="#000" opacity="0.06"/>
 
-    <path d="M 62 86 Q 78 52 100 64 Q 122 52 138 86 Q 124 80 110 82 Q 100 90 90 82 Q 76 80 62 86 Z" fill="${hair}"/>
+    <path d="M 50 92 L 50 52 Q 60 28, 100 28 Q 140 28, 150 52 L 150 92 Q 135 72, 122 82 Q 112 92, 100 80 Q 88 92, 78 82 Q 65 72, 50 92 Z" fill="${hair}"/>
 
-    <g transform="translate(132, 66)">
-      <path d="M -9 0 Q -5 -5 0 -1 Q 5 -5 9 0 Q 5 5 0 1 Q -5 5 -9 0 Z" fill="${accent}"/>
-      <circle r="2" fill="${accent}" opacity="0.7"/>
-    </g>
+    <path d="M 50 82 L 48 118 Q 52 125, 58 122 L 60 95 Z" fill="${hair}"/>
+    <path d="M 150 82 L 152 118 Q 148 125, 142 122 L 140 95 Z" fill="${hair}"/>
 
-    <ellipse cx="76" cy="120" rx="7" ry="4" fill="#ffaaaa" opacity="0.5"/>
-    <ellipse cx="124" cy="120" rx="7" ry="4" fill="#ffaaaa" opacity="0.5"/>
+    <ellipse cx="82" cy="94" rx="7" ry="9" fill="#1a1a1a"/>
+    <ellipse cx="84" cy="91" rx="2.5" ry="2" fill="white"/>
+    <circle cx="80" cy="98" r="1.2" fill="white"/>
 
-    <ellipse cx="82" cy="108" rx="8" ry="11" fill="white"/>
-    <ellipse cx="82" cy="109" rx="6" ry="9" fill="${accent}"/>
-    <circle cx="82" cy="110" r="3" fill="#1a1a1a"/>
-    <ellipse cx="84" cy="104" rx="2.5" ry="2" fill="white"/>
-    <circle cx="80" cy="113" r="1" fill="white"/>
+    <ellipse cx="118" cy="94" rx="7" ry="9" fill="#1a1a1a"/>
+    <ellipse cx="120" cy="91" rx="2.5" ry="2" fill="white"/>
+    <circle cx="116" cy="98" r="1.2" fill="white"/>
 
-    <ellipse cx="118" cy="108" rx="8" ry="11" fill="white"/>
-    <ellipse cx="118" cy="109" rx="6" ry="9" fill="${accent}"/>
-    <circle cx="118" cy="110" r="3" fill="#1a1a1a"/>
-    <ellipse cx="120" cy="104" rx="2.5" ry="2" fill="white"/>
-    <circle cx="116" cy="113" r="1" fill="white"/>
+    <rect x="73" y="80" width="14" height="3" rx="1.5" fill="${hair}"/>
+    <rect x="113" y="80" width="14" height="3" rx="1.5" fill="${hair}"/>
 
-    <path d="M 72 92 Q 82 88 92 92" stroke="${hair}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-    <path d="M 108 92 Q 118 88 128 92" stroke="${hair}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="68" cy="110" rx="6" ry="3.5" fill="#ffaaaa" opacity="0.55"/>
+    <ellipse cx="132" cy="110" rx="6" ry="3.5" fill="#ffaaaa" opacity="0.55"/>
 
-    <path d="M 94 128 Q 100 133 106 128" stroke="#a85060" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M 92 117 Q 100 124 108 117" stroke="#3a2820" stroke-width="2.2" fill="none" stroke-linecap="round"/>
   </svg>`;
 }
 
@@ -62,11 +58,11 @@ const html = `<!doctype html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"/>
-<title>藥師吉祥物預覽</title>
+<title>藥師吉祥物預覽 — Roblox 風格</title>
 <style>
   body { font-family: system-ui, -apple-system, 'PingFang TC', 'Noto Sans TC', sans-serif; background: #f7f7f8; padding: 32px; margin: 0; color: #1f2937; }
   h1 { font-size: 22px; margin: 0 0 8px; }
-  p.sub { color: #6b7280; margin: 0 0 28px; font-size: 13px; line-height: 1.6; max-width: 700px; }
+  p.sub { color: #6b7280; margin: 0 0 28px; font-size: 13px; line-height: 1.6; max-width: 760px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 1200px; margin-bottom: 40px; }
   .card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; text-align: center; }
   .card .avatar { width: 160px; height: 160px; margin: 0 auto; }
@@ -80,16 +76,14 @@ const html = `<!doctype html>
   .job-card h4 { margin: 0; font-size: 16px; }
   .job-card h4 small { color: #6b7280; font-weight: normal; font-size: 13px; margin-left: 4px; }
   .job-card p { margin: 4px 0 0; color: #6b7280; font-size: 13px; }
+  .note { margin-top: 32px; padding: 14px 18px; background: #fef9c3; border-left: 4px solid #facc15; border-radius: 4px; font-size: 13px; color: #713f12; max-width: 760px; line-height: 1.7; }
 </style>
 </head>
 <body>
-  <h1>藥師吉祥物 SVG 預覽（5 個範例）</h1>
+  <h1>藥師吉祥物 — Roblox 風格嘗試（5 個範例）</h1>
   <p class="sub">
-    純 SVG 程式生成 — 無外部圖檔、無 API 費用、無過期連結。每家醫院只需指定三個參數：
-    <code>accent</code>（主色，影響制服領、眼睛、髮飾、邊框）、
-    <code>accentLight</code>（背景淺色）、
-    <code>hair</code>（髮色）。
-    醫院名稱顯示於 JobCard 的標題，不在頭像內，所以可以是純 64×64 圓形。
+    特徵：圓角方頭、區塊化身體、深色細縫分隔頭/頸/身/手、扁平眼眉、白色 V 領（藥師袍）。
+    每家醫院仍只改三個變數：<code>accent</code>、<code>accentLight</code>、<code>hair</code>。
   </p>
 
   <div class="grid">
@@ -117,6 +111,13 @@ const html = `<!doctype html>
         </div>
       </div>
     `).join('')}
+  </div>
+
+  <div class="note">
+    <strong>誠實提醒：</strong> 真正 Roblox 風格是 3D 渲染（立體方塊頭、漸層光影、肢體分件）。
+    SVG 只能模擬「Roblox 視覺語彙」（圓角方頭、區塊化、扁平特徵），所以結果是「致敬版」而非「正版 Roblox 截圖」。
+    如果你想要真正像 Roblox 玩家頭像那種立體感，建議走方案二：用 ChatGPT / Gemini 圖片生成 API
+    （每張約 USD $0.02–$0.10），我可以寫好腳本，你跑一次就有 20 張。
   </div>
 </body>
 </html>`;

@@ -1,6 +1,6 @@
 import type { Job, Tag } from '../lib/types';
 import { applyUrl, hasJobDetail } from '../lib/types';
-import { HOSPITAL_TIER_BADGE, TIER_BADGE, safeBrandColor } from '../lib/styles';
+import { HOSPITAL_TIER_BADGE, TIER_BADGE, hospitalDisplayName, safeBrandColor } from '../lib/styles';
 import { TagButton } from './TagButton';
 
 export function JobCard({
@@ -16,6 +16,7 @@ export function JobCard({
   const link = applyUrl(job);
   const isFromOfficial = Boolean(job.officialUrl);
   const showDetails = hasJobDetail(job);
+  const { header, subtitle } = hospitalDisplayName(job.hospitalName);
   const meta = [job.hospitalTier, job.publicPrivate, job.region, job.location]
     .filter(Boolean)
     .join(' · ');
@@ -30,7 +31,7 @@ export function JobCard({
         />
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-xl font-bold">{job.hospitalName}</h2>
+            <h2 className="text-xl font-bold">{header}</h2>
             <div className="flex flex-wrap gap-1">
               {job.hospitalTier && (
                 <span
@@ -48,6 +49,7 @@ export function JobCard({
               )}
             </div>
           </div>
+          {subtitle && <p className="mt-0.5 text-xs text-gray-500">{subtitle}</p>}
           {meta && <p className="mt-1 text-sm text-gray-600">{meta}</p>}
           {job.phone && (
             <p className="mt-0.5 text-sm text-gray-500">

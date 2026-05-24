@@ -1,6 +1,6 @@
 import type { Job, Tag } from '../lib/types';
 import { applyUrl } from '../lib/types';
-import { HOSPITAL_TIER_BADGE, TIER_BADGE, breakOnParens } from '../lib/styles';
+import { HOSPITAL_TIER_BADGE, TIER_BADGE, breakOnParens, hospitalDisplayName } from '../lib/styles';
 import { TagButton } from './TagButton';
 
 type RowDef = { label: string; render: (job: Job) => React.ReactNode };
@@ -98,17 +98,23 @@ export function ComparisonTable({
             >
               欄位
             </th>
-            {jobs.map((job) => (
-              <th
-                key={job.id}
-                scope="col"
-                className="min-w-[10rem] border-b border-gray-200 px-3 py-2 text-left font-semibold text-gray-900"
-              >
-                <div className="whitespace-pre-wrap">
-                  {breakOnParens(job.hospitalName) || '—'}
-                </div>
-              </th>
-            ))}
+            {jobs.map((job) => {
+              const { header, subtitle } = hospitalDisplayName(job.hospitalName);
+              return (
+                <th
+                  key={job.id}
+                  scope="col"
+                  className="min-w-[10rem] border-b border-gray-200 px-3 py-2 text-left font-semibold text-gray-900"
+                >
+                  <div className="whitespace-pre-wrap">{header || '—'}</div>
+                  {subtitle && (
+                    <div className="mt-0.5 text-xs font-normal text-gray-500 whitespace-pre-wrap">
+                      {subtitle}
+                    </div>
+                  )}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>

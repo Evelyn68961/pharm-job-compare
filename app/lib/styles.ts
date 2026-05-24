@@ -1,4 +1,18 @@
 import type { HospitalTier, Region, SalaryTier, Tag } from './types';
+import briefNames from './hospital-brief-names.json';
+
+const BRIEF: Record<string, string> = briefNames as Record<string, string>;
+
+export function hospitalDisplayName(fullName: string): {
+  header: string;
+  subtitle: string | null;
+} {
+  const brief = BRIEF[fullName];
+  if (brief && brief !== fullName) {
+    return { header: brief, subtitle: fullName };
+  }
+  return { header: fullName, subtitle: null };
+}
 
 export const TIER_BADGE: Record<SalaryTier, string> = {
   突出: 'bg-orange-100 text-orange-900 border-orange-300',

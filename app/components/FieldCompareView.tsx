@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { HospitalTier, Job, PublicPrivate, SalaryTier, Tag } from '../lib/types';
-import { HOSPITAL_TIER_BADGE, TIER_BADGE, breakOnParens, rankCity } from '../lib/styles';
+import { HOSPITAL_TIER_BADGE, TIER_BADGE, breakOnParens, hospitalDisplayName, rankCity } from '../lib/styles';
 import { TagButton } from './TagButton';
 
 type FieldRenderer = (
@@ -201,23 +201,23 @@ export function FieldCompareView({
       </div>
 
       <ul className="divide-y divide-gray-100">
-        {displayJobs.map((job) => (
-          <li key={job.id} className="px-4 py-3">
-            <div className="flex items-baseline gap-2">
-              <div className="text-base font-semibold text-gray-900">
-                <span className="whitespace-pre-wrap">
-                  {breakOnParens(job.hospitalName) || '—'}
-                </span>
+        {displayJobs.map((job) => {
+          const { header, subtitle } = hospitalDisplayName(job.hospitalName);
+          return (
+            <li key={job.id} className="px-4 py-3">
+              <div className="flex items-baseline gap-2">
+                <div className="text-base font-semibold text-gray-900">{header || '—'}</div>
+                {job.publicPrivate && (
+                  <span className="text-xs font-normal text-gray-500">({job.publicPrivate})</span>
+                )}
               </div>
-              {job.publicPrivate && (
-                <span className="text-xs font-normal text-gray-500">({job.publicPrivate})</span>
-              )}
-            </div>
-            <div className="mt-1 text-sm text-gray-700">
-              {activeField.render(job, activeTags, onTagClick)}
-            </div>
-          </li>
-        ))}
+              {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+              <div className="mt-1 text-sm text-gray-700">
+                {activeField.render(job, activeTags, onTagClick)}
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

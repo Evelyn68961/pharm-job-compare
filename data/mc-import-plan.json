@@ -1,0 +1,536 @@
+{
+  "create": [
+    {
+      "gov_seq": 21,
+      "gov_name": "國立台灣大學醫學院附設醫院",
+      "registry_id": "ntuh-main",
+      "career_url": "https://www.ntuh.gov.tw/ntuh/Recruit.action?muid=46",
+      "row_data": {
+        "醫院名稱": "國立台灣大學醫學院附設醫院",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "臺北市",
+        "區": "中正區",
+        "地點": "臺北·中正",
+        "電話": "02-23123456",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.ntuh.gov.tw/ntuh/Recruit.action?muid=46"
+      }
+    },
+    {
+      "gov_seq": 22,
+      "gov_name": "國立臺灣大學醫學院附設醫院兒童醫院",
+      "registry_id": null,
+      "career_url": null,
+      "row_data": {
+        "醫院名稱": "國立臺灣大學醫學院附設醫院兒童醫院",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "臺北市",
+        "區": "中正區",
+        "地點": "臺北·中正",
+        "電話": "02-23123456",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk"
+      }
+    },
+    {
+      "gov_seq": 25,
+      "gov_name": "三軍總醫院附設民眾診療服務處及其汀州院區",
+      "registry_id": "tsgh-main",
+      "career_url": "https://www1.ndmctsgh.edu.tw/RessourceHumaine/HirP01.aspx",
+      "row_data": {
+        "醫院名稱": "三軍總醫院附設民眾診療服務處及其汀州院區",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "臺北市",
+        "區": "內湖區",
+        "地點": "臺北·內湖",
+        "電話": "02-87923311",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www1.ndmctsgh.edu.tw/RessourceHumaine/HirP01.aspx"
+      }
+    },
+    {
+      "gov_seq": 26,
+      "gov_name": "臺北榮民總醫院",
+      "registry_id": "vghtpe-main",
+      "career_url": "https://www4.vghtpe.gov.tw/conscribe/indexb.htm",
+      "row_data": {
+        "醫院名稱": "臺北榮民總醫院",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "臺北市",
+        "區": "北投區",
+        "地點": "臺北·北投",
+        "電話": "02-28712121",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www4.vghtpe.gov.tw/conscribe/indexb.htm"
+      }
+    },
+    {
+      "gov_seq": 37,
+      "gov_name": "台灣基督長老教會馬偕醫療財團法人馬偕兒童醫院",
+      "registry_id": "mmch-taipei",
+      "career_url": "https://www.mmh.org.tw/hr/stafflist.php",
+      "row_data": {
+        "醫院名稱": "台灣基督長老教會馬偕醫療財團法人馬偕兒童醫院",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "臺北市",
+        "區": "中山區",
+        "地點": "臺北·中山",
+        "電話": "02-25433535",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.mmh.org.tw/hr/stafflist.php"
+      }
+    },
+    {
+      "gov_seq": 39,
+      "gov_name": "新光醫療財團法人新光吳火獅紀念醫院",
+      "registry_id": "skh-main",
+      "career_url": "https://recruitweb.skh.org.tw/Recruit/JobVacancyResume/List",
+      "row_data": {
+        "醫院名稱": "新光醫療財團法人新光吳火獅紀念醫院",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "臺北市",
+        "區": "士林區",
+        "地點": "臺北·士林",
+        "電話": "02-28332211",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://recruitweb.skh.org.tw/Recruit/JobVacancyResume/List"
+      }
+    },
+    {
+      "gov_seq": 59,
+      "gov_name": "醫療財團法人徐元智先生醫藥基金會亞東紀念醫院",
+      "registry_id": "femh-main",
+      "career_url": "https://www.femh.org.tw/mainpage/femhjob",
+      "row_data": {
+        "醫院名稱": "醫療財團法人徐元智先生醫藥基金會亞東紀念醫院",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "新北市",
+        "區": "板橋區",
+        "地點": "新北·板橋",
+        "電話": "02-89667000",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.femh.org.tw/mainpage/femhjob"
+      }
+    },
+    {
+      "gov_seq": 60,
+      "gov_name": "佛教慈濟醫療財團法人台北慈濟醫院",
+      "registry_id": "tzuchi-taipei",
+      "career_url": "https://taipei.tzuchi.com.tw/%E8%97%A5%E5%B8%AB%E5%8F%AC%E5%8B%9F/",
+      "row_data": {
+        "醫院名稱": "佛教慈濟醫療財團法人台北慈濟醫院",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "新北市",
+        "區": "新店區",
+        "地點": "新北·新店",
+        "電話": "02-66289779",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://taipei.tzuchi.com.tw/%E8%97%A5%E5%B8%AB%E5%8F%AC%E5%8B%9F/"
+      }
+    },
+    {
+      "gov_seq": 67,
+      "gov_name": "衛生福利部雙和醫院(委託臺北醫學大學興建經營)",
+      "registry_id": "shh-main",
+      "career_url": "https://shh.tmu.edu.tw/page/WelfareRecruited.aspx",
+      "row_data": {
+        "醫院名稱": "衛生福利部雙和醫院(委託臺北醫學大學興建經營)",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "新北市",
+        "區": "中和區",
+        "地點": "新北·中和",
+        "電話": "02-22490088",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://shh.tmu.edu.tw/page/WelfareRecruited.aspx"
+      }
+    },
+    {
+      "gov_seq": 123,
+      "gov_name": "國立臺灣大學醫學院附設醫院新竹臺大分院新竹醫院",
+      "registry_id": null,
+      "career_url": null,
+      "row_data": {
+        "醫院名稱": "國立臺灣大學醫學院附設醫院新竹臺大分院新竹醫院",
+        "醫院等級": "醫學中心",
+        "地區": "桃竹苗",
+        "縣市": "新竹市",
+        "區": "北區",
+        "地點": "新竹·北",
+        "電話": "03-5326151",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk"
+      }
+    },
+    {
+      "gov_seq": 156,
+      "gov_name": "臺中榮民總醫院",
+      "registry_id": "vghtc-main",
+      "career_url": "https://www.vghtc.gov.tw/Module/RecruitMent?WebMenuID=9d005e46-411b-46fc-b438-e0bd561eba78",
+      "row_data": {
+        "醫院名稱": "臺中榮民總醫院",
+        "醫院等級": "醫學中心",
+        "地區": "中彰投",
+        "縣市": "臺中市",
+        "區": "西屯區",
+        "地點": "臺中·西屯",
+        "電話": "04-23592525",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.vghtc.gov.tw/Module/RecruitMent?WebMenuID=9d005e46-411b-46fc-b438-e0bd561eba78"
+      }
+    },
+    {
+      "gov_seq": 168,
+      "gov_name": "中國醫藥大學兒童醫院",
+      "registry_id": "cmuch-main",
+      "career_url": "http://www.cmuch.org.tw/Recruit",
+      "row_data": {
+        "醫院名稱": "中國醫藥大學兒童醫院",
+        "醫院等級": "醫學中心",
+        "地區": "中彰投",
+        "縣市": "臺中市",
+        "區": "北區",
+        "地點": "臺中·北",
+        "電話": "04-22052121",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "http://www.cmuch.org.tw/Recruit"
+      }
+    },
+    {
+      "gov_seq": 172,
+      "gov_name": "中國醫藥大學附設醫院",
+      "registry_id": "cmuh-main",
+      "career_url": "https://www.cmuh.org.tw/CMUHPages/Careers",
+      "row_data": {
+        "醫院名稱": "中國醫藥大學附設醫院",
+        "醫院等級": "醫學中心",
+        "地區": "中彰投",
+        "縣市": "臺中市",
+        "區": "北區",
+        "地點": "臺中·北",
+        "電話": "04-22052121",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.cmuh.org.tw/CMUHPages/Careers"
+      }
+    },
+    {
+      "gov_seq": 213,
+      "gov_name": "彰化基督教醫療財團法人彰化基督教醫院",
+      "registry_id": "cch-main",
+      "career_url": "https://www.cch.org.tw/hr1.aspx",
+      "row_data": {
+        "醫院名稱": "彰化基督教醫療財團法人彰化基督教醫院",
+        "醫院等級": "醫學中心",
+        "地區": "中彰投",
+        "縣市": "彰化縣",
+        "區": "彰化市",
+        "地點": "彰化·彰化",
+        "電話": "04-7238595",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.cch.org.tw/hr1.aspx"
+      }
+    },
+    {
+      "gov_seq": 214,
+      "gov_name": "彰化基督教醫療財團法人彰化基督教兒童醫院",
+      "registry_id": null,
+      "career_url": null,
+      "row_data": {
+        "醫院名稱": "彰化基督教醫療財團法人彰化基督教兒童醫院",
+        "醫院等級": "醫學中心",
+        "地區": "中彰投",
+        "縣市": "彰化縣",
+        "區": "彰化市",
+        "地點": "彰化·彰化",
+        "電話": "04-7238595",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk"
+      }
+    },
+    {
+      "gov_seq": 271,
+      "gov_name": "國立成功大學醫學院附設醫院",
+      "registry_id": "ncku-main",
+      "career_url": "https://www.hosp.ncku.edu.tw/external/talentsignup/index.asp",
+      "row_data": {
+        "醫院名稱": "國立成功大學醫學院附設醫院",
+        "醫院等級": "醫學中心",
+        "地區": "雲嘉南",
+        "縣市": "臺南市",
+        "區": "北區",
+        "地點": "臺南·北",
+        "電話": "06-2353535",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.hosp.ncku.edu.tw/external/talentsignup/index.asp"
+      }
+    },
+    {
+      "gov_seq": 282,
+      "gov_name": "奇美醫療財團法人奇美醫院及其樹林院區",
+      "registry_id": "chimei-yongkang",
+      "career_url": "https://www.chimei.org.tw/newindex/proclamation/joinuscmh.html",
+      "row_data": {
+        "醫院名稱": "奇美醫療財團法人奇美醫院及其樹林院區",
+        "醫院等級": "醫學中心",
+        "地區": "雲嘉南",
+        "縣市": "臺南市",
+        "區": "永康區",
+        "地點": "臺南·永康",
+        "電話": "06-2812811",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.chimei.org.tw/newindex/proclamation/joinuscmh.html"
+      }
+    },
+    {
+      "gov_seq": 304,
+      "gov_name": "高雄榮民總醫院",
+      "registry_id": "vghks-main",
+      "career_url": "https://www.vghks.gov.tw/News.aspx?n=C03011BF96C680C4&sms=5EF61FB0D0F5B657",
+      "row_data": {
+        "醫院名稱": "高雄榮民總醫院",
+        "醫院等級": "醫學中心",
+        "地區": "高屏",
+        "縣市": "高雄市",
+        "區": "左營區",
+        "地點": "高雄·左營",
+        "電話": "07-3422121",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.vghks.gov.tw/News.aspx?n=C03011BF96C680C4&sms=5EF61FB0D0F5B657"
+      }
+    },
+    {
+      "gov_seq": 317,
+      "gov_name": "長庚醫療財團法人高雄長庚紀念醫院",
+      "registry_id": "cgmh-kaohsiung",
+      "career_url": "https://www.cgmh.org.tw/tw/Systems/Recruit",
+      "row_data": {
+        "醫院名稱": "長庚醫療財團法人高雄長庚紀念醫院",
+        "醫院等級": "醫學中心",
+        "地區": "高屏",
+        "縣市": "高雄市",
+        "區": "鳥松區",
+        "地點": "高雄·鳥松",
+        "電話": "07-7317123",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.cgmh.org.tw/tw/Systems/Recruit"
+      }
+    },
+    {
+      "gov_seq": 318,
+      "gov_name": "義大醫療財團法人義大醫院",
+      "registry_id": "edah-main",
+      "career_url": "https://employee.edah.org.tw/recruit/",
+      "row_data": {
+        "醫院名稱": "義大醫療財團法人義大醫院",
+        "醫院等級": "醫學中心",
+        "地區": "高屏",
+        "縣市": "高雄市",
+        "區": "燕巢區",
+        "地點": "高雄·燕巢",
+        "電話": "07-6150011",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://employee.edah.org.tw/recruit/"
+      }
+    },
+    {
+      "gov_seq": 320,
+      "gov_name": "財團法人私立高雄醫學大學附設中和紀念醫院",
+      "registry_id": "kmuh-main",
+      "career_url": "https://www.kmuh.org.tw/Web/HireSystem.MVC/VacancySearch",
+      "row_data": {
+        "醫院名稱": "財團法人私立高雄醫學大學附設中和紀念醫院",
+        "醫院等級": "醫學中心",
+        "地區": "高屏",
+        "縣市": "高雄市",
+        "區": "三民區",
+        "地點": "高雄·三民",
+        "電話": "07-3121101",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.kmuh.org.tw/Web/HireSystem.MVC/VacancySearch"
+      }
+    },
+    {
+      "gov_seq": 391,
+      "gov_name": "佛教慈濟醫療財團法人花蓮慈濟醫院",
+      "registry_id": "tzuchi-hualien",
+      "career_url": "https://hlm.tzuchi.com.tw/home/index.php/news/recruit/recruit-tech",
+      "row_data": {
+        "醫院名稱": "佛教慈濟醫療財團法人花蓮慈濟醫院",
+        "醫院等級": "醫學中心",
+        "地區": "宜花東",
+        "縣市": "花蓮縣",
+        "區": "花蓮市",
+        "地點": "花蓮·花蓮",
+        "電話": "03-8561825",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://hlm.tzuchi.com.tw/home/index.php/news/recruit/recruit-tech"
+      }
+    }
+  ],
+  "update": [
+    {
+      "gov_seq": 44,
+      "gov_name": "臺北市立萬芳醫院-委託臺北醫學大學辦理",
+      "registry_id": "wanfang-main",
+      "career_url": "https://www.wanfang.gov.tw/departments/WanfangClass_48/7f6ca32cdb8b7c0a",
+      "row_data": {
+        "醫院名稱": "臺北市立萬芳醫院-委託臺北醫學大學辦理",
+        "醫院等級": "醫學中心",
+        "地區": "北北基",
+        "縣市": "臺北市",
+        "區": "文山區",
+        "地點": "臺北·文山",
+        "電話": "02-29307930",
+        "公立/私立": "公立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.wanfang.gov.tw/departments/WanfangClass_48/7f6ca32cdb8b7c0a"
+      },
+      "notion_id": "368c496d-fff1-8129-9132-d582cda5ab13",
+      "existing_short_name": "萬芳醫院"
+    },
+    {
+      "gov_seq": 170,
+      "gov_name": "中山醫學大學附設醫院",
+      "registry_id": "csh-main",
+      "career_url": "https://www.csh.org.tw/HR.html",
+      "row_data": {
+        "醫院名稱": "中山醫學大學附設醫院",
+        "醫院等級": "醫學中心",
+        "地區": "中彰投",
+        "縣市": "臺中市",
+        "區": "南區",
+        "地點": "臺中·南",
+        "電話": "04-24739595",
+        "公立/私立": "私立",
+        "特色標籤": [
+          "醫學中心級",
+          "教學醫院"
+        ],
+        "資料來源": "gov-bulk",
+        "醫院官網職缺連結": "https://www.csh.org.tw/HR.html"
+      },
+      "notion_id": "368c496d-fff1-8136-9278-fc1c8a274625",
+      "existing_short_name": "中山醫大附醫"
+    }
+  ],
+  "skip": []
+}

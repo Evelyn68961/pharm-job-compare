@@ -1,0 +1,122 @@
+{
+  "_schema_version": 1,
+  "_status": "DRAFT — selectors 為 TODO，需實際看過國泰頁面 HTML 後填入",
+  "_source_of_truth": "plan/pharmacist-job-compare-plan-v4.md §11 component 2",
+  "_last_updated": "2026-05-23",
+
+  "hospital_id": "cgh-main",
+
+  "fetcher": {
+    "_note": "list_url 應與 data/hospital-career-urls.json 中此 hospital_id 的 career_page_url 一致；變更時兩邊同步。runner 啟動時會 assert 兩者相等。",
+    "list_url": "https://www.cgh.org.tw/ec99/rwd1320/category.asp?category_id=1699",
+    "encoding": "utf-8",
+    "user_agent": "Mozilla/5.0 (pharm-job-compare parser; +https://github.com/<repo>)",
+    "request_delay_ms": 1500,
+    "timeout_seconds": 30,
+    "max_retries": 2
+  },
+
+  "fixed_facts": {
+    "_note": "這些欄位每次抓都一樣，不需從頁面 extract。runner 直接寫入 row。",
+    "醫院名稱": "國泰綜合醫院",
+    "公立/私立": "私立",
+    "醫院等級": "醫學中心",
+    "縣市": "臺北市",
+    "地點": "臺北·大安",
+    "地區": "北北基"
+  },
+
+  "list_page": {
+    "_note": "列表頁結構。國泰 ec99 平台通常是 table 結構，每一條職缺一個 row。",
+    "posting_item_selector": "TODO: 例如 'table.list_table tr.item' 或 'div.product-list-item'",
+    "fields_from_list": {
+      "posting_title": { "selector": "TODO", "attr": "text" },
+      "posting_url": { "selector": "TODO: 'a'", "attr": "href" },
+      "posting_date": { "selector": "TODO", "attr": "text", "format": "YYYY/MM/DD" }
+    },
+    "pagination": {
+      "next_link_selector": null,
+      "max_pages": 1
+    }
+  },
+
+  "detail_page": {
+    "_note": "點進每條職缺後的詳情頁。如果列表頁就已含全部資訊（ec99 偶有此情況），把對應欄位往 list_page.fields_from_list 移、留 detail_page.fields 為空。",
+
+    "fields": {
+      "薪資顯示字串": {
+        "selector": "TODO",
+        "transform": "trim",
+        "regex_extract": null,
+        "_note": "保留醫院原寫法（如『月薪 7 萬+』『年薪約 100 萬』『面議』）"
+      },
+      "輪班說明": {
+        "selector": "TODO",
+        "transform": "trim"
+      },
+      "職務內容摘要": {
+        "selector": "TODO",
+        "transform": "summarize_to_short_text",
+        "_note": "目標 ≤ 30 字；長文交給 body_sections.工作概況"
+      },
+      "學歷要求": {
+        "selector": "TODO",
+        "regex_extract": "(大學|專科|碩士)以上"
+      },
+      "證照": {
+        "selector": "TODO",
+        "_note": "高考藥師為主"
+      },
+      "宿舍": {
+        "selector": "TODO",
+        "transform": "trim"
+      },
+      "需求人數": {
+        "selector": "TODO",
+        "regex_extract": "(\\d+|不限)\\s*人?"
+      },
+      "更新日期": {
+        "selector": "TODO",
+        "format": "YYYY-MM-DD",
+        "fallback": "fetch_timestamp",
+        "_note": "若頁面無刊登日，fallback 用 parser 跑的時間戳"
+      }
+    },
+
+    "body_sections": {
+      "_note": "§3 4-section paraphrased body — parser 把 detail 頁分段映射到這 4 個 section。原則『不 verbatim 複製，paraphrase 即可』（§2 Index-card 規則）。",
+      "工作概況": { "selector": "TODO", "max_chars": 400 },
+      "薪酬結構": { "selector": "TODO", "max_chars": 400 },
+      "訓練與福利": { "selector": "TODO", "max_chars": 400 },
+      "法定福利": { "selector": "TODO", "max_chars": 200 }
+    }
+  },
+
+  "filter_rules": {
+    "_note": "category_id=1699 已經是『醫技/藥事』分類，理論上不需再過濾；保留欄位以防誤入非藥師職缺",
+    "include_only_if_title_matches": "藥師|藥事|藥學|Pharmacist",
+    "exclude_if_title_matches": "助理|工讀|實習|外包"
+  },
+
+  "tag_inference_overrides": {
+    "_note": "Level A tags 由 hospitals-reference.md cross-check 決定（醫學中心級/教學醫院）— 不在這裡寫。若該醫院有特殊『鐵釘』anchor 詞（例：三總『無化療無 TPN』），可在此明文 promote 某 Level C tag 為 Level B。",
+    "force_apply": [],
+    "force_block": []
+  },
+
+  "quirks": {
+    "_notes": [
+      "ec99 平台網址通常是相對路徑（../product/xxx.asp?...），runner 必須 absolute-ize",
+      "TODO: 確認頁面編碼（utf-8 還是 big5）— 部分 ec99 舊站是 big5",
+      "TODO: 看頁面是否有 anti-bot（要 Cookie / Referer）",
+      "TODO: 看『立即應徵』連結是否導向 104 — 若是，§2 Rule B 規定 parser 不可跟連"
+    ]
+  },
+
+  "test_fixtures": {
+    "_note": "Phase 1 後填：跑過一次 parser 後把實際抓到的 HTML snapshot path 寫這裡，當作 regression baseline",
+    "list_html_path": null,
+    "sample_detail_html_path": null,
+    "expected_postings_count_min": 1
+  }
+}

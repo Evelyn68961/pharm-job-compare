@@ -26,6 +26,13 @@
 > with outbound-click tracking; EN/i18n cut (Traditional Chinese only); runway
 > framing corrected from "around existing work" to "fresh build, reusing
 > patterns from prior projects"; Notion week-1 sequencing made explicit.
+>
+> ---
+>
+> **NOTE (2026-05-23)**: This document is **superseded by v4**. v4 captures
+> the architectural pivot to parser-based data collection and the 全台灣
+> tracking scope. v3 remains as historical reference for the original
+> ~15–30-jobs/season manual-paste design.
 
 ---
 

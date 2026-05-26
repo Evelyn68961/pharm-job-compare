@@ -5,9 +5,10 @@ import type { Job } from '../../lib/types';
 import { buildWheelCandidates, type QuizAnswers } from '../../lib/quiz';
 import { MBTIQuiz } from './MBTIQuiz';
 import { SpinWheel } from './SpinWheel';
+import { MysteryBox } from './MysteryBox';
 import { ResultCard } from './ResultCard';
 
-type Stage = 'intro' | 'quiz' | 'wheel' | 'result';
+type Stage = 'intro' | 'quiz' | 'wheel' | 'box' | 'result';
 
 export function SpinApp({ jobs }: { jobs: Job[] }) {
   const [stage, setStage] = useState<Stage>('intro');
@@ -47,10 +48,14 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
             candidates={candidates}
             onResult={(idx) => {
               setWinnerIndex(idx);
-              setStage('result');
+              setStage('box');
             }}
           />
         </div>
+      )}
+
+      {stage === 'box' && winnerIndex !== null && candidates[winnerIndex] && (
+        <MysteryBox job={candidates[winnerIndex].job} onOpen={() => setStage('result')} />
       )}
 
       {stage === 'result' && winnerIndex !== null && candidates[winnerIndex] && (

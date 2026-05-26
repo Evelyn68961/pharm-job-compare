@@ -79,19 +79,18 @@ export function SpinWheel({
           {slices.map((slice) => (
             <g key={slice.index}>
               <path d={slice.path} fill={slice.color} stroke="white" strokeWidth="1" />
-              {slice.spanDeg > 4 && (
+              {slice.spanDeg > 5 && (
                 <text
                   x={slice.labelX}
                   y={slice.labelY}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={slice.spanDeg > 12 ? 11 : 9}
+                  fontSize={slice.spanDeg > 18 ? 20 : 14}
                   fill="white"
-                  fontWeight="600"
-                  transform={`rotate(${slice.labelRotation}, ${slice.labelX}, ${slice.labelY})`}
+                  fontWeight="700"
                   style={{ pointerEvents: 'none' }}
                 >
-                  {slice.label}
+                  ?
                 </text>
               )}
             </g>

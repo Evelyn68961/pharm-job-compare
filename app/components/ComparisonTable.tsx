@@ -80,7 +80,7 @@ export function ComparisonTable({
             rel="noopener noreferrer"
             className="text-sm font-medium text-blue-600 hover:underline"
           >
-            {j.officialUrl ? '官網 →' : '104 →'}
+            {j.sourceUrl104 ? '104 →' : '官網 →'}
           </a>
         );
       },

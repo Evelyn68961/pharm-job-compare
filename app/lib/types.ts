@@ -56,7 +56,7 @@ export type Job = {
 };
 
 export function applyUrl(job: Job): string | null {
-  return job.officialUrl || job.sourceUrl104 || null;
+  return job.sourceUrl104 || job.officialUrl || null;
 }
 
 export function hasJobDetail(job: Job): boolean {

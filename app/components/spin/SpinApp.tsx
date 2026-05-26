@@ -1,29 +1,32 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import type { Job } from '../../lib/types';
-import { buildWheelCandidates, type QuizAnswers } from '../../lib/quiz';
+import { buildWheelCandidates, pickWeightedSample, type QuizAnswers } from '../../lib/quiz';
 import { MBTIQuiz } from './MBTIQuiz';
-import { SpinWheel } from './SpinWheel';
+import { PillboxMaze } from './PillboxMaze';
 import { MysteryBox } from './MysteryBox';
 import { ResultCard } from './ResultCard';
 
-type Stage = 'intro' | 'quiz' | 'wheel' | 'box' | 'result';
+type Stage = 'intro' | 'quiz' | 'maze' | 'box' | 'result';
+
+const POOL_SIZE = 30;
+const PILLBOX_CELLS = 14;
 
 export function SpinApp({ jobs }: { jobs: Job[] }) {
   const [stage, setStage] = useState<Stage>('intro');
   const [answers, setAnswers] = useState<QuizAnswers | null>(null);
   const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
 
-  const candidates = useMemo(
-    () => (answers ? buildWheelCandidates(jobs, answers) : []),
-    [jobs, answers],
-  );
+  // Stable per-quiz: pick the 14 finalists once when answers commit, so the
+  // grid doesn't reshuffle if the component re-renders.
+  const [candidates, setCandidates] = useState<ReturnType<typeof pickWeightedSample>>([]);
 
   const restart = () => {
     setStage('intro');
     setAnswers(null);
     setWinnerIndex(null);
+    setCandidates([]);
   };
 
   return (
@@ -34,24 +37,21 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
         <MBTIQuiz
           onComplete={(a) => {
             setAnswers(a);
-            setStage('wheel');
+            const scored = buildWheelCandidates(jobs, a);
+            setCandidates(pickWeightedSample(scored, POOL_SIZE, PILLBOX_CELLS));
+            setStage('maze');
           }}
         />
       )}
 
-      {stage === 'wheel' && candidates.length > 0 && (
-        <div className="space-y-4">
-          <p className="text-center text-sm text-gray-600">
-            根據你的偏好，{candidates.length} 家醫院進入轉盤，越符合你的偏好格子越大
-          </p>
-          <SpinWheel
-            candidates={candidates}
-            onResult={(idx) => {
-              setWinnerIndex(idx);
-              setStage('box');
-            }}
-          />
-        </div>
+      {stage === 'maze' && candidates.length > 0 && (
+        <PillboxMaze
+          candidates={candidates}
+          onResult={(idx) => {
+            setWinnerIndex(idx);
+            setStage('box');
+          }}
+        />
       )}
 
       {stage === 'box' && winnerIndex !== null && candidates[winnerIndex] && (
@@ -68,9 +68,9 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
 function Intro({ onStart, totalHospitals }: { onStart: () => void; totalHospitals: number }) {
   return (
     <div className="mx-auto max-w-xl space-y-6 text-center">
-      <h2 className="text-3xl font-bold text-gray-900">🎯 找到你的命運醫院</h2>
+      <h2 className="text-3xl font-bold text-gray-900">💊 找到你的命運醫院</h2>
       <p className="text-gray-600">
-        8 題 MBTI 測驗，根據你的偏好幫你篩選並加權，然後轉動轉盤——抽中哪一家就是你的命運。
+        8 題 MBTI 測驗 → 為你篩出 14 家最適合的醫院 → 藥丸在藥盒裡滾來滾去 → 停在哪格，那家就是你的命運。
         <br />
         目前資料庫共 <strong>{totalHospitals}</strong> 家醫院，涵蓋醫學中心與區域醫院。
       </p>

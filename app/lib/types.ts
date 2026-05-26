@@ -16,6 +16,8 @@ export const REGIONS: Region[] = [
 
 export const HOSPITAL_TIERS: HospitalTier[] = ['醫學中心', '區域醫院', '地區醫院', '其他'];
 
+export const FILTERABLE_HOSPITAL_TIERS: HospitalTier[] = ['醫學中心', '區域醫院'];
+
 export type Tag =
   | '工作單純'
   | '免/少輪班'

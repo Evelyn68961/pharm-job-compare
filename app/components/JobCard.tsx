@@ -14,7 +14,6 @@ export function JobCard({
 }) {
   const brand = safeBrandColor(job.brandColor);
   const link = applyUrl(job);
-  const linkLabel = job.sourceUrl104 ? '查看 104 原始職缺 →' : '前往醫院官網職缺 →';
   const showDetails = hasJobDetail(job);
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
   const meta = [job.hospitalTier, job.publicPrivate, job.region, job.location]
@@ -93,7 +92,7 @@ export function JobCard({
             rel="noopener noreferrer"
             className="font-medium text-blue-600 hover:underline"
           >
-            {linkLabel}
+            查看 104 原始職缺 →
           </a>
         )}
       </footer>

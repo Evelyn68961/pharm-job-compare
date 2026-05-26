@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import type { HospitalTier, Job, Region, SalaryTier, Tag } from '../lib/types';
-import { HOSPITAL_TIERS, REGIONS } from '../lib/types';
+import { FILTERABLE_HOSPITAL_TIERS, REGIONS } from '../lib/types';
 import { REGION_PILL, rankCity } from '../lib/styles';
 import { JobCard } from './JobCard';
 import { ComparisonTable } from './ComparisonTable';
@@ -111,7 +111,7 @@ export function JobsView({ jobs }: { jobs: Job[] }) {
         </FilterRow>
 
         <FilterRow label="等級">
-          {HOSPITAL_TIERS.map((tier) => (
+          {FILTERABLE_HOSPITAL_TIERS.map((tier) => (
             <FilterPill
               key={tier}
               label={tier}

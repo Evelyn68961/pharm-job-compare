@@ -70,6 +70,7 @@ function parseJob(page: NotionPage): Job {
   return {
     id: page.id,
     hospitalName: getTitle(p['醫院名稱']),
+    hospitalBriefName: getText(p['醫院簡稱']),
     hospitalTier: getSelect(p['醫院等級']) as HospitalTier | null,
     publicPrivate: getSelect(p['公立/私立']) as PublicPrivate | null,
     region: getSelect(p['地區']) as Region | null,

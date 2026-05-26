@@ -3,10 +3,18 @@ import briefNames from './hospital-brief-names.json';
 
 const BRIEF: Record<string, string> = briefNames as Record<string, string>;
 
-export function hospitalDisplayName(fullName: string): {
+export function hospitalDisplayName(
+  fullName: string,
+  manualBrief?: string | null,
+): {
   header: string;
   subtitle: string | null;
 } {
+  // Priority: Notion 醫院簡稱 column > auto-shortened JSON map > full name
+  const override = manualBrief?.trim();
+  if (override && override !== fullName) {
+    return { header: override, subtitle: fullName };
+  }
   const brief = BRIEF[fullName];
   if (brief && brief !== fullName) {
     return { header: brief, subtitle: fullName };

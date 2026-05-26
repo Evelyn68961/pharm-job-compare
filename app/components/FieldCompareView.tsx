@@ -202,7 +202,7 @@ export function FieldCompareView({
 
       <ul className="divide-y divide-gray-100">
         {displayJobs.map((job) => {
-          const { header, subtitle } = hospitalDisplayName(job.hospitalName);
+          const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
           return (
             <li key={job.id} className="px-4 py-3">
               <div className="flex items-baseline gap-2">

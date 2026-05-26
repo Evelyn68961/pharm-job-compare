@@ -32,6 +32,7 @@ export type Tag =
 export type Job = {
   id: string;
   hospitalName: string;
+  hospitalBriefName: string | null;
   hospitalTier: HospitalTier | null;
   publicPrivate: PublicPrivate | null;
   region: Region | null;

@@ -99,7 +99,7 @@ export function ComparisonTable({
               欄位
             </th>
             {jobs.map((job) => {
-              const { header, subtitle } = hospitalDisplayName(job.hospitalName);
+              const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
               return (
                 <th
                   key={job.id}

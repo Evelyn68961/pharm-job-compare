@@ -88,24 +88,27 @@ Outbound links from the site go to the hospital's career page — never to
 any aggregator. Cards, detail panels, and analytics all reference the
 hospital's career page only.
 
-### Rule B: Never 104
+### Rule B: 104 is a permitted destination; never a scraping target
 
-For the record — since 104 is the obvious aggregator a future builder might
-be tempted to use as either source or destination: **we do not interact
-with 104 in any form.**
+Two halves, distinct:
 
-- 104's Terms of Service prohibit automated data collection, and they have
-  litigated it. **No scraper, no AI agent, no reverse-engineered API
-  targeting 104.com.tw.**
-- 104 is **not a destination** either. The site does not link out to 104.
-  Users with the hospital's career page have everything they need to apply.
-- Changing the database, framework, or host does **not** change this. The
-  constraint lives at the data-collection-and-presentation layer.
+- **104 as outbound link**: ALLOWED, and now preferred when available.
+  Linking to a public 104 page does not violate any ToS — anyone can link
+  to a public URL. Job seekers benefit from the richer posting on 104, so
+  when the row has a 104 URL we display it as the primary "apply" link
+  and the hospital career page becomes the fallback.
+- **104 as data source**: STILL FORBIDDEN. 104's Terms of Service prohibit
+  automated data collection, and they have litigated it. **No scraper,
+  no AI agent, no reverse-engineered API targeting 104.com.tw.** All 104
+  URLs in the database must be collected by hand (Evelyn manually
+  pastes), or surfaced by a search-engine query that humans review before
+  saving.
 
-The 12 historical rows (v3 phase) were paraphrased from 104 by Evelyn — a
-one-time manual exercise to seed the database. Those rows now point to
-their respective hospital career pages instead (migration task; existing
-104 links removed from schema).
+The 12 historical rows from the v3 phase were paraphrased from 104 by
+Evelyn — a one-time manual exercise to seed the database, well within
+the "manual data collection" lane. Their 104 URLs remain in the
+`104 原始連結` column and now drive the primary "查看 104 原始職缺" link
+in the card UI.
 
 ### Mirror vs. index card (rule preserved from v3)
 

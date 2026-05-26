@@ -37,7 +37,6 @@ export type Job = {
   publicPrivate: PublicPrivate | null;
   region: Region | null;
   city: string | null;
-  district: string | null;
   location: string | null;
   phone: string | null;
   brandColor: string | null;
@@ -45,29 +44,19 @@ export type Job = {
   salaryTier: SalaryTier | null;
   shiftDescription: string | null;
   jobSummary: string | null;
-  educationRequirement: string | null;
-  certification: string | null;
   dormitory: string | null;
-  headcount: string | null;
   updatedDate: string | null;
-  officialUrl: string | null;
   sourceUrl104: string | null;
   source: DataSource | null;
   tags: Tag[];
 };
 
 export function applyUrl(job: Job): string | null {
-  return job.sourceUrl104 || job.officialUrl || null;
+  return job.sourceUrl104 || null;
 }
 
 export function hasJobDetail(job: Job): boolean {
   return Boolean(
-    job.salaryDisplay ||
-      job.shiftDescription ||
-      job.jobSummary ||
-      job.educationRequirement ||
-      job.certification ||
-      job.dormitory ||
-      job.headcount,
+    job.salaryDisplay || job.shiftDescription || job.jobSummary || job.dormitory,
   );
 }

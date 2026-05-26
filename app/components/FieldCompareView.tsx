@@ -98,8 +98,6 @@ const FIELDS: Field[] = [
     render: (j) => textOrDash(breakOnParens(j.shiftDescription)),
   },
   { key: 'jobSummary', label: '職務內容', render: (j) => textOrDash(j.jobSummary) },
-  { key: 'education', label: '學歷', render: (j) => textOrDash(j.educationRequirement) },
-  { key: 'certification', label: '證照', render: (j) => textOrDash(j.certification) },
   { key: 'dormitory', label: '宿舍', render: (j) => textOrDash(j.dormitory) },
   {
     key: 'tags',

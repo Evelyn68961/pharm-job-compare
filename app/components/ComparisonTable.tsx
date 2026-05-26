@@ -48,10 +48,7 @@ export function ComparisonTable({
     },
     { label: '輪班', render: (j) => textOrDash(breakOnParens(j.shiftDescription)) },
     { label: '職務內容', render: (j) => textOrDash(j.jobSummary) },
-    { label: '學歷', render: (j) => textOrDash(j.educationRequirement) },
-    { label: '證照', render: (j) => textOrDash(j.certification) },
     { label: '宿舍', render: (j) => textOrDash(j.dormitory) },
-    { label: '需求人數', render: (j) => textOrDash(j.headcount) },
     { label: '更新', render: (j) => textOrDash(j.updatedDate) },
     {
       label: '特色標籤',

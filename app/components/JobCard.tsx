@@ -66,10 +66,7 @@ export function JobCard({
           {job.salaryDisplay && <Field label="薪資" value={job.salaryDisplay} />}
           {job.shiftDescription && <Field label="輪班" value={job.shiftDescription} />}
           {job.jobSummary && <Field label="職務內容" value={job.jobSummary} />}
-          {job.educationRequirement && <Field label="學歷" value={job.educationRequirement} />}
-          {job.certification && <Field label="證照" value={job.certification} />}
           {job.dormitory && <Field label="宿舍" value={job.dormitory} />}
-          {job.headcount && <Field label="需求人數" value={job.headcount} />}
         </dl>
       )}
 

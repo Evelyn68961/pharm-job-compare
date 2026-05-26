@@ -1,23 +1,27 @@
+import Link from 'next/link';
 import { fetchJobs, sortJobs } from './lib/notion';
-import { JobsView } from './components/JobsView';
+import { SpinApp } from './components/spin/SpinApp';
 
 export default async function HomePage() {
   const result = await fetchJobs();
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">藥師職缺比較</h1>
-        <p className="mt-2 text-gray-600">
-          醫院藥師職缺，依薪資等級排序。點擊特色標籤即可篩選；點擊「查看 104 原始職缺」前往原始頁面。
-        </p>
+    <main className="mx-auto max-w-4xl px-4 py-8">
+      <header className="mb-8 flex items-baseline justify-between gap-4">
+        <h1 className="text-2xl font-bold">
+          <span className="text-gray-900">藥師</span>
+          <span className="ml-1 text-blue-600">命運轉盤</span>
+        </h1>
+        <Link href="/all" className="text-sm text-blue-600 hover:underline">
+          進階：瀏覽所有醫院 →
+        </Link>
       </header>
 
       {result.ok ? (
         result.jobs.length === 0 ? (
           <EmptyState />
         ) : (
-          <JobsView jobs={sortJobs(result.jobs)} />
+          <SpinApp jobs={sortJobs(result.jobs)} />
         )
       ) : (
         <ErrorState reason={result.reason} detail={result.detail} />

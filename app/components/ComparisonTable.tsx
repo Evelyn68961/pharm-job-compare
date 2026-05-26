@@ -1,5 +1,6 @@
 import type { Job, Tag } from '../lib/types';
-import { TIER_BADGE, breakOnParens } from '../lib/styles';
+import { applyUrl } from '../lib/types';
+import { HOSPITAL_TIER_BADGE, TIER_BADGE, breakOnParens, hospitalDisplayName } from '../lib/styles';
 import { TagButton } from './TagButton';
 
 type RowDef = { label: string; render: (job: Job) => React.ReactNode };
@@ -14,8 +15,23 @@ export function ComparisonTable({
   onTagClick: (tag: Tag) => void;
 }) {
   const rows: RowDef[] = [
+    {
+      label: '醫院等級',
+      render: (j) =>
+        j.hospitalTier ? (
+          <span
+            className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${HOSPITAL_TIER_BADGE[j.hospitalTier]}`}
+          >
+            {j.hospitalTier}
+          </span>
+        ) : (
+          dash()
+        ),
+    },
     { label: '公/私立', render: (j) => textOrDash(j.publicPrivate) },
+    { label: '地區', render: (j) => textOrDash(j.region) },
     { label: '地點', render: (j) => textOrDash(j.location) },
+    { label: '電話', render: (j) => textOrDash(j.phone) },
     { label: '薪資', render: (j) => textOrDash(breakOnParens(j.salaryDisplay)) },
     {
       label: '薪資等級',
@@ -32,10 +48,7 @@ export function ComparisonTable({
     },
     { label: '輪班', render: (j) => textOrDash(breakOnParens(j.shiftDescription)) },
     { label: '職務內容', render: (j) => textOrDash(j.jobSummary) },
-    { label: '學歷', render: (j) => textOrDash(j.educationRequirement) },
-    { label: '證照', render: (j) => textOrDash(j.certification) },
     { label: '宿舍', render: (j) => textOrDash(j.dormitory) },
-    { label: '需求人數', render: (j) => textOrDash(j.headcount) },
     { label: '更新', render: (j) => textOrDash(j.updatedDate) },
     {
       label: '特色標籤',
@@ -54,19 +67,20 @@ export function ComparisonTable({
     },
     {
       label: '連結',
-      render: (j) =>
-        j.sourceUrl ? (
+      render: (j) => {
+        const link = applyUrl(j);
+        if (!link) return dash();
+        return (
           <a
-            href={j.sourceUrl}
+            href={link}
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium text-blue-600 hover:underline"
           >
-            104 →
+            {j.sourceUrl104 ? '104 →' : '官網 →'}
           </a>
-        ) : (
-          dash()
-        ),
+        );
+      },
     },
   ];
 
@@ -81,17 +95,23 @@ export function ComparisonTable({
             >
               欄位
             </th>
-            {jobs.map((job) => (
-              <th
-                key={job.id}
-                scope="col"
-                className="min-w-[10rem] border-b border-gray-200 px-3 py-2 text-left font-semibold text-gray-900"
-              >
-                <div className="whitespace-pre-wrap">
-                  {breakOnParens(job.hospitalName) || '—'}
-                </div>
-              </th>
-            ))}
+            {jobs.map((job) => {
+              const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
+              return (
+                <th
+                  key={job.id}
+                  scope="col"
+                  className="min-w-[10rem] border-b border-gray-200 px-3 py-2 text-left font-semibold text-gray-900"
+                >
+                  <div className="whitespace-pre-wrap">{header || '—'}</div>
+                  {subtitle && (
+                    <div className="mt-0.5 text-xs font-normal text-gray-500 whitespace-pre-wrap">
+                      {subtitle}
+                    </div>
+                  )}
+                </th>
+              );
+            })}
           </tr>
         </thead>
         <tbody>
@@ -122,8 +142,5 @@ function dash() {
 
 function textOrDash(value: string | null) {
   if (!value) return dash();
-  return (
-    <span className="whitespace-pre-wrap [text-wrap:balance]">{value}</span>
-  );
+  return <span className="whitespace-pre-wrap [text-wrap:balance]">{value}</span>;
 }
-

@@ -82,7 +82,7 @@ function Intro({ onStart, totalHospitals }: { onStart: () => void; totalHospital
         開始測驗 →
       </button>
       <p className="text-xs text-gray-400">
-        輔仁大學藥劑部學生作品 · 純娛樂用
+        輔大附醫藥劑部 · 純為娛樂
       </p>
     </div>
   );

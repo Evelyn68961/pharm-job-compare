@@ -5,8 +5,8 @@ import {
   HOSPITAL_TIER_BADGE,
   TIER_BADGE,
   hospitalDisplayName,
-  safeBrandColor,
 } from '../../lib/styles';
+import { HospitalIcon } from './icons/HospitalIcon';
 
 export function ResultCard({
   job,
@@ -15,7 +15,6 @@ export function ResultCard({
   job: Job;
   onRestart: () => void;
 }) {
-  const brand = safeBrandColor(job.brandColor) ?? '#94a3b8';
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
 
   return (
@@ -23,15 +22,7 @@ export function ResultCard({
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
         <p className="text-center text-sm text-gray-500">你的命運醫院是</p>
         <div className="mt-4 flex items-center gap-4">
-          {/* Roblox 藥師 placeholder — replace with hospital-specific art later */}
-          <div
-            className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-2xl text-3xl font-bold text-white shadow-inner"
-            style={{ backgroundColor: brand }}
-            aria-hidden
-            title="Roblox 藥師角色 placeholder"
-          >
-            🧑‍⚕️
-          </div>
+          <HospitalIcon job={job} size={96} />
           <div className="min-w-0 flex-1">
             <h2 className="text-2xl font-bold text-gray-900">{header}</h2>
             {subtitle && <p className="mt-0.5 text-sm text-gray-500">{subtitle}</p>}
@@ -106,7 +97,7 @@ export function ResultCard({
       </div>
 
       <div className="rounded-xl border border-amber-100 bg-amber-50 p-4 text-xs text-amber-900">
-        本網站為 <strong>輔仁大學藥劑部</strong> 學生作品，僅供參考娛樂。職缺資訊以
+        本網站由 <strong>輔大附醫藥劑部</strong> 整理，僅供參考。職缺資訊以
         104 與醫院官網實際公告為準。
       </div>
     </div>

@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ScoredJob } from '../../lib/quiz';
 import { pickWeightedIndex } from '../../lib/quiz';
 import { safeBrandColor } from '../../lib/styles';
+import { MAZE_EMBLEM_ARCHETYPES, MAZE_EMBLEM_VIEWBOX, MazeEmblem } from './MazeEmblem';
+import type { ArchetypeKey } from './icons/types';
 
 const COLS = 7;
 const ROWS = 2;
@@ -17,6 +19,24 @@ const FALLBACK_PALETTE = [
 
 const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日'];
 const ROW_LABELS = ['早', '晚'];
+
+// Pre-assign one archetype emblem + small rotation to each cell. Neighbors
+// (left, up) get a different emblem so adjacent cells never share the same
+// glyph — keeps the grid feeling scattered rather than gridded.
+function assignEmblems(): { archetype: ArchetypeKey; rotation: number }[] {
+  const result: { archetype: ArchetypeKey; rotation: number }[] = [];
+  for (let i = 0; i < TOTAL_CELLS; i++) {
+    const row = Math.floor(i / COLS);
+    const col = i % COLS;
+    const forbidden = new Set<ArchetypeKey>();
+    if (col > 0) forbidden.add(result[i - 1].archetype);
+    if (row > 0) forbidden.add(result[i - COLS].archetype);
+    const choices = MAZE_EMBLEM_ARCHETYPES.filter((a) => !forbidden.has(a));
+    const archetype = choices[Math.floor(Math.random() * choices.length)];
+    result.push({ archetype, rotation: Math.random() * 24 - 12 });
+  }
+  return result;
+}
 
 export function PillboxMaze({
   candidates,
@@ -32,6 +52,7 @@ export function PillboxMaze({
 
   // Pad / truncate to exactly TOTAL_CELLS slots so the grid always fills.
   const cells = useMemo(() => candidates.slice(0, TOTAL_CELLS), [candidates]);
+  const emblems = useMemo(() => assignEmblems(), []);
 
   useEffect(() => {
     return () => {
@@ -119,6 +140,25 @@ export function PillboxMaze({
                       boxShadow: isHighlight ? 'none' : 'inset 0 2px 4px rgba(0,0,0,0.06)',
                     }}
                   />
+                  {/* Emblem watermark — random per cell, adjacent cells never share */}
+                  <div
+                    className="pointer-events-none absolute inset-2 flex items-center justify-center"
+                    style={{ transform: `rotate(${emblems[idx].rotation}deg)` }}
+                  >
+                    <svg
+                      viewBox={MAZE_EMBLEM_VIEWBOX}
+                      preserveAspectRatio="xMidYMid meet"
+                      className="h-full w-full"
+                      style={{ opacity: isHighlight ? 0.85 : 0.28 }}
+                      aria-hidden
+                    >
+                      <MazeEmblem
+                        archetype={emblems[idx].archetype}
+                        color={isHighlight ? 'white' : '#475569'}
+                        bgColor={baseColor}
+                      />
+                    </svg>
+                  </div>
                   {isPill && (
                     <div
                       className="absolute inset-0 flex items-center justify-center text-3xl"

@@ -30,8 +30,9 @@ Built by **pharmacists at 輔大附醫 (FJUH)**, not students. This shapes voice
 
 ## Architecture guardrails
 
-- **One client island only** ([JobsView.tsx](app/components/JobsView.tsx)). Other view files are server-importable; don't add `'use client'` to them without strong reason.
-- **No `/api/*` routes.** Server Component talks to Notion directly via [app/lib/notion.ts](app/lib/notion.ts).
+- **`/all` is one client island** ([JobsView.tsx](app/components/JobsView.tsx)). Other view files there are server-importable; don't add `'use client'` to them without strong reason.
+- **`/` (spin) is one client island** ([SpinApp.tsx](app/components/spin/SpinApp.tsx)) that orchestrates the `intro → quiz → maze → box → result → alternatives` state machine. Sub-components (MBTIQuiz, PillboxMaze, MysteryBox, ResultCard, AlternativesView) are also client components but driven by SpinApp state.
+- **One real `/api`-ish route: [/og](app/og/route.tsx)** — Edge-runtime dynamic OG image via `next/og`. Server Components otherwise talk to Notion directly via [app/lib/notion.ts](app/lib/notion.ts); no other server routes.
 - **Default order** is 薪資 tier `突出` first, then Notion insertion order. No global sort UI; per-field sort exists only inside the 依欄位 view.
 - **City ranking is geographic** (north → south, Taiwan-aware) via `rankCity` in [app/lib/styles.ts](app/lib/styles.ts), not alphabetic.
 
@@ -40,10 +41,18 @@ Built by **pharmacists at 輔大附醫 (FJUH)**, not students. This shapes voice
 - [README.md](README.md) — setup + tech stack
 - [plan/pharmacist-job-compare-plan-v4.md](plan/pharmacist-job-compare-plan-v4.md) — latest design rationale (v1–v3 also in [plan/](plan/) for history)
 - [app/lib/types.ts](app/lib/types.ts) — `Job` data model + tag / region / tier enums
-- [hospital-icons-guide.md](hospital-icons-guide.md) — per-hospital icon system + the Figma + OpenPeeps workflow for swapping in real character art
+- [hospital-icons-guide.md](hospital-icons-guide.md) — icon system reference: 4-layer composition, archetype priority, `accentColor` tint contract, file map
+- [app/components/spin/SpinApp.tsx](app/components/spin/SpinApp.tsx) — spin flow state machine entry point
+- [app/lib/resolveAlternatives.ts](app/lib/resolveAlternatives.ts) — top-3 alternatives logic + FJUH lookup helper
+- [app/og/route.tsx](app/og/route.tsx) — dynamic Open Graph image (Edge runtime + `next/og`)
 - [data/hospitals-reference.md](data/hospitals-reference.md) — Taiwan medical center curation reference (read-only aid)
 
 ## Active context (update as it changes)
 
-- **Hospital icons in v1 build-out.** `<HospitalIcon>` is wired into [ResultCard](app/components/spin/ResultCard.tsx) with 6 placeholder dashed-circle SVGs. Real character art (OpenPeeps in Figma) is the next manual step — full guide in [hospital-icons-guide.md](hospital-icons-guide.md). v1 surface is **ResultCard only** — don't expand icons to JobCard or PillboxMaze cells until user opts in.
-- Archetype lineup uses the naming convention **`{2-char}藥師`** for consistency: 北漂藥師 / 教魂藥師 / 夜貓藥師 / 佛系藥師 / 學霸藥師 / 鐵腕藥師. Preserve this pattern if proposing additions or renames.
+- **Icon system is fully built out.** All 6 chibi character SVGs drawn directly in [archetypes/](app/components/spin/icons/archetypes/) (no Figma workflow). Each character receives an `accentColor` prop (= `job.brandColor`) and tints its chest pin + chosen accessory surfaces at `0.85` (punch) / `0.55` (background) opacity. Every tinted `fill`/`stroke` has an `|| '#hex'` fallback to its original colour so the icon stays visible if `accentColor` is missing. Badges show per-archetype white emblems (graduation cap, train, open book, crescent+star, water lily, shield+star) instead of text initials. See [hospital-icons-guide.md](hospital-icons-guide.md) for the full tint cheatsheet.
+- **Icon scope has expanded beyond ResultCard.** Icons render in: [ResultCard](app/components/spin/ResultCard.tsx) at 96 px, [AlternativesView](app/components/spin/AlternativesView.tsx) at 56 px, and the [OG image](app/og/route.tsx). [PillboxMaze](app/components/spin/PillboxMaze.tsx) cells get faint per-archetype glyphs via the standalone [MazeEmblem](app/components/spin/MazeEmblem.tsx) (a deliberate copy of the badge glyphs — badge can evolve without touching the maze).
+- **Spin flow has a stage 2 (alternatives) after the result reveal.** [AlternativesView](app/components/spin/AlternativesView.tsx) shows up to 3 same-archetype hospitals (sorted by 薪資突出 first, fallback to other archetypes if fewer than 3 share the winner's archetype) followed by an FJUH-voice "關於這個網站" section with an embedded FJUH JobCard. The FJUH card looks for `輔大附醫` / `輔大附設` in `hospitalName` or `hospitalBriefName`; if not found, the section shows a placeholder.
+- **Sharing flow uses dynamic OG images.** [ShareButton](app/components/spin/ShareButton.tsx) on the result card builds a URL `/?archetype=...&hospital=...&color=...`. The recipient lands on the game start (not the result), but [page.tsx](app/page.tsx)'s `generateMetadata` reads those params and points the OG image at the parameterized `/og?...` URL, so LINE/WhatsApp/IG link previews show a personalized image. Uses `navigator.share()` on mobile (native share sheet); falls back to clipboard copy on desktop.
+- **Set `NEXT_PUBLIC_SITE_URL` in production** so OG image URLs resolve correctly when scraped by social platforms. Defaults to `http://localhost:3000` for dev (configured in [layout.tsx](app/layout.tsx) via `metadataBase`).
+- Archetype lineup uses the naming convention **`{2-char}藥師`** for consistency: 學霸藥師 / 教魂藥師 / 北漂藥師 / 鐵腕藥師 / 夜貓藥師 / 佛系藥師. Preserve this pattern if proposing additions or renames.
+- **Archetype priority order** (set in [resolveArchetype.ts](app/components/spin/icons/resolveArchetype.ts)): tier-prestige > teaching > dormitory > public-sector > night-shift > chill. 醫學中心 hospitals will resolve to 學霸 even if they also have teaching tags. Reorder cautiously — changing priority shifts many existing hospitals' archetypes at once.

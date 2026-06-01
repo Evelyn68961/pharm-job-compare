@@ -1,226 +1,155 @@
-# Hospital icons — workflow guide
+# Hospital icons — system guide
 
-The icon system at [app/components/spin/icons/](app/components/spin/icons/) renders the per-hospital character icon on the [ResultCard](app/components/spin/ResultCard.tsx). It currently uses **placeholder SVGs** (dashed pastel circles labeled with the 2-char archetype name). When real art is ready, swap files in [app/components/spin/icons/archetypes/](app/components/spin/icons/archetypes/) one at a time — no other code changes needed.
+The icon system at [app/components/spin/icons/](app/components/spin/icons/) renders the per-hospital character icon. It's a four-layer SVG composition where three of the four layers vary by hospital, driven by `job.brandColor` from Notion.
+
+The icon appears in:
+- [ResultCard](app/components/spin/ResultCard.tsx) at 96 px (the spin reveal)
+- [AlternativesView](app/components/spin/AlternativesView.tsx) at 56 px (stage 2 alternative cards)
+- The dynamic OG image at [app/og/route.tsx](app/og/route.tsx) for shareable previews
+
+A separate component, [MazeEmblem.tsx](app/components/spin/MazeEmblem.tsx), sprinkles small per-archetype glyphs into [PillboxMaze](app/components/spin/PillboxMaze.tsx) cells. It echoes the badge emblems visually but is its own copy — the icon system itself stays untouched by the maze.
 
 ---
 
-## How the icon is composed
+## The 4-layer composition
 
 ```
 ┌──────────────────────────────────┐
-│  brand-color radial halo         │ ← ArchetypeHalo.tsx (uses job.brandColor)
+│  Layer 1: ArchetypeHalo          │  ← radial brand-color glow
 │      ╭─────────────╮             │
-│      │  archetype  │             │ ← archetypes/*.tsx (1 of 6 by resolver)
-│      │  character  │             │
-│      │             │             │
+│      │  Layer 2:   │             │  ← 1 of 6 archetype SVGs
+│      │  Character  │                  with brand-color tints on
+│      │             │                  chest pin + accessory
 │      ╰─────────────╯             │
 │                  ╭───╮           │
-│                  │馬偕│ ← HospitalBadge.tsx (initials + brandColor, corner)
-│                  ╰───╯           │
-│   ✨ (if 薪資突出)               │ ← SalarySparkle.tsx
+│                  │ 🎓│           │  ← Layer 3: HospitalBadge
+│                  ╰───╯           │      brand-color circle +
+│                                  │      per-archetype white emblem
+│   ✨ (if 薪資突出)               │  ← Layer 4: SalarySparkle
 └──────────────────────────────────┘
 ```
 
-The halo, badge, and sparkle all work today against real Notion data — only the **character art** is placeholder.
+Per-hospital variation comes from:
+- **Halo** — `job.brandColor` as a radial gradient (low opacity)
+- **Character chest pin and accessories** — `accentColor` (= `brandColor`) tinted at 0.85 / 0.55 opacity
+- **Badge background** — `job.brandColor` (white emblem on top)
+- **Badge emblem** — per-archetype (graduation cap, train, open book, crescent+star, water lily, shield+star)
+- **Sparkle** — only renders when `job.salaryTier === '突出'`
+
+If `job.brandColor` is missing or invalid, the halo and badge fall back to slate (`#94a3b8`). Each tinted surface in the character SVG falls back to its original hand-picked hex, so paths stay visible even if `accentColor` breaks (see "The accentColor contract" below).
 
 ---
 
 ## The 6 archetypes
 
-| Archetype | Vibe / prop | Assigned when... | File to replace |
-|---|---|---|---|
-| **北漂藥師** | suitcase, hopeful — pharmacist who relocated for the job | `tags.includes('提供宿舍')` | [BeipiaoPharmacist.tsx](app/components/spin/icons/archetypes/BeipiaoPharmacist.tsx) |
-| **教魂藥師** | whiteboard marker / pointing pose, bright — loves to teach | tags include any of: 教學醫院, 重視教學, 全面藥事訓練, 外派進修機會 | [TeachingSoulPharmacist.tsx](app/components/spin/icons/archetypes/TeachingSoulPharmacist.tsx) |
-| **夜貓藥師** | coffee mug, sleepy-happy — night-shift specialist | `tags.includes('夜班津貼優渥')` | [NightOwlPharmacist.tsx](app/components/spin/icons/archetypes/NightOwlPharmacist.tsx) |
-| **佛系藥師** | pill bottle held gently, peaceful — work-life balance | tags include any of: 工作單純, 免/少輪班, 無大夜 | [ZenPharmacist.tsx](app/components/spin/icons/archetypes/ZenPharmacist.tsx) |
-| **學霸藥師** | clipboard + glasses, serious — medical center elite | `hospitalTier === '醫學中心'` | [AcademicAcePharmacist.tsx](app/components/spin/icons/archetypes/AcademicAcePharmacist.tsx) |
-| **鐵腕藥師** | 政府 pin badge, confident — public sector stalwart | `publicPrivate === '公立'` | [IronArmPharmacist.tsx](app/components/spin/icons/archetypes/IronArmPharmacist.tsx) |
+Selected by [resolveArchetype.ts](app/components/spin/icons/resolveArchetype.ts) — top-down priority, first match wins, fallback is `佛系藥師`.
 
-**Priority is top-down — first match wins.** Default fallback (nothing matches) is **佛系藥師**.
+| Priority | Archetype | Wins when... | Badge emblem | Character prop |
+|---|---|---|---|---|
+| 1 | **學霸藥師** | `hospitalTier === '醫學中心'` | graduation cap | clipboard + glasses |
+| 2 | **教魂藥師** | tags include any of: `教學醫院`, `重視教學`, `全面藥事訓練`, `外派進修機會` | open book | whiteboard marker |
+| 3 | **北漂藥師** | tags include `提供宿舍` | train (side view) | suitcase |
+| 4 | **鐵腕藥師** | `publicPrivate === '公立'` | shield + star | seal (印章) + 政府 pin |
+| 5 | **夜貓藥師** | tags include `夜班津貼優渥` | crescent moon + star | coffee mug + floating z's |
+| 6 | **佛系藥師** | tags include any of: `工作單純`, `免/少輪班`, `無大夜` | water lily | pill bottle + green side ribbons |
 
-To change the priority order or rules: edit [resolveArchetype.ts](app/components/spin/icons/resolveArchetype.ts).
-
----
-
-## Part 1: Produce SVGs in Figma with OpenPeeps
-
-Estimated time: ~3 hours total (slower for archetype #1, faster after).
-
-### Step 1: Figma account + file setup (5 min)
-
-1. Sign up at **figma.com** (Google login works) → choose **Starter (Free)** plan
-2. Click **+ Design file** in your drafts
-3. Press **F** for the Frame tool → drag on canvas to create a **256 × 256** frame (verify size in the right-side panel)
-4. Repeat to create **6 frames in a row**
-5. Click each frame name in the left layers panel and rename to:
-   - `BeipiaoPharmacist`
-   - `TeachingSoulPharmacist`
-   - `NightOwlPharmacist`
-   - `ZenPharmacist`
-   - `AcademicAcePharmacist`
-   - `IronArmPharmacist`
-6. Save the file (Cmd/Ctrl + S) — call it something like `pharm-icons`
-
-### Step 2: Install OpenPeeps (3 min)
-
-1. Top-right menu (or right-click on canvas) → **Plugins** → **Browse plugins in Community**
-2. Search **"Open Peeps"** by Pablo Stanley → click **Run** or **Install**
-3. The OpenPeeps panel opens with a randomized character — you can re-roll, swap head/hair/expression/accessories
-
-### Step 3: Build your first archetype (recommend starting with 學霸藥師)
-
-Why 學霸藥師 first: most "default" pharmacist look, easiest to evaluate against your aesthetic bar before you commit to the workflow.
-
-1. Click into the `AcademicAcePharmacist` frame
-2. Open OpenPeeps plugin → click **Insert** to drop a character
-3. Scale the character to ~80% of frame height using corner handles
-4. Use the plugin's **shuffle/swap** buttons to find:
-   - **Glasses** (OpenPeeps has glasses options)
-   - **Serious / focused expression**
-   - **Standing or holding-something pose**
-5. Once happy, click **Insert** to commit the character as flat SVG paths
-6. **Add the clipboard prop** — press **R** for rectangle → draw a small rectangle (~30×40px) beside one hand. Fill = white, stroke = gray. Add 2–3 thin gray lines inside for "paper lines"
-7. **Add a lab coat (optional)** — press **R** → draw a white rectangle covering the torso. Fill = white, stroke = light gray (#E5E7EB) 2px. In layers panel, drag this layer just below the head so the face sits on top
-8. Click outside to deselect → eyeball it. Should look like a chibi student-pharmacist with glasses, clipboard, and lab coat
-
-> 💡 **If the lab coat step feels hard, skip it.** OpenPeeps' built-in clothing options sometimes include a white top — try those first. The chest badge that the code adds on top usually communicates "pharmacist" well enough even without an explicit lab coat.
-
-### Step 4: Repeat for the other 5 archetypes
-
-Same pattern — pick OpenPeeps character matching the vibe, add prop, optional lab coat:
-
-| Archetype | OpenPeeps vibe to find | Prop to add |
-|---|---|---|
-| **北漂藥師** | hopeful smile, standing pose, no glasses | small suitcase (brown rectangle ~40×30px + tiny gray handle) |
-| **教魂藥師** | bright, mouth open, pointing or arms-up pose | thin whiteboard marker (skinny vertical rectangle) |
-| **夜貓藥師** | sleepy half-smile, relaxed pose | coffee mug — OpenPeeps has one built-in! |
-| **佛系藥師** | calm, eyes closed if available | pill bottle (small rounded rectangle, white body + colored cap) |
-| **鐵腕藥師** | confident, arms crossed or hands on hips | nothing extra — the 政府 pin badge can be a small star or shield on the lab coat |
-
-**Don't aim for perfect.** Aim for *cute and visually distinguishable from the other 5.* The brand-color halo and chest badge that the code adds will tie each character to its specific hospital.
-
-### Step 5: Export the SVGs (5 min)
-
-1. Click on a frame name in the left layers panel (e.g. `AcademicAcePharmacist`)
-2. Right-side panel → scroll to **Export** section → click **+**
-3. Set format to **SVG**, scale **1×**
-4. Click **Export AcademicAcePharmacist** → save the `.svg` file
-5. Repeat for all 6 frames (or shift-click to select all 6 frames first, then **Export 6 layers**)
-6. **Optimize each file** — drop into [svgomg.net](https://svgomg.net) → click the download icon → replaces with optimized version (~50% smaller). Figma's raw SVG export is bloated.
+Naming convention: every archetype is `{2-char}藥師`. Preserve this if proposing additions.
 
 ---
 
-## Part 2: Drop SVGs into the codebase
+## The accentColor contract
 
-For each archetype, repeat these steps:
+Each archetype SVG component receives an `accentColor?: string` prop ([types.ts](app/components/spin/icons/types.ts)). [HospitalIcon](app/components/spin/icons/HospitalIcon.tsx) passes `brandColor` as `accentColor`; the character uses it on the chest pin and on chosen accessory paths.
 
-### Step 1: Open the matching component file
-
-For example, to install the 學霸藥師 art, open [AcademicAcePharmacist.tsx](app/components/spin/icons/archetypes/AcademicAcePharmacist.tsx).
-
-The current placeholder looks like:
+The pattern across all 6 archetypes:
 
 ```tsx
-import type { ArchetypeComponentProps } from '../types';
+// Chest pin (small, semantically neutral) — full opacity
+<path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor || '#5EC8C2'} />
 
-export function AcademicAcePharmacist({ size }: ArchetypeComponentProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 100 100" aria-label="學霸藥師 placeholder">
-      <circle ... />
-      <text ...>學霸</text>
-    </svg>
-  );
-}
+// Accessory "punch" surface — 0.85 opacity (saturated accent)
+<rect ... fill={accentColor || '#9AA1AB'} fillOpacity="0.85" />
+
+// Accessory "background" surface — 0.55 opacity (soft wash)
+<rect ... fill={accentColor || '#F4F1EA'} fillOpacity="0.55" />
 ```
 
-### Step 2: Open your exported SVG file
+Two opacities of the same `brandColor` over the white card background produce both the muting AND the within-accessory contrast — no color-mixing helper needed.
 
-Open the `.svg` file from Figma in any text editor (VS Code, Notepad). It looks something like:
+**The `|| '#hex'` fallback is critical.** Without it, `fill={undefined}` inherits `fill="none"` from the SVG root and the path renders invisible. The fallback hex is the path's pre-tint colour, so the icon stays viewable even when `accentColor` is missing or empty.
 
-```xml
-<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <g><path d="..."/><path d="..."/>...</g>
-</svg>
-```
+### Per-archetype tint targets
 
-### Step 3: Replace the placeholder JSX
+| Archetype | Chest pin | Punch (0.85) | Background (0.55) | Stays untouched |
+|---|---|---|---|---|
+| **學霸** | ✓ | clipboard metal clip | clipboard outer border (stroke) | paper, paper lines |
+| **北漂** | ✓ | destination tag + body border + divider + handle (all `stroke`/`fill` at 0.85) | suitcase body fill | — |
+| **夜貓** | ✓ | mug band | steam squiggles | cream mug body, dark coffee, indigo z's |
+| **教魂** | ✓ | marker cap band | marker body | slate marker tip, white sleeve |
+| **佛系** | ✓ | bottle cap + green "+" cross + ribbon center circles + bow petals + trailing strings (all 0.85) | bottle label background | white bottle body |
+| **鐵腕** | ✓ | seal knob | seal stem | red seal base, red ink pad, gold gov shield+star |
 
-Replace the placeholder's `<svg>...</svg>` with your exported one, with **3 required modifications**:
-
-1. **Change `viewBox` to `"0 0 100 100"`** (or scale your paths — see contract below)
-2. **Replace `width="256" height="256"`** with `width={size} height={size}`
-3. **Update `aria-label`** to `"學霸藥師"` (remove "placeholder")
-
-The result looks like:
-
-```tsx
-import type { ArchetypeComponentProps } from '../types';
-
-export function AcademicAcePharmacist({ size }: ArchetypeComponentProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label="學霸藥師"
-    >
-      <g>
-        <path d="..." />
-        {/* ... your paths from Figma ... */}
-      </g>
-    </svg>
-  );
-}
-```
-
-### Step 4: Save and verify
-
-```sh
-npm run dev
-```
-
-Visit http://localhost:3000 → run through the quiz → land on a hospital that matches that archetype. Eyeball the result card.
-
-If you don't know which hospitals match which archetype, the title attribute on the icon shows it on hover (e.g. *"學霸藥師 · 臺大醫院"*).
+To re-tune: each archetype file in [archetypes/](app/components/spin/icons/archetypes/) has the tint values inline on its `fill`/`stroke` attributes. Search for `Opacity="0.85"` or `Opacity="0.55"` to find the surfaces.
 
 ---
 
-## The viewBox contract (important!)
+## The viewBox contract
 
-All archetype SVGs **must use `viewBox="0 0 100 100"`** so the [HospitalBadge](app/components/spin/icons/HospitalBadge.tsx) and [SalarySparkle](app/components/spin/icons/SalarySparkle.tsx) overlays align correctly. The badge is hardcoded at coordinates `(78, 82)` within that 100×100 space, sparkle at `(78, 18)`.
+All archetype SVGs **must use `viewBox="0 0 100 100"`** so the [HospitalBadge](app/components/spin/icons/HospitalBadge.tsx) and [SalarySparkle](app/components/spin/icons/SalarySparkle.tsx) overlays align correctly. The badge sits at `(78, 82)` r=16, the sparkle at `(78, 18)`.
 
-### Two ways to satisfy the contract
+Within that 100×100 space, the established anatomy is:
 
-**Option A: Change Figma frame size to 100×100 from the start**
-- Cleanest. Build characters within a 100-unit-wide frame.
-- Smaller working area in Figma, can feel cramped.
+| Y range | Element |
+|---|---|
+| 14–34 | hair / head |
+| 33–51 | face (glasses, brows, eyes, cheeks, mouth) |
+| 47–58 | neck rect |
+| 55–73 | chest pin diamond (`M50 55 L44 67 L50 73 L56 67 Z`) |
+| 53–98 | lab coat |
+| 60–95 | accessory (clipboard, suitcase, mug, marker, pill bottle, seal) |
 
-**Option B: Build in 256×256, then scale paths on export**
-- More comfortable to work in Figma.
-- After export, wrap your SVG's contents in `<g transform="scale(0.39)">` (0.39 ≈ 100/256) before pasting into the React file. Or just change the `viewBox` attribute from `"0 0 256 256"` to `"0 0 100 100"` — SVG will auto-scale paths to fit.
-
-**Recommended:** start with Option A (build at 100×100) if you can stomach the smaller workspace.
+The chest pin path is identical across all 6 archetypes — only its fill differs.
 
 ---
 
-## Customization knobs (if you want to tweak later)
+## MazeEmblem (the maze sprinkle)
+
+[MazeEmblem.tsx](app/components/spin/MazeEmblem.tsx) renders one of the 6 badge-style emblems at a chosen colour, with a viewBox `66 69 26 26` that crops to just the emblem region. It's used in [PillboxMaze](app/components/spin/PillboxMaze.tsx) to scatter faint per-archetype glyphs across the 14 cells with neighbour-avoidance (adjacent cells never share an emblem).
+
+The crescent moon for 夜貓 uses a different drawing technique than the badge does — a two-circle cutout that needs the cell's `bgColor` to render the carved-out crescent. The badge does the same trick.
+
+If you ever change a badge emblem's shape, the maze sprinkle won't update automatically — MazeEmblem is a deliberate copy so the badge can evolve without touching the maze.
+
+---
+
+## Customization knobs
+
+### Tweak the opacity values
+Search any archetype file for `Opacity="0.85"` (punch) or `Opacity="0.55"` (background). Both `fillOpacity` and `strokeOpacity` exist; treat them the same.
 
 ### Change badge position
-Edit `cx` / `cy` in [HospitalBadge.tsx](app/components/spin/icons/HospitalBadge.tsx). The viewBox is 0–100. Default is `(78, 82)` (bottom-right). To put it on the character's chest, try `(50, 70)`.
+Edit `cx` / `cy` in [HospitalBadge.tsx](app/components/spin/icons/HospitalBadge.tsx). The viewBox is 0–100. Default is `(78, 82)` (bottom-right corner).
 
-### Change halo color intensity
-Edit the `stopOpacity` values in [ArchetypeHalo.tsx](app/components/spin/icons/ArchetypeHalo.tsx). Currently `0.5 → 0.18 → 0`. Increase to make brand color more dominant, decrease for subtler.
+### Change a badge emblem
+Edit the `<BadgeEmblem>` switch in [HospitalBadge.tsx](app/components/spin/icons/HospitalBadge.tsx). Emblems use stroke/fill `white` for visibility against any brandColor. 夜貓's crescent depends on the carving circle matching the badge `brandColor`.
+
+### Change halo intensity
+Edit the `stopOpacity` values in [ArchetypeHalo.tsx](app/components/spin/icons/ArchetypeHalo.tsx). Currently `0.5 → 0.18 → 0`.
 
 ### Change archetype priority / rules
-Edit [resolveArchetype.ts](app/components/spin/icons/resolveArchetype.ts). It's a simple ordered array — reorder entries or change the `test:` predicates.
+Edit [resolveArchetype.ts](app/components/spin/icons/resolveArchetype.ts). It's a single ordered array.
 
-### Drop the sparkle
-Remove the conditional render in [HospitalIcon.tsx](app/components/spin/icons/HospitalIcon.tsx): delete the line with `{showSparkle && <SalarySparkle size={size} />}`.
+### Add a 7th archetype
+1. Add the key to `ArchetypeKey` union in [types.ts](app/components/spin/icons/types.ts)
+2. Add a rule to `ARCHETYPE_PRIORITY` in [resolveArchetype.ts](app/components/spin/icons/resolveArchetype.ts)
+3. Create a new file in [archetypes/](app/components/spin/icons/archetypes/) — copy an existing one as a starting point, change the prop, accessory, and `aria-label`
+4. Add it to `ARCHETYPE_COMPONENTS` in [HospitalIcon.tsx](app/components/spin/icons/HospitalIcon.tsx)
+5. Add a badge emblem case to `BadgeEmblem` in [HospitalBadge.tsx](app/components/spin/icons/HospitalBadge.tsx)
+6. Add it to `MAZE_EMBLEM_ARCHETYPES` in [MazeEmblem.tsx](app/components/spin/MazeEmblem.tsx) and add an emblem case there
+7. Update the table in this file
 
-### Add custom art for specific hospitals (escape hatch)
-Not built yet, but the architecture is ready for it. Add an `iconUrl` field to [Job](app/lib/types.ts), and in [HospitalIcon.tsx](app/components/spin/icons/HospitalIcon.tsx) check `job.iconUrl` first — if present, render `<img src={job.iconUrl} />` instead of the archetype component. Good for headliner hospitals like FJUH itself.
+### Add custom art for specific hospitals (escape hatch, not built)
+Add an `iconUrl` field to [Job](app/lib/types.ts), and in [HospitalIcon.tsx](app/components/spin/icons/HospitalIcon.tsx) check `job.iconUrl` first — if present, render `<img src={job.iconUrl} />` instead of the archetype component. Useful for headliner hospitals.
 
 ---
 
@@ -228,31 +157,35 @@ Not built yet, but the architecture is ready for it. Add an `iconUrl` field to [
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| Character appears tiny in corner of icon | Your SVG's `viewBox` doesn't match the contract | Change `viewBox` to `"0 0 100 100"` |
-| Character appears huge / clipped | Same — wrong viewBox | Same fix |
-| Badge overlaps face | Character art extends into bottom-right | Move badge: edit `cx`/`cy` in HospitalBadge.tsx |
+| A tinted path renders invisible | `accentColor` was passed as `""` or `undefined` and the path lacks the `|| '#hex'` fallback | Add the fallback hex to the `fill` / `stroke` |
+| Character appears tiny in corner of icon | The archetype SVG's `viewBox` isn't `0 0 100 100` | Fix the viewBox |
+| Badge overlaps face / accessory | Character art extends into bottom-right corner of the 100×100 space | Move the badge (`cx`/`cy` in HospitalBadge.tsx) or redraw the conflicting paths |
 | Halo not showing | Hospital has invalid `brandColor` in Notion | Falls back to slate-400 — verify Notion data has `#RRGGBB` format |
-| TypeScript error after editing archetype file | Probably removed the `import type { ArchetypeComponentProps }` line, or the `size` prop | Compare against another archetype file as reference |
-| Build fails after edit | Run `npm run typecheck` to see the exact line | |
+| Brand color is hot pink / clashes with archetype | Brand colors close to red/magenta can wash green-coded accessories oddly | Either accept it (tint is meant to be loud), drop the offending surface from tinting, or bump opacity toward `0.4` to mute further |
+| Maze emblem missing for one archetype | New archetype added to `ArchetypeKey` but `MazeEmblem` switch doesn't have a case for it | Add the case in `MazeEmblem.tsx` |
+| OG image renders Chinese as boxes in production | Google Fonts subset fetch failed at Edge runtime | Check the Vercel function logs; consider bundling an explicit TTF |
 
 ---
 
-## File map (cheatsheet)
+## File map
 
 ```
 app/components/spin/icons/
 ├── HospitalIcon.tsx           ← public API: <HospitalIcon job={job} size={96} />
 ├── resolveArchetype.ts        ← Job → archetype priority resolver
-├── initials.ts                ← hospitalBriefName → 2-char badge text
-├── types.ts                   ← ArchetypeKey union + prop types
-├── ArchetypeHalo.tsx          ← brand-color radial gradient backdrop
-├── HospitalBadge.tsx          ← brand-color circle with initials (corner)
-├── SalarySparkle.tsx          ← gold ✨ for 薪資突出
-└── archetypes/
-    ├── BeipiaoPharmacist.tsx        ← 北漂藥師   (替換為實際 SVG)
-    ├── TeachingSoulPharmacist.tsx   ← 教魂藥師   (替換為實際 SVG)
-    ├── NightOwlPharmacist.tsx       ← 夜貓藥師   (替換為實際 SVG)
-    ├── ZenPharmacist.tsx            ← 佛系藥師   (替換為實際 SVG)
-    ├── AcademicAcePharmacist.tsx    ← 學霸藥師   (替換為實際 SVG)
-    └── IronArmPharmacist.tsx        ← 鐵腕藥師   (替換為實際 SVG)
+├── types.ts                   ← ArchetypeKey union + ArchetypeComponentProps (with accentColor?)
+├── ArchetypeHalo.tsx          ← Layer 1: brand-color radial gradient
+├── HospitalBadge.tsx          ← Layer 3: brand-color circle + per-archetype white emblem
+├── SalarySparkle.tsx          ← Layer 4: gold ✨ for 薪資突出 jobs
+└── archetypes/                ← Layer 2 candidates (1 of 6, picked by resolver)
+    ├── BeipiaoPharmacist.tsx       ← 北漂藥師 — suitcase
+    ├── TeachingSoulPharmacist.tsx  ← 教魂藥師 — whiteboard marker
+    ├── NightOwlPharmacist.tsx      ← 夜貓藥師 — coffee mug + z's
+    ├── ZenPharmacist.tsx           ← 佛系藥師 — pill bottle + side ribbons
+    ├── AcademicAcePharmacist.tsx   ← 學霸藥師 — clipboard + glasses
+    └── IronArmPharmacist.tsx       ← 鐵腕藥師 — seal + 政府 pin
+
+app/components/spin/
+├── MazeEmblem.tsx             ← Standalone copy of badge glyphs for PillboxMaze cells
+└── PillboxMaze.tsx            ← 7×2 maze grid; cells sprinkled with MazeEmblem
 ```

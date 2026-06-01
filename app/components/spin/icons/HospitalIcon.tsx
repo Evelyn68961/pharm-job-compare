@@ -3,7 +3,6 @@ import { safeBrandColor } from '../../../lib/styles';
 import { ArchetypeHalo } from './ArchetypeHalo';
 import { HospitalBadge } from './HospitalBadge';
 import { SalarySparkle } from './SalarySparkle';
-import { hospitalInitials } from './initials';
 import { resolveArchetype } from './resolveArchetype';
 import type { ArchetypeComponentProps, ArchetypeKey, HospitalIconProps } from './types';
 import { AcademicAcePharmacist } from './archetypes/AcademicAcePharmacist';
@@ -28,7 +27,6 @@ export function HospitalIcon({ job, size = 96 }: HospitalIconProps) {
   const archetype = resolveArchetype(job);
   const Character = ARCHETYPE_COMPONENTS[archetype];
   const brandColor = safeBrandColor(job.brandColor) ?? FALLBACK_BRAND;
-  const initials = hospitalInitials(job.hospitalBriefName, job.hospitalName);
   const showSparkle = job.salaryTier === '突出';
   const haloGradientId = `halo-${job.id}`;
 
@@ -42,7 +40,7 @@ export function HospitalIcon({ job, size = 96 }: HospitalIconProps) {
       <div className="absolute inset-0 flex items-center justify-center">
         <Character size={Math.round(size * 0.86)} />
       </div>
-      <HospitalBadge brandColor={brandColor} initials={initials} size={size} />
+      <HospitalBadge brandColor={brandColor} archetype={archetype} size={size} />
       {showSparkle && <SalarySparkle size={size} />}
     </div>
   );

@@ -5,7 +5,7 @@
 // sparkle are composed on top by HospitalIcon — do not add them here.
 import type { ArchetypeComponentProps } from '../types';
 
-export function ZenPharmacist({ size }: ArchetypeComponentProps) {
+export function ZenPharmacist({ size, accentColor }: ArchetypeComponentProps) {
   return (
     <svg
       width={size}
@@ -19,15 +19,15 @@ export function ZenPharmacist({ size }: ArchetypeComponentProps) {
 
       <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" strokeWidth="1.6" />
       <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" strokeWidth="1.4" fill="none" />
-      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill="#6EE7B7" />
+      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor} />
 
       <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92" />
 
-      <rect x="18.5" y="70" width="11" height="4.5" rx="1.5" fill="#059669" />
+      <rect x="18.5" y="70" width="11" height="4.5" rx="1.5" fill={accentColor} fillOpacity="0.85" />
       <rect x="17.5" y="74" width="13" height="14" rx="2" fill="#FFFFFF" stroke="#C7CDD6" strokeWidth="1.6" />
-      <rect x="19" y="78" width="10" height="7" rx="1" fill="#D1FAE5" />
-      <rect x="23.2" y="79.5" width="1.6" height="4" fill="#059669" />
-      <rect x="21.8" y="80.7" width="4.4" height="1.6" fill="#059669" />
+      <rect x="19" y="78" width="10" height="7" rx="1" fill={accentColor} fillOpacity="0.55" />
+      <rect x="23.2" y="79.5" width="1.6" height="4" fill={accentColor} fillOpacity="0.85" />
+      <rect x="21.8" y="80.7" width="4.4" height="1.6" fill={accentColor} fillOpacity="0.85" />
       <circle cx="31" cy="80" r="3.6" fill="#F8D2AC" />
 
       <circle cx="50" cy="34" r="17" fill="#F8D2AC" />

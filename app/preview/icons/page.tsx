@@ -9,12 +9,12 @@ import { IronArmPharmacist } from '../../components/spin/icons/archetypes/IronAr
 import { NightOwlPharmacist } from '../../components/spin/icons/archetypes/NightOwlPharmacist';
 import { TeachingSoulPharmacist } from '../../components/spin/icons/archetypes/TeachingSoulPharmacist';
 import { ZenPharmacist } from '../../components/spin/icons/archetypes/ZenPharmacist';
-import type { ArchetypeKey } from '../../components/spin/icons/types';
+import type { ArchetypeComponentProps, ArchetypeKey } from '../../components/spin/icons/types';
 import type { Job, Tag } from '../../lib/types';
 
 type Row = {
   key: ArchetypeKey;
-  Character: React.ComponentType<{ size: number }>;
+  Character: React.ComponentType<ArchetypeComponentProps>;
   job: Job;
 };
 
@@ -138,7 +138,7 @@ export default function IconPreviewPage() {
                 <div className="text-xs text-slate-400 mt-1">brand {job.brandColor}</div>
               </div>
               <div className="flex justify-center bg-slate-50 rounded-lg p-3">
-                <Character size={192} />
+                <Character size={192} accentColor={job.brandColor ?? '#94a3b8'} />
               </div>
               <div className="flex justify-center bg-slate-50 rounded-lg p-3">
                 <HospitalIcon job={job} size={128} />

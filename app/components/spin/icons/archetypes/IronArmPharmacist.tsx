@@ -5,7 +5,7 @@
 // — do not add them here.
 import type { ArchetypeComponentProps } from '../types';
 
-export function IronArmPharmacist({ size }: ArchetypeComponentProps) {
+export function IronArmPharmacist({ size, accentColor }: ArchetypeComponentProps) {
   return (
     <svg
       width={size}
@@ -20,14 +20,14 @@ export function IronArmPharmacist({ size }: ArchetypeComponentProps) {
 
       <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" strokeWidth="1.6" />
       <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" strokeWidth="1.4" fill="none" />
-      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill="#FCA5A5" />
+      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor} />
 
       <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92" />
 
       <rect x="17.8" y="76" width="8.4" height="4" rx="1.4" fill="#C0392B" stroke="#8E2A22" strokeWidth="1" />
       <rect x="17.3" y="79.5" width="9.4" height="2.2" rx="1" fill="#7F1D1D" />
-      <rect x="20.8" y="72.5" width="2.4" height="4" fill="#9A5E33" />
-      <circle cx="22" cy="71.5" r="2.6" fill="#8A5128" />
+      <rect x="20.8" y="72.5" width="2.4" height="4" fill={accentColor} fillOpacity="0.55" />
+      <circle cx="22" cy="71.5" r="2.6" fill={accentColor} fillOpacity="0.85" />
       <circle cx="22" cy="69" r="3.4" fill="#F8D2AC" />
 
       <path d="M40 62.5 L44.5 64 V67.5 Q44.5 70.5 40 72 Q35.5 70.5 35.5 67.5 V64 Z" fill="#C8362F" stroke="#FBE3A1" strokeWidth="0.8" />

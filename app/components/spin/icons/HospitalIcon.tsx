@@ -38,7 +38,7 @@ export function HospitalIcon({ job, size = 96 }: HospitalIconProps) {
     >
       <ArchetypeHalo brandColor={brandColor} size={size} gradientId={haloGradientId} />
       <div className="absolute inset-0 flex items-center justify-center">
-        <Character size={Math.round(size * 0.86)} />
+        <Character size={Math.round(size * 0.86)} accentColor={brandColor} />
       </div>
       <HospitalBadge brandColor={brandColor} archetype={archetype} size={size} />
       {showSparkle && <SalarySparkle size={size} />}

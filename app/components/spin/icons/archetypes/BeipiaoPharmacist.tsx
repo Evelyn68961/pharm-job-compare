@@ -4,7 +4,7 @@
 // HospitalIcon — do not add them here.
 import type { ArchetypeComponentProps } from '../types';
 
-export function BeipiaoPharmacist({ size }: ArchetypeComponentProps) {
+export function BeipiaoPharmacist({ size, accentColor }: ArchetypeComponentProps) {
   return (
     <svg
       width={size}
@@ -16,7 +16,7 @@ export function BeipiaoPharmacist({ size }: ArchetypeComponentProps) {
     >
       <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" strokeWidth="1.6" />
       <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" strokeWidth="1.4" fill="none" />
-      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill="#7DD3FC" />
+      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor} />
 
       <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92" />
 
@@ -33,10 +33,10 @@ export function BeipiaoPharmacist({ size }: ArchetypeComponentProps) {
       <path d="M44 44 Q50 50 56 44" fill="none" stroke="#B06A4F" strokeWidth="1.8" strokeLinecap="round" />
 
       <g transform="rotate(-6 25 80)">
-        <rect x="14" y="72" width="24" height="18" rx="2.5" fill="#B5703B" stroke="#8A5128" strokeWidth="1.6" />
-        <line x1="14" y1="80" x2="38" y2="80" stroke="#8A5128" strokeWidth="1.4" />
-        <rect x="22" y="76" width="8" height="3" rx="1" fill="#D9A66B" />
-        <path d="M22 72 Q22 67 26 67 L26 67 Q30 67 30 72" fill="none" stroke="#8A5128" strokeWidth="1.8" />
+        <rect x="14" y="72" width="24" height="18" rx="2.5" fill="#B5703B" stroke={accentColor} strokeOpacity="0.55" strokeWidth="1.6" />
+        <line x1="14" y1="80" x2="38" y2="80" stroke={accentColor} strokeOpacity="0.55" strokeWidth="1.4" />
+        <rect x="22" y="76" width="8" height="3" rx="1" fill={accentColor} fillOpacity="0.85" />
+        <path d="M22 72 Q22 67 26 67 L26 67 Q30 67 30 72" fill="none" stroke={accentColor} strokeOpacity="0.55" strokeWidth="1.8" />
       </g>
       <circle cx="26" cy="66" r="3.8" fill="#F8D2AC" />
     </svg>

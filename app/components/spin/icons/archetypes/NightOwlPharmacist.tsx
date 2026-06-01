@@ -4,7 +4,7 @@
 // sparkle are composed on top by HospitalIcon — do not add them here.
 import type { ArchetypeComponentProps } from '../types';
 
-export function NightOwlPharmacist({ size }: ArchetypeComponentProps) {
+export function NightOwlPharmacist({ size, accentColor }: ArchetypeComponentProps) {
   return (
     <svg
       width={size}
@@ -16,15 +16,15 @@ export function NightOwlPharmacist({ size }: ArchetypeComponentProps) {
     >
       <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" strokeWidth="1.6" />
       <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" strokeWidth="1.4" fill="none" />
-      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill="#A5B4FC" />
+      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor} />
 
       <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92" />
 
-      <path d="M20 71 Q18 68 20 65 Q22 62 20 59.5" fill="none" stroke="#C7CDD6" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M25 71 Q23 68 25 65 Q27 62 25 59.5" fill="none" stroke="#C7CDD6" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M20 71 Q18 68 20 65 Q22 62 20 59.5" fill="none" stroke={accentColor} strokeOpacity="0.55" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M25 71 Q23 68 25 65 Q27 62 25 59.5" fill="none" stroke={accentColor} strokeOpacity="0.55" strokeWidth="1.4" strokeLinecap="round" />
       <path d="M30 77 Q36 77.5 36 81.5 Q36 85.5 30 85" fill="none" stroke="#B9A98C" strokeWidth="2.6" />
       <rect x="15" y="73" width="15" height="15" rx="2.5" fill="#EFE9DD" stroke="#B9A98C" strokeWidth="1.6" />
-      <rect x="15.8" y="79" width="13.4" height="3" fill="#6366F1" />
+      <rect x="15.8" y="79" width="13.4" height="3" fill={accentColor} fillOpacity="0.85" />
       <ellipse cx="22.5" cy="73.6" rx="6.4" ry="1.7" fill="#5C3D2E" />
       <circle cx="33" cy="82" r="3.6" fill="#F8D2AC" />
 

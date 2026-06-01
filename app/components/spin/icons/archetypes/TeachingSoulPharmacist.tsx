@@ -18,15 +18,15 @@ export function TeachingSoulPharmacist({ size, accentColor }: ArchetypeComponent
 
       <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" strokeWidth="1.6" />
       <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" strokeWidth="1.4" fill="none" />
-      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor} />
+      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor || '#C4B5FD'} />
 
       <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92" />
 
       <path d="M30 74 Q23 74 25 67" stroke="#D7DCE3" strokeWidth="8" fill="none" strokeLinecap="round" />
       <path d="M30 74 Q23 74 25 67" stroke="#FFFFFF" strokeWidth="5.5" fill="none" strokeLinecap="round" />
       <path d="M23.5 50 L26 45.5 L28.5 50 Z" fill="#475569" />
-      <rect x="23" y="50" width="6" height="16" rx="2" fill={accentColor} fillOpacity="0.55" />
-      <rect x="22.6" y="59" width="6.8" height="4" rx="1.2" fill={accentColor} fillOpacity="0.85" />
+      <rect x="23" y="50" width="6" height="16" rx="2" fill={accentColor || '#2563EB'} fillOpacity="0.55" />
+      <rect x="22.6" y="59" width="6.8" height="4" rx="1.2" fill={accentColor || '#1E40AF'} fillOpacity="0.85" />
       <circle cx="26" cy="65" r="4.2" fill="#F8D2AC" />
 
       <circle cx="50" cy="34" r="17" fill="#F8D2AC" />

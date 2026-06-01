@@ -16,7 +16,7 @@ export function AcademicAcePharmacist({ size, accentColor }: ArchetypeComponentP
     >
       <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" strokeWidth="1.6" />
       <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" strokeWidth="1.4" fill="none" />
-      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor} />
+      <path d="M50 55 L44 67 L50 73 L56 67 Z" fill={accentColor || '#5EC8C2'} />
 
       <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92" />
 
@@ -39,8 +39,8 @@ export function AcademicAcePharmacist({ size, accentColor }: ArchetypeComponentP
       <line x1="46" y1="46" x2="54" y2="46" stroke="#B06A4F" strokeWidth="1.8" strokeLinecap="round" />
 
       <g transform="rotate(-9 26 76)">
-        <rect x="15" y="63" width="22" height="27" rx="2" fill="#F4F1EA" stroke={accentColor} strokeOpacity="0.55" strokeWidth="1.6" />
-        <rect x="22" y="60" width="8" height="5" rx="1.5" fill={accentColor} fillOpacity="0.85" />
+        <rect x="15" y="63" width="22" height="27" rx="2" fill="#F4F1EA" stroke={accentColor || '#9AA1AB'} strokeOpacity="0.55" strokeWidth="1.6" />
+        <rect x="22" y="60" width="8" height="5" rx="1.5" fill={accentColor || '#9AA1AB'} fillOpacity="0.85" />
         <line x1="19" y1="71" x2="33" y2="71" stroke="#C2C7CF" strokeWidth="1.4" />
         <line x1="19" y1="76" x2="33" y2="76" stroke="#C2C7CF" strokeWidth="1.4" />
         <line x1="19" y1="81" x2="29" y2="81" stroke="#C2C7CF" strokeWidth="1.4" />

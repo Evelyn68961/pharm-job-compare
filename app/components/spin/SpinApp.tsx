@@ -1,14 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import type { Job } from '../../lib/types';
 import { buildWheelCandidates, pickWeightedSample, type QuizAnswers } from '../../lib/quiz';
+import { findFjuhJob, resolveAlternatives } from '../../lib/resolveAlternatives';
 import { MBTIQuiz } from './MBTIQuiz';
 import { PillboxMaze } from './PillboxMaze';
 import { MysteryBox } from './MysteryBox';
 import { ResultCard } from './ResultCard';
+import { AlternativesView } from './AlternativesView';
 
-type Stage = 'intro' | 'quiz' | 'maze' | 'box' | 'result';
+type Stage = 'intro' | 'quiz' | 'maze' | 'box' | 'result' | 'alternatives';
 
 const POOL_SIZE = 30;
 const PILLBOX_CELLS = 14;
@@ -21,6 +23,13 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
   // Stable per-quiz: pick the 14 finalists once when answers commit, so the
   // grid doesn't reshuffle if the component re-renders.
   const [candidates, setCandidates] = useState<ReturnType<typeof pickWeightedSample>>([]);
+
+  const fjuhJob = useMemo(() => findFjuhJob(jobs), [jobs]);
+  const winner = winnerIndex !== null ? candidates[winnerIndex]?.job ?? null : null;
+  const alternatives = useMemo(
+    () => (winner ? resolveAlternatives(winner, jobs) : []),
+    [winner, jobs],
+  );
 
   const restart = () => {
     setStage('intro');
@@ -58,8 +67,21 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
         <MysteryBox job={candidates[winnerIndex].job} onOpen={() => setStage('result')} />
       )}
 
-      {stage === 'result' && winnerIndex !== null && candidates[winnerIndex] && (
-        <ResultCard job={candidates[winnerIndex].job} onRestart={restart} />
+      {stage === 'result' && winner && (
+        <ResultCard
+          job={winner}
+          onRestart={restart}
+          onContinue={() => setStage('alternatives')}
+        />
+      )}
+
+      {stage === 'alternatives' && winner && (
+        <AlternativesView
+          winner={winner}
+          alternatives={alternatives}
+          fjuhJob={fjuhJob}
+          onRestart={restart}
+        />
       )}
     </div>
   );

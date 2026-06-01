@@ -1,6 +1,48 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { fetchJobs, sortJobs } from './lib/notion';
 import { SpinApp } from './components/spin/SpinApp';
+
+type SearchParams = Promise<{ archetype?: string; hospital?: string; color?: string }>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const archetype = params.archetype?.slice(0, 20);
+  const hospital = params.hospital?.slice(0, 30);
+  const color = params.color;
+  if (!archetype && !hospital) return {};
+
+  const og = new URLSearchParams();
+  if (archetype) og.set('archetype', archetype);
+  if (hospital) og.set('hospital', hospital);
+  if (color) og.set('color', color);
+  const ogUrl = `/og?${og.toString()}`;
+
+  const headline = archetype && hospital
+    ? `我抽到 ${archetype}：${hospital}`
+    : archetype
+      ? `我抽到 ${archetype}`
+      : `我抽到 ${hospital}`;
+
+  return {
+    title: `${headline} · 藥師命運轉盤`,
+    openGraph: {
+      title: headline,
+      description: '你的命運醫院是哪間？',
+      images: [{ url: ogUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: headline,
+      description: '你的命運醫院是哪間？',
+      images: [ogUrl],
+    },
+  };
+}
 
 export default async function HomePage() {
   const result = await fetchJobs();

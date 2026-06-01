@@ -5,7 +5,7 @@
 // sparkle are composed on top by HospitalIcon — do not add them here.
 import type { ArchetypeComponentProps } from '../types';
 
-export function ZenPharmacist({ size, accentColor }: ArchetypeComponentProps) {
+export function ZenPharmacist({ size, accentColor, secondaryColor }: ArchetypeComponentProps) {
   return (
     <svg
       width={size}
@@ -23,11 +23,11 @@ export function ZenPharmacist({ size, accentColor }: ArchetypeComponentProps) {
 
       <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92" />
 
-      <rect x="18.5" y="70" width="11" height="4.5" rx="1.5" fill={accentColor || '#059669'} fillOpacity="0.85" />
+      <rect x="18.5" y="70" width="11" height="4.5" rx="1.5" fill={secondaryColor || '#059669'} fillOpacity="0.85" />
       <rect x="17.5" y="74" width="13" height="14" rx="2" fill="#FFFFFF" stroke="#C7CDD6" strokeWidth="1.6" />
-      <rect x="19" y="78" width="10" height="7" rx="1" fill={accentColor || '#D1FAE5'} fillOpacity="0.55" />
-      <rect x="23.2" y="79.5" width="1.6" height="4" fill={accentColor || '#059669'} fillOpacity="0.85" />
-      <rect x="21.8" y="80.7" width="4.4" height="1.6" fill={accentColor || '#059669'} fillOpacity="0.85" />
+      <rect x="19" y="78" width="10" height="7" rx="1" fill={secondaryColor || '#D1FAE5'} fillOpacity="0.55" />
+      <rect x="23.2" y="79.5" width="1.6" height="4" fill={secondaryColor || '#059669'} fillOpacity="0.85" />
+      <rect x="21.8" y="80.7" width="4.4" height="1.6" fill={secondaryColor || '#059669'} fillOpacity="0.85" />
       <circle cx="31" cy="80" r="3.6" fill="#F8D2AC" />
 
       <circle cx="50" cy="34" r="17" fill="#F8D2AC" />

@@ -11,6 +11,7 @@ export type ArchetypeKey =
 export type ArchetypeComponentProps = {
   size: number;
   accentColor?: string;
+  secondaryColor?: string;
 };
 
 export type HospitalIconProps = {

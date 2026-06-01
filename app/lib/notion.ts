@@ -78,6 +78,7 @@ function parseJob(page: NotionPage): Job {
     location: getText(p['地點']),
     phone: getPhone(p['電話']),
     brandColor: getText(p['識別色']),
+    secondaryColor: getText(p['輔助色']),
     salaryDisplay: getText(p['薪資顯示字串']),
     salaryTier: getSelect(p['薪資等級']) as SalaryTier | null,
     shiftDescription: getText(p['輪班說明']),

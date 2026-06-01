@@ -5,7 +5,7 @@
 // — do not add them here.
 import type { ArchetypeComponentProps } from '../types';
 
-export function IronArmPharmacist({ size, accentColor }: ArchetypeComponentProps) {
+export function IronArmPharmacist({ size, accentColor, secondaryColor }: ArchetypeComponentProps) {
   return (
     <svg
       width={size}
@@ -26,8 +26,8 @@ export function IronArmPharmacist({ size, accentColor }: ArchetypeComponentProps
 
       <rect x="17.8" y="76" width="8.4" height="4" rx="1.4" fill="#C0392B" stroke="#8E2A22" strokeWidth="1" />
       <rect x="17.3" y="79.5" width="9.4" height="2.2" rx="1" fill="#7F1D1D" />
-      <rect x="20.8" y="72.5" width="2.4" height="4" fill={accentColor || '#9A5E33'} fillOpacity="0.55" />
-      <circle cx="22" cy="71.5" r="2.6" fill={accentColor || '#8A5128'} fillOpacity="0.85" />
+      <rect x="20.8" y="72.5" width="2.4" height="4" fill={secondaryColor || '#9A5E33'} fillOpacity="0.55" />
+      <circle cx="22" cy="71.5" r="2.6" fill={secondaryColor || '#8A5128'} fillOpacity="0.85" />
       <circle cx="22" cy="69" r="3.4" fill="#F8D2AC" />
 
       <path d="M40 62.5 L44.5 64 V67.5 Q44.5 70.5 40 72 Q35.5 70.5 35.5 67.5 V64 Z" fill="#C8362F" stroke="#FBE3A1" strokeWidth="0.8" />

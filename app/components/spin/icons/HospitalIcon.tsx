@@ -27,6 +27,9 @@ export function HospitalIcon({ job, size = 96 }: HospitalIconProps) {
   const archetype = resolveArchetype(job);
   const Character = ARCHETYPE_COMPONENTS[archetype];
   const brandColor = safeBrandColor(job.brandColor) ?? FALLBACK_BRAND;
+  // 識別色 = primary (halo + badge + neckerchief); 輔助色 = secondary (accessory/prop).
+  // Falls back to the primary so single-color hospitals render unchanged.
+  const secondaryColor = safeBrandColor(job.secondaryColor) ?? brandColor;
   const showSparkle = job.salaryTier === '突出';
   const haloGradientId = `halo-${job.id}`;
 
@@ -38,7 +41,7 @@ export function HospitalIcon({ job, size = 96 }: HospitalIconProps) {
     >
       <ArchetypeHalo brandColor={brandColor} size={size} gradientId={haloGradientId} />
       <div className="absolute inset-0 flex items-center justify-center">
-        <Character size={Math.round(size * 0.86)} accentColor={brandColor} />
+        <Character size={Math.round(size * 0.86)} accentColor={brandColor} secondaryColor={secondaryColor} />
       </div>
       <HospitalBadge brandColor={brandColor} archetype={archetype} size={size} />
       {showSparkle && <SalarySparkle size={size} />}

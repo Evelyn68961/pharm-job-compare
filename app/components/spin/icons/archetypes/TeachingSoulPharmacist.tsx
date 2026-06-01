@@ -4,7 +4,7 @@
 // sparkle are composed on top by HospitalIcon — do not add them here.
 import type { ArchetypeComponentProps } from '../types';
 
-export function TeachingSoulPharmacist({ size, accentColor }: ArchetypeComponentProps) {
+export function TeachingSoulPharmacist({ size, accentColor, secondaryColor }: ArchetypeComponentProps) {
   return (
     <svg
       width={size}
@@ -25,8 +25,8 @@ export function TeachingSoulPharmacist({ size, accentColor }: ArchetypeComponent
       <path d="M30 74 Q23 74 25 67" stroke="#D7DCE3" strokeWidth="8" fill="none" strokeLinecap="round" />
       <path d="M30 74 Q23 74 25 67" stroke="#FFFFFF" strokeWidth="5.5" fill="none" strokeLinecap="round" />
       <path d="M23.5 50 L26 45.5 L28.5 50 Z" fill="#475569" />
-      <rect x="23" y="50" width="6" height="16" rx="2" fill={accentColor || '#2563EB'} fillOpacity="0.55" />
-      <rect x="22.6" y="59" width="6.8" height="4" rx="1.2" fill={accentColor || '#1E40AF'} fillOpacity="0.85" />
+      <rect x="23" y="50" width="6" height="16" rx="2" fill={secondaryColor || '#2563EB'} fillOpacity="0.55" />
+      <rect x="22.6" y="59" width="6.8" height="4" rx="1.2" fill={secondaryColor || '#1E40AF'} fillOpacity="0.85" />
       <circle cx="26" cy="65" r="4.2" fill="#F8D2AC" />
 
       <circle cx="50" cy="34" r="17" fill="#F8D2AC" />

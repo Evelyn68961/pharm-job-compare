@@ -4,7 +4,7 @@
 // HospitalIcon — do not add them here.
 import type { ArchetypeComponentProps } from '../types';
 
-export function AcademicAcePharmacist({ size, accentColor }: ArchetypeComponentProps) {
+export function AcademicAcePharmacist({ size, accentColor, secondaryColor }: ArchetypeComponentProps) {
   return (
     <svg
       width={size}
@@ -39,8 +39,8 @@ export function AcademicAcePharmacist({ size, accentColor }: ArchetypeComponentP
       <line x1="46" y1="46" x2="54" y2="46" stroke="#B06A4F" strokeWidth="1.8" strokeLinecap="round" />
 
       <g transform="rotate(-9 26 76)">
-        <rect x="15" y="63" width="22" height="27" rx="2" fill="#F4F1EA" stroke={accentColor || '#9AA1AB'} strokeOpacity="0.55" strokeWidth="1.6" />
-        <rect x="22" y="60" width="8" height="5" rx="1.5" fill={accentColor || '#9AA1AB'} fillOpacity="0.85" />
+        <rect x="15" y="63" width="22" height="27" rx="2" fill="#F4F1EA" stroke={secondaryColor || '#9AA1AB'} strokeOpacity="0.55" strokeWidth="1.6" />
+        <rect x="22" y="60" width="8" height="5" rx="1.5" fill={secondaryColor || '#9AA1AB'} fillOpacity="0.85" />
         <line x1="19" y1="71" x2="33" y2="71" stroke="#C2C7CF" strokeWidth="1.4" />
         <line x1="19" y1="76" x2="33" y2="76" stroke="#C2C7CF" strokeWidth="1.4" />
         <line x1="19" y1="81" x2="29" y2="81" stroke="#C2C7CF" strokeWidth="1.4" />

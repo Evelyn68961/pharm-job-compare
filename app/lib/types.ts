@@ -42,6 +42,7 @@ export type Job = {
   location: string | null;
   phone: string | null;
   brandColor: string | null;
+  secondaryColor: string | null;
   salaryDisplay: string | null;
   salaryTier: SalaryTier | null;
   shiftDescription: string | null;

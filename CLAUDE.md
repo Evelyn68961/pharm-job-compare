@@ -40,10 +40,10 @@ Built by **pharmacists at 輔大附醫 (FJUH)**, not students. This shapes voice
 - [README.md](README.md) — setup + tech stack
 - [plan/pharmacist-job-compare-plan-v4.md](plan/pharmacist-job-compare-plan-v4.md) — latest design rationale (v1–v3 also in [plan/](plan/) for history)
 - [app/lib/types.ts](app/lib/types.ts) — `Job` data model + tag / region / tier enums
-- [app/components/spin/icons/README.md](app/components/spin/icons/README.md) — per-hospital icon system + the Figma + OpenPeeps workflow for swapping in real character art
+- [hospital-icons-guide.md](hospital-icons-guide.md) — per-hospital icon system + the Figma + OpenPeeps workflow for swapping in real character art
 - [data/hospitals-reference.md](data/hospitals-reference.md) — Taiwan medical center curation reference (read-only aid)
 
 ## Active context (update as it changes)
 
-- **Hospital icons in v1 build-out.** `<HospitalIcon>` is wired into [ResultCard](app/components/spin/ResultCard.tsx) with 6 placeholder dashed-circle SVGs. Real character art (OpenPeeps in Figma) is the next manual step — full guide in [app/components/spin/icons/README.md](app/components/spin/icons/README.md). v1 surface is **ResultCard only** — don't expand icons to JobCard or PillboxMaze cells until user opts in.
+- **Hospital icons in v1 build-out.** `<HospitalIcon>` is wired into [ResultCard](app/components/spin/ResultCard.tsx) with 6 placeholder dashed-circle SVGs. Real character art (OpenPeeps in Figma) is the next manual step — full guide in [hospital-icons-guide.md](hospital-icons-guide.md). v1 surface is **ResultCard only** — don't expand icons to JobCard or PillboxMaze cells until user opts in.
 - Archetype lineup uses the naming convention **`{2-char}藥師`** for consistency: 北漂藥師 / 教魂藥師 / 夜貓藥師 / 佛系藥師 / 學霸藥師 / 鐵腕藥師. Preserve this pattern if proposing additions or renames.

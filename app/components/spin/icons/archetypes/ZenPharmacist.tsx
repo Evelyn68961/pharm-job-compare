@@ -36,15 +36,15 @@ export function ZenPharmacist({ size, accentColor }: ArchetypeComponentProps) {
 
       <path d="M34 34 Q34 17 50 16 Q66 17 66 34 Q61 25 53 25 Q56 21 49 21 Q42 22 40 27 Q37 28 34 34 Z" fill="#3A2A1C" />
 
-      <path d="M32 51.5 C30.5 49 27.5 49.5 29 52 C27.5 54.5 30.5 55 32 52.5 Z" fill={accentColor || '#059669'} fillOpacity="0.55" />
-      <path d="M32 51.5 C33.5 49 36.5 49.5 35 52 C36.5 54.5 33.5 55 32 52.5 Z" fill={accentColor || '#059669'} fillOpacity="0.55" />
-      <path d="M31.5 53 Q30 55 31 56.5" stroke={accentColor || '#059669'} strokeOpacity="0.55" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-      <path d="M32.5 53 Q34 55 33 56.5" stroke={accentColor || '#059669'} strokeOpacity="0.55" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+      <path d="M32 51.5 C30.5 49 27.5 49.5 29 52 C27.5 54.5 30.5 55 32 52.5 Z" fill={accentColor || '#059669'} fillOpacity="0.85" />
+      <path d="M32 51.5 C33.5 49 36.5 49.5 35 52 C36.5 54.5 33.5 55 32 52.5 Z" fill={accentColor || '#059669'} fillOpacity="0.85" />
+      <path d="M31.5 53 Q30 55 31 56.5" stroke={accentColor || '#059669'} strokeOpacity="0.85" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+      <path d="M32.5 53 Q34 55 33 56.5" stroke={accentColor || '#059669'} strokeOpacity="0.85" strokeWidth="0.8" fill="none" strokeLinecap="round" />
       <circle cx="32" cy="52" r="0.75" fill={accentColor || '#047857'} fillOpacity="0.85" />
-      <path d="M68 51.5 C66.5 49 63.5 49.5 65 52 C63.5 54.5 66.5 55 68 52.5 Z" fill={accentColor || '#059669'} fillOpacity="0.55" />
-      <path d="M68 51.5 C69.5 49 72.5 49.5 71 52 C72.5 54.5 69.5 55 68 52.5 Z" fill={accentColor || '#059669'} fillOpacity="0.55" />
-      <path d="M67.5 53 Q66 55 67 56.5" stroke={accentColor || '#059669'} strokeOpacity="0.55" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-      <path d="M68.5 53 Q70 55 69 56.5" stroke={accentColor || '#059669'} strokeOpacity="0.55" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+      <path d="M68 51.5 C66.5 49 63.5 49.5 65 52 C63.5 54.5 66.5 55 68 52.5 Z" fill={accentColor || '#059669'} fillOpacity="0.85" />
+      <path d="M68 51.5 C69.5 49 72.5 49.5 71 52 C72.5 54.5 69.5 55 68 52.5 Z" fill={accentColor || '#059669'} fillOpacity="0.85" />
+      <path d="M67.5 53 Q66 55 67 56.5" stroke={accentColor || '#059669'} strokeOpacity="0.85" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+      <path d="M68.5 53 Q70 55 69 56.5" stroke={accentColor || '#059669'} strokeOpacity="0.85" strokeWidth="0.8" fill="none" strokeLinecap="round" />
       <circle cx="68" cy="52" r="0.75" fill={accentColor || '#047857'} fillOpacity="0.85" />
 
       <path d="M39 31 Q43 29.8 47 31" fill="none" stroke="#3A2A1C" strokeWidth="1.5" strokeLinecap="round" />

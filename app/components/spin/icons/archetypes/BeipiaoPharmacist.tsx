@@ -34,7 +34,7 @@ export function BeipiaoPharmacist({ size, accentColor }: ArchetypeComponentProps
 
       <g transform="rotate(-6 25 80)">
         <rect x="14" y="72" width="24" height="18" rx="2.5" fill={accentColor || '#B5703B'} fillOpacity="0.55" stroke={accentColor || '#8A5128'} strokeOpacity="0.85" strokeWidth="1.6" />
-        <line x1="14" y1="80" x2="38" y2="80" stroke="#8A5128" strokeWidth="1.4" />
+        <line x1="14" y1="80" x2="38" y2="80" stroke={accentColor || '#8A5128'} strokeOpacity="0.85" strokeWidth="1.4" />
         <rect x="22" y="76" width="8" height="3" rx="1" fill={accentColor || '#D9A66B'} fillOpacity="0.85" />
         <path d="M22 72 Q22 67 26 67 L26 67 Q30 67 30 72" fill="none" stroke={accentColor || '#8A5128'} strokeOpacity="0.85" strokeWidth="1.8" />
       </g>

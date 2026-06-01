@@ -5,6 +5,7 @@ import type { ScoredJob } from '../../lib/quiz';
 import { pickWeightedIndex } from '../../lib/quiz';
 import { safeBrandColor } from '../../lib/styles';
 import { MAZE_EMBLEM_ARCHETYPES, MAZE_EMBLEM_VIEWBOX, MazeEmblem } from './MazeEmblem';
+import { type PillVariant, RollingPill, pickRandomPill } from './RollingPill';
 import type { ArchetypeKey } from './icons/types';
 
 const COLS = 7;
@@ -48,6 +49,7 @@ export function PillboxMaze({
   const [pillIndex, setPillIndex] = useState(0);
   const [rolling, setRolling] = useState(false);
   const [highlight, setHighlight] = useState<number | null>(null);
+  const [pillVariant, setPillVariant] = useState<PillVariant>(() => pickRandomPill());
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Pad / truncate to exactly TOTAL_CELLS slots so the grid always fills.
@@ -161,14 +163,13 @@ export function PillboxMaze({
                   </div>
                   {isPill && (
                     <div
-                      className="absolute inset-0 flex items-center justify-center text-3xl"
+                      className="absolute inset-0 flex items-center justify-center"
                       style={{
                         transition: 'transform 150ms ease',
-                        filter: 'drop-shadow(0 2px 3px rgba(0,0,0,0.2))',
+                        filter: 'drop-shadow(0 3px 5px rgba(0,0,0,0.35))',
                       }}
-                      aria-label="藥丸"
                     >
-                      💊
+                      <RollingPill variant={pillVariant} className="h-3/4 w-3/4" />
                     </div>
                   )}
                 </div>

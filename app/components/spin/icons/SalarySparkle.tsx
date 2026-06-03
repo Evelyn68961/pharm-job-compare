@@ -1,3 +1,6 @@
+// Gold ✨ in the icon's top-right corner. Despite the legacy name, this is the
+// visual cue for the 簽約金 (signing-bonus) tag — HospitalIcon renders it when
+// job.tags includes '簽約金', not for the salary tier. (Rename pending.)
 export function SalarySparkle({ size }: { size: number }) {
   return (
     <svg

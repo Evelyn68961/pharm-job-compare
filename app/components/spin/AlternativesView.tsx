@@ -52,7 +52,7 @@ export function AlternativesView({
 
       <FjuhSection fjuhJob={includeFjuhBelow ? fjuhJob : null} />
 
-      <div className="flex flex-col items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
         <button
           type="button"
           onClick={onBack}
@@ -67,63 +67,105 @@ export function AlternativesView({
         >
           🎲 再玩一次
         </button>
-        <a
-          href="/all"
-          className="text-xs text-gray-500 hover:text-gray-700 hover:underline"
-        >
-          進階：瀏覽所有醫院 →
-        </a>
       </div>
     </div>
   );
 }
 
-function AlternativeCard({ job, archetype }: { job: Job; archetype?: ArchetypeKey }) {
+function AlternativeCard({
+  job,
+  archetype,
+  layout = 'stack',
+}: {
+  job: Job;
+  archetype?: ArchetypeKey;
+  layout?: 'stack' | 'row';
+}) {
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
   const link = job.sourceUrl104;
 
-  return (
-    <article className="flex h-full flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
-      <div className="flex items-start gap-3">
-        <HospitalIcon job={job} size={72} archetype={archetype} />
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate text-base font-bold text-gray-900">{header}</h3>
-          {subtitle && <p className="truncate text-xs text-gray-500">{subtitle}</p>}
-          <div className="mt-1.5 flex flex-wrap gap-1">
-            {job.hospitalTier && (
-              <span
-                className={`rounded-full border px-1.5 py-0.5 text-[10px] font-medium ${HOSPITAL_TIER_BADGE[job.hospitalTier]}`}
-              >
-                {job.hospitalTier}
-              </span>
-            )}
-            {job.salaryTier === '突出' && (
-              <span
-                className={`rounded-full border px-1.5 py-0.5 text-[10px] font-medium ${TIER_BADGE[job.salaryTier]}`}
-              >
-                薪資突出
-              </span>
-            )}
-            {job.region && (
-              <span className="rounded-full border border-gray-200 bg-white px-1.5 py-0.5 text-[10px] text-gray-600">
-                {job.region}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-      {link ? (
-        <a
-          href={link}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-auto self-end text-xs font-medium text-blue-600 hover:underline"
+  const badges = (
+    <div className={`mt-1.5 flex flex-wrap gap-1 ${layout === 'stack' ? 'justify-center' : ''}`}>
+      {job.hospitalTier && (
+        <span
+          className={`rounded-full border px-1.5 py-0.5 text-[10px] font-medium ${HOSPITAL_TIER_BADGE[job.hospitalTier]}`}
         >
-          查看 104 職缺 →
-        </a>
-      ) : (
-        <span className="mt-auto self-end text-xs text-gray-400">尚無連結</span>
+          {job.hospitalTier}
+        </span>
       )}
+      {job.salaryTier === '突出' && (
+        <span
+          className={`rounded-full border px-1.5 py-0.5 text-[10px] font-medium ${TIER_BADGE[job.salaryTier]}`}
+        >
+          薪資突出
+        </span>
+      )}
+      {job.region && (
+        <span className="rounded-full border border-gray-200 bg-white px-1.5 py-0.5 text-[10px] text-gray-600">
+          {job.region}
+        </span>
+      )}
+      {job.tags.slice(0, 6).map((tag) => (
+        <span
+          key={tag}
+          className="rounded-full border border-gray-200 bg-gray-50 px-1.5 py-0.5 text-[10px] text-gray-700"
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
+  );
+
+  const linkEl = link ? (
+    <a
+      href={link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-xs font-medium text-blue-600 hover:underline"
+    >
+      查看 104 職缺 →
+    </a>
+  ) : (
+    <span className="text-xs text-gray-400">尚無連結</span>
+  );
+
+  // Wide row layout (full-width FJUH card): icon left, info in the middle, and a
+  // recruiting CTA pinned to the right edge so the card fills its width.
+  if (layout === 'row') {
+    return (
+      <article className="flex flex-col items-center gap-4 rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md sm:flex-row sm:gap-6">
+        <HospitalIcon job={job} size={112} archetype={archetype} />
+        <div className="min-w-0 flex-1 text-center sm:text-left">
+          <h3 className="text-lg font-bold text-gray-900">{header}</h3>
+          {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+          {badges}
+        </div>
+        {link ? (
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700"
+          >
+            查看徵才職缺 →
+          </a>
+        ) : (
+          <span className="shrink-0 text-xs text-gray-400">尚無連結</span>
+        )}
+      </article>
+    );
+  }
+
+  // Stacked layout (the 3 narrow grid cards): icon on top, info centered below.
+  return (
+    <article className="flex h-full flex-col items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 text-center shadow-sm transition-shadow hover:shadow-md">
+      <HospitalIcon job={job} size={112} archetype={archetype} />
+      <div className="w-full min-w-0">
+        <h3 className="truncate text-base font-bold text-gray-900">{header}</h3>
+        {subtitle && <p className="truncate text-xs text-gray-500">{subtitle}</p>}
+        {badges}
+      </div>
+      <div className="mt-auto self-end">{linkEl}</div>
     </article>
   );
 }
@@ -149,7 +191,8 @@ function FjuhSection({ fjuhJob }: { fjuhJob: Job | null }) {
       </div>
       {fjuhJob ? (
         // FJUH is a university teaching hospital — pin it to 教魂 (teaching).
-        <AlternativeCard job={fjuhJob} archetype="教魂藥師" />
+        // Wide row layout so the full-width card doesn't look empty.
+        <AlternativeCard job={fjuhJob} archetype="教魂藥師" layout="row" />
       ) : (
         <p className="text-center text-xs text-gray-500">
           目前 Notion 資料庫中尚未列入輔大附醫的職缺資料。

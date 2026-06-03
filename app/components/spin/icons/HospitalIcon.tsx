@@ -30,7 +30,7 @@ export function HospitalIcon({ job, size = 96, archetype: forced }: HospitalIcon
   // 識別色 = primary (halo + badge + neckerchief); 輔助色 = secondary (accessory/prop).
   // Falls back to the primary so single-color hospitals render unchanged.
   const secondaryColor = safeBrandColor(job.secondaryColor) ?? brandColor;
-  const showSparkle = job.salaryTier === '突出';
+  const showSparkle = job.tags.includes('簽約金');
   const haloGradientId = `halo-${job.id}`;
 
   return (

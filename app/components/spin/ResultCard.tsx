@@ -8,13 +8,16 @@ import {
 } from '../../lib/styles';
 import { HospitalIcon } from './icons/HospitalIcon';
 import { ShareButton } from './ShareButton';
+import type { ArchetypeKey } from './icons/types';
 
 export function ResultCard({
   job,
+  archetype,
   onRestart,
   onContinue,
 }: {
   job: Job;
+  archetype?: ArchetypeKey;
   onRestart: () => void;
   onContinue: () => void;
 }) {
@@ -25,10 +28,10 @@ export function ResultCard({
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm text-gray-500">你的命運醫院是</p>
-          <ShareButton job={job} />
+          <ShareButton job={job} archetype={archetype} />
         </div>
         <div className="mt-4 flex items-center gap-4">
-          <HospitalIcon job={job} size={96} />
+          <HospitalIcon job={job} size={96} archetype={archetype} />
           <div className="min-w-0 flex-1">
             <h2 className="text-2xl font-bold text-gray-900">{header}</h2>
             {subtitle && <p className="mt-0.5 text-sm text-gray-500">{subtitle}</p>}

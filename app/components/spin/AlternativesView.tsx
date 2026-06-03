@@ -7,17 +7,22 @@ import {
   hospitalDisplayName,
 } from '../../lib/styles';
 import { HospitalIcon } from './icons/HospitalIcon';
+import type { ArchetypeKey } from './icons/types';
 
 export function AlternativesView({
   winner,
   alternatives,
   fjuhJob,
+  idolRank,
   onRestart,
+  onBack,
 }: {
   winner: Job;
   alternatives: Job[];
   fjuhJob: Job | null;
+  idolRank?: ArchetypeKey[];
   onRestart: () => void;
+  onBack: () => void;
 }) {
   const winnerName = hospitalDisplayName(winner.hospitalName, winner.hospitalBriefName).header;
   const includeFjuhBelow = fjuhJob && fjuhJob.id !== winner.id;
@@ -36,9 +41,10 @@ export function AlternativesView({
         </p>
       ) : (
         <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          {alternatives.map((job) => (
+          {alternatives.map((job, i) => (
             <li key={job.id}>
-              <AlternativeCard job={job} />
+              {/* idol = the user's #2/#3/#4 ranked priority (result card uses #1) */}
+              <AlternativeCard job={job} archetype={idolRank?.[i + 1]} />
             </li>
           ))}
         </ul>
@@ -47,6 +53,13 @@ export function AlternativesView({
       <FjuhSection fjuhJob={includeFjuhBelow ? fjuhJob : null} />
 
       <div className="flex flex-col items-center gap-3 pt-2">
+        <button
+          type="button"
+          onClick={onBack}
+          className="rounded-full border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+        >
+          ← 回到結果
+        </button>
         <button
           type="button"
           onClick={onRestart}
@@ -65,14 +78,14 @@ export function AlternativesView({
   );
 }
 
-function AlternativeCard({ job }: { job: Job }) {
+function AlternativeCard({ job, archetype }: { job: Job; archetype?: ArchetypeKey }) {
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
   const link = job.sourceUrl104;
 
   return (
     <article className="flex h-full flex-col gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start gap-3">
-        <HospitalIcon job={job} size={56} />
+        <HospitalIcon job={job} size={72} archetype={archetype} />
         <div className="min-w-0 flex-1">
           <h3 className="truncate text-base font-bold text-gray-900">{header}</h3>
           {subtitle && <p className="truncate text-xs text-gray-500">{subtitle}</p>}
@@ -135,7 +148,8 @@ function FjuhSection({ fjuhJob }: { fjuhJob: Job | null }) {
         </p>
       </div>
       {fjuhJob ? (
-        <AlternativeCard job={fjuhJob} />
+        // FJUH is a university teaching hospital — pin it to 教魂 (teaching).
+        <AlternativeCard job={fjuhJob} archetype="教魂藥師" />
       ) : (
         <p className="text-center text-xs text-gray-500">
           目前 Notion 資料庫中尚未列入輔大附醫的職缺資料。

@@ -27,8 +27,8 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
   const fjuhJob = useMemo(() => findFjuhJob(jobs), [jobs]);
   const winner = winnerIndex !== null ? candidates[winnerIndex]?.job ?? null : null;
   const alternatives = useMemo(
-    () => (winner ? resolveAlternatives(winner, jobs) : []),
-    [winner, jobs],
+    () => (winner ? resolveAlternatives(winner, jobs, answers?.regions ?? []) : []),
+    [winner, jobs, answers],
   );
 
   const restart = () => {
@@ -70,6 +70,7 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
       {stage === 'result' && winner && (
         <ResultCard
           job={winner}
+          archetype={answers?.idolRank[0]}
           onRestart={restart}
           onContinue={() => setStage('alternatives')}
         />
@@ -80,7 +81,9 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
           winner={winner}
           alternatives={alternatives}
           fjuhJob={fjuhJob}
+          idolRank={answers?.idolRank}
           onRestart={restart}
+          onBack={() => setStage('result')}
         />
       )}
     </div>
@@ -92,7 +95,7 @@ function Intro({ onStart, totalHospitals }: { onStart: () => void; totalHospital
     <div className="mx-auto max-w-xl space-y-6 text-center">
       <h2 className="text-3xl font-bold text-gray-900">💊 找到你的命運醫院</h2>
       <p className="text-gray-600">
-        8 題 MBTI 測驗 → 為你篩出 14 家最適合的醫院 → 藥丸在藥盒裡滾來滾去 → 停在哪格，那家就是你的命運。
+        MBTI 測驗 + 排出你的優先順序 → 為你篩出 14 家最適合的醫院 → 藥丸在藥盒裡滾來滾去 → 停在哪格，那家就是你的命運。
         <br />
         目前資料庫共 <strong>{totalHospitals}</strong> 家醫院，涵蓋醫學中心與區域醫院。
       </p>

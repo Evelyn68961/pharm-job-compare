@@ -1,21 +1,31 @@
-import type {
-  HospitalTier,
-  Job,
-  PublicPrivate,
-  Region,
-  SalaryTier,
-  Tag,
+import {
+  REGIONS,
+  type HospitalTier,
+  type Job,
+  type PublicPrivate,
+  type Region,
+  type SalaryTier,
+  type Tag,
 } from './types';
+import type { ArchetypeKey } from '../components/spin/icons/types';
 
 export type QuizChoice = 'A' | 'B';
-export type QuizAnswers = QuizChoice[];
+
+// The user's full input from the spin quiz:
+// - choices: one A/B answer per QUIZ question (these pick the hospital)
+// - regions: 0+ regions the user is open to (multi-select)
+// - idolRank: the 6 idol themes in the user's order; idolRank[0] = rendered idol
+export type QuizAnswers = {
+  choices: QuizChoice[];
+  regions: Region[];
+  idolRank: ArchetypeKey[];
+};
 
 type Effect = {
   tags?: Tag[];
   hospitalTier?: HospitalTier;
   salaryTier?: SalaryTier;
   publicPrivate?: PublicPrivate;
-  regions?: Region[];
 };
 
 export type QuizQuestion = {
@@ -140,22 +150,24 @@ export const QUIZ: QuizQuestion[] = [
       },
     },
   },
-  {
-    id: 'region',
-    prompt: '想去哪個區域？',
-    options: {
-      A: {
-        label: '西部都會圈',
-        hint: '北北基、桃竹苗、中彰投',
-        effect: { regions: ['北北基', '桃竹苗', '中彰投'] },
-      },
-      B: {
-        label: '中南東部',
-        hint: '雲嘉南、高屏、宜花東',
-        effect: { regions: ['雲嘉南', '高屏', '宜花東'] },
-      },
-    },
-  },
+];
+
+// Region multi-select step. The user can pick any number of regions (or none).
+// 離島 is excluded — the database has no offshore-island hospitals.
+export const QUIZ_REGIONS: Region[] = REGIONS.filter((r) => r !== '離島');
+
+// Final ranking step: the user orders these 6 priorities. The top-ranked one
+// maps to the idol that renders on the result card. Worded as values, not as
+// the character art — the idol stays a surprise until the result.
+export type IdolPriority = { archetype: ArchetypeKey; label: string; hint: string };
+
+export const IDOL_PRIORITIES: IdolPriority[] = [
+  { archetype: '學霸藥師', label: '醫學中心練功', hint: '挑戰大院、學得多' },
+  { archetype: '教魂藥師', label: '跟著制度成長', hint: '教學、進修、認證' },
+  { archetype: '北漂藥師', label: '需要宿舍', hint: '離鄉工作、要住宿' },
+  { archetype: '鐵腕藥師', label: '公立穩定', hint: '部立、市立、榮民、國軍' },
+  { archetype: '夜貓藥師', label: '拼夜班津貼', hint: '輪班沒在怕、衝夜班費' },
+  { archetype: '佛系藥師', label: '工作生活平衡', hint: '下班好好過生活' },
 ];
 
 export type ScoredJob = { job: Job; weight: number };
@@ -165,13 +177,12 @@ const POINTS = {
   hospitalTier: 3,
   salaryTier: 3,
   publicPrivate: 2,
-  region: 2,
 };
 
 export function scoreJob(job: Job, answers: QuizAnswers): number {
   let score = 0;
   for (let i = 0; i < QUIZ.length; i++) {
-    const choice = answers[i];
+    const choice = answers.choices[i];
     if (!choice) continue;
     const effect = QUIZ[i].options[choice].effect;
     if (effect.tags) {
@@ -188,9 +199,6 @@ export function scoreJob(job: Job, answers: QuizAnswers): number {
     if (effect.publicPrivate && job.publicPrivate === effect.publicPrivate) {
       score += POINTS.publicPrivate;
     }
-    if (effect.regions && job.region && effect.regions.includes(job.region)) {
-      score += POINTS.region;
-    }
   }
   return score;
 }
@@ -198,7 +206,12 @@ export function scoreJob(job: Job, answers: QuizAnswers): number {
 // Hospitals always get baseline weight 1 so the wheel never has 0-weight slices.
 // Higher score → bigger slice → more likely to be picked.
 export function buildWheelCandidates(jobs: Job[], answers: QuizAnswers): ScoredJob[] {
-  const eligible = jobs.filter((j) => j.hospitalTier === '醫學中心' || j.hospitalTier === '區域醫院');
+  let eligible = jobs.filter((j) => j.hospitalTier === '醫學中心' || j.hospitalTier === '區域醫院');
+  // Region is a STRICT filter: if the user picked regions, only hospitals in
+  // those regions are eligible. (No regions picked = no region restriction.)
+  if (answers.regions.length > 0) {
+    eligible = eligible.filter((j) => j.region != null && answers.regions.includes(j.region));
+  }
   const scored = eligible.map((job) => ({ job, weight: 1 + scoreJob(job, answers) }));
   // Sort by weight descending so the highest matches sit on the wheel's right side.
   scored.sort((a, b) => b.weight - a.weight);

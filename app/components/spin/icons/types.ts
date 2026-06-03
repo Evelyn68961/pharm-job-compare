@@ -17,4 +17,7 @@ export type ArchetypeComponentProps = {
 export type HospitalIconProps = {
   job: Job;
   size?: number;
+  // Override the resolved archetype (e.g. the spin result renders the idol the
+  // user ranked #1, not the hospital's own trait). Falls back to resolveArchetype.
+  archetype?: ArchetypeKey;
 };

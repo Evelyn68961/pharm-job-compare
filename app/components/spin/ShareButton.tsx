@@ -4,11 +4,12 @@ import { useState } from 'react';
 import type { Job } from '../../lib/types';
 import { hospitalDisplayName, safeBrandColor } from '../../lib/styles';
 import { resolveArchetype } from './icons/resolveArchetype';
+import type { ArchetypeKey } from './icons/types';
 
-export function ShareButton({ job }: { job: Job }) {
+export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: ArchetypeKey }) {
   const [status, setStatus] = useState<'idle' | 'copied'>('idle');
 
-  const archetype = resolveArchetype(job);
+  const archetype = forced ?? resolveArchetype(job);
   const { header } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
   const brand = safeBrandColor(job.brandColor)?.slice(1);
 

@@ -1,11 +1,20 @@
-import type { Job } from './types';
+import type { Job, Region } from './types';
 import { resolveArchetype } from '../components/spin/icons/resolveArchetype';
 
 const MAX_ALTERNATIVES = 3;
 
-export function resolveAlternatives(winner: Job, allJobs: Job[]): Job[] {
+export function resolveAlternatives(
+  winner: Job,
+  allJobs: Job[],
+  regions: Region[] = [],
+): Job[] {
   const winnerArchetype = resolveArchetype(winner);
-  const others = allJobs.filter((j) => j.id !== winner.id);
+  let others = allJobs.filter((j) => j.id !== winner.id);
+  // Region is a strict filter: if the user picked regions, alternatives stay
+  // within them (matches the wheel). Fewer than 3 in-region = show fewer.
+  if (regions.length > 0) {
+    others = others.filter((j) => j.region != null && regions.includes(j.region));
+  }
 
   const sortBySalary = (a: Job, b: Job) =>
     (b.salaryTier === '突出' ? 1 : 0) - (a.salaryTier === '突出' ? 1 : 0);

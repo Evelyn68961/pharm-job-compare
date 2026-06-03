@@ -23,8 +23,8 @@ const ARCHETYPE_COMPONENTS: Record<ArchetypeKey, ComponentType<ArchetypeComponen
 
 const FALLBACK_BRAND = '#94a3b8';
 
-export function HospitalIcon({ job, size = 96 }: HospitalIconProps) {
-  const archetype = resolveArchetype(job);
+export function HospitalIcon({ job, size = 96, archetype: forced }: HospitalIconProps) {
+  const archetype = forced ?? resolveArchetype(job);
   const Character = ARCHETYPE_COMPONENTS[archetype];
   const brandColor = safeBrandColor(job.brandColor) ?? FALLBACK_BRAND;
   // 識別色 = primary (halo + badge + neckerchief); 輔助色 = secondary (accessory/prop).

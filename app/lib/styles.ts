@@ -102,6 +102,14 @@ export const TAG_STYLE: Record<Tag, { base: string; active: string }> = {
     base: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
     active: 'bg-purple-600 text-white border-purple-700 hover:bg-purple-700',
   },
+  進階制度: {
+    base: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
+    active: 'bg-purple-600 text-white border-purple-700 hover:bg-purple-700',
+  },
+  專科藥師訓練: {
+    base: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
+    active: 'bg-purple-600 text-white border-purple-700 hover:bg-purple-700',
+  },
   簽約金: {
     base: 'bg-green-50 text-green-800 border-green-200 hover:bg-green-100',
     active: 'bg-green-600 text-white border-green-700 hover:bg-green-700',

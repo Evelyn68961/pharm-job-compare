@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
 import { fetchJobs, sortJobs } from './lib/notion';
 import { SpinApp } from './components/spin/SpinApp';
@@ -49,14 +48,11 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
-      <header className="mb-8 flex items-baseline justify-between gap-4">
+      <header className="mb-8">
         <h1 className="text-2xl font-bold">
           <span className="text-gray-900">藥師</span>
           <span className="ml-1 text-blue-600">命運轉盤</span>
         </h1>
-        <Link href="/all" className="text-sm text-blue-600 hover:underline">
-          進階：瀏覽所有醫院 →
-        </Link>
       </header>
 
       {result.ok ? (

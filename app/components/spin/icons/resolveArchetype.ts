@@ -1,7 +1,7 @@
 import type { Job, Tag } from '../../../lib/types';
 import type { ArchetypeKey } from './types';
 
-const TEACHING_TAGS: Tag[] = ['重視教學', '全面藥事訓練', '外派進修機會'];
+const TEACHING_TAGS: Tag[] = ['專科藥師訓練', '進階制度', '全面藥事訓練', '外派進修機會'];
 const CHILL_TAGS: Tag[] = ['工作單純', '免/少輪班', '無大夜'];
 
 export const ARCHETYPE_PRIORITY: ReadonlyArray<{

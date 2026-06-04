@@ -45,11 +45,11 @@ export const QUIZ: QuizQuestion[] = [
       A: {
         label: '想跟著進階制度成長',
         hint: 'PGY 訓練、藥事認證、進階獎金',
-        effect: { tags: ['教學醫院', '重視教學', '全面藥事訓練'] },
+        effect: { tags: ['專科藥師訓練', '進階制度'] },
       },
       B: {
-        label: '想單純做事下班',
-        hint: '不愛訓練負擔，希望工作別太雜',
+        label: '想專注把份內工作做好',
+        hint: '工作單純穩定，準時下班',
         effect: { tags: ['工作單純'] },
       },
     },
@@ -66,7 +66,7 @@ export const QUIZ: QuizQuestion[] = [
       B: {
         label: '看整體 package',
         hint: '薪水合理就好，重視其他福利',
-        effect: {},
+        effect: { tags: ['福利完善'] },
       },
     },
   },
@@ -108,12 +108,12 @@ export const QUIZ: QuizQuestion[] = [
     options: {
       A: {
         label: '公立穩定',
-        hint: '部立、市立、榮民、國軍',
+        hint: '保障足、年資制度完整',
         effect: { publicPrivate: '公立' },
       },
       B: {
         label: '私立彈性',
-        hint: '長庚、慈濟、義大、各財團法人',
+        hint: '薪資、升遷空間較有彈性',
         effect: { publicPrivate: '私立' },
       },
     },
@@ -123,14 +123,14 @@ export const QUIZ: QuizQuestion[] = [
     prompt: '進修發展的偏好？',
     options: {
       A: {
-        label: '想發論文、出國研討',
-        hint: '公假公費、研究獎勵',
-        effect: { tags: ['外派進修機會', '重視教學'] },
+        label: '想往學術、進修發展',
+        hint: '發論文、出國研討、公假公費',
+        effect: { tags: ['外派進修機會'] },
       },
       B: {
-        label: '工作生活平衡',
-        hint: '下班好好過生活',
-        effect: { tags: ['工作單純'] },
+        label: '把臨床功夫練扎實',
+        hint: '重視實務經驗、貼近病人',
+        effect: { tags: ['全面藥事訓練'] },
       },
     },
   },

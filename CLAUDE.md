@@ -4,10 +4,11 @@ Project context for Claude Code sessions. Read [README.md](README.md) first for 
 
 ## What this is
 
-**藥師命運轉盤** — a seasonal Traditional Chinese site helping Taiwanese pharmacists discover and compare hospital pharmacy jobs. Two surfaces:
+**藥師命運轉盤** — a seasonal Traditional Chinese site helping Taiwanese pharmacists discover hospital pharmacy jobs. One surface:
 
-- `/` — a playful MBTI quiz → pillbox-maze "fortune" reveal flow ([SpinApp.tsx](app/components/spin/SpinApp.tsx))
-- `/all` — a structured filter / compare tool ([JobsView.tsx](app/components/JobsView.tsx)) with three view modes (卡片 / 比較表 / 依欄位)
+- `/` — a playful MBTI quiz → pillbox-maze "fortune" reveal flow ([SpinApp.tsx](app/components/spin/SpinApp.tsx)), ending on a scrollable result + alternatives page.
+
+(There used to be a `/all` structured filter/compare tool — `JobsView` and friends — but it was removed per product decision. The Notion data layer it shared with the spin flow stays.)
 
 Built by **pharmacists at 輔大附醫 (FJUH)**, not students. This shapes voice + scope decisions below.
 
@@ -21,7 +22,7 @@ Built by **pharmacists at 輔大附醫 (FJUH)**, not students. This shapes voice
 
 - **Traditional Chinese only.** No English UI, no i18n.
 - **Never describe the site as a student project or 學生作品.** It's built by working pharmacists — voice should be practitioner insight, not classroom exercise. Current credit line is "輔大附醫藥劑部"; preserve that framing.
-- Tone is playful for the spin flow, neutral-informative for /all.
+- Tone is playful for the spin flow; neutral-informative for the result/alternatives detail.
 
 ## Data sourcing (governing rule)
 
@@ -30,11 +31,9 @@ Built by **pharmacists at 輔大附醫 (FJUH)**, not students. This shapes voice
 
 ## Architecture guardrails
 
-- **`/all` is one client island** ([JobsView.tsx](app/components/JobsView.tsx)). Other view files there are server-importable; don't add `'use client'` to them without strong reason.
 - **`/` (spin) is one client island** ([SpinApp.tsx](app/components/spin/SpinApp.tsx)) that orchestrates the `intro → quiz → maze → result` state machine. Sub-components (MBTIQuiz, PillboxMaze, ResultCard, AlternativesView) are also client components but driven by SpinApp state. The `result` stage is **one scrollable page**: SpinApp stacks `ResultCard` (the命運醫院 card) above `AlternativesView` (alternatives + 關於這個網站 + footer) inside a shared `max-w-2xl` wrapper — there is no separate `alternatives` stage or back/forward navigation between them. The rolling pill is always a two-tone capsule ([RollingPill](app/components/spin/RollingPill.tsx)); when it settles on the winning maze cell it cracks open in place (`opening` state — halves slide apart + powder burst + glow) and reveals the result directly. There is no separate gift-box step (the old `MysteryBox`/`box` stage was removed).
 - **One real `/api`-ish route: [/og](app/og/route.tsx)** — Edge-runtime dynamic OG image via `next/og`. Server Components otherwise talk to Notion directly via [app/lib/notion.ts](app/lib/notion.ts); no other server routes.
-- **Default order** is 薪資 tier `突出` first, then Notion insertion order. No global sort UI; per-field sort exists only inside the 依欄位 view.
-- **City ranking is geographic** (north → south, Taiwan-aware) via `rankCity` in [app/lib/styles.ts](app/lib/styles.ts), not alphabetic.
+- **Job ordering** is by hospital name (zh-Hant collation) via `sortJobs` in [app/lib/notion.ts](app/lib/notion.ts); the spin flow re-scores and weighted-samples downstream, so this ordering is mostly a stable baseline.
 
 ## Where to look
 

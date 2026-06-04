@@ -14,22 +14,18 @@ export const REGIONS: Region[] = [
   '離島',
 ];
 
-export const HOSPITAL_TIERS: HospitalTier[] = ['醫學中心', '區域醫院', '地區醫院', '其他'];
-
-export const FILTERABLE_HOSPITAL_TIERS: HospitalTier[] = ['醫學中心', '區域醫院'];
-
 export type Tag =
   | '工作單純'
   | '免/少輪班'
   | '無大夜'
   | '夜班津貼優渥'
-  | '醫學中心級'
-  | '教學醫院'
-  | '重視教學'
+  | '專科藥師訓練'
+  | '進階制度'
   | '全面藥事訓練'
   | '外派進修機會'
   | '簽約金'
-  | '提供宿舍';
+  | '提供宿舍'
+  | '福利完善';
 
 export type Job = {
   id: string;

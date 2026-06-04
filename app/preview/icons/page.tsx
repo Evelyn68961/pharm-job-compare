@@ -63,7 +63,7 @@ const ROWS: Row[] = [
       hospitalName: '林口長庚紀念醫院',
       hospitalBriefName: '林口長庚',
       brandColor: '#16a34a',
-      tags: ['教學醫院', '重視教學'],
+      tags: ['專科藥師訓練', '進階制度'],
     }),
   },
   {

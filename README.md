@@ -1,8 +1,9 @@
 # pharm-job-compare
 
-A small seasonal website for job-hunting pharmacists to browse and compare
-hospital pharmacy positions side by side — filtered by salary tier, location,
-and curated feature tags (e.g. `免/少輪班`, `提供宿舍`).
+A small seasonal website for job-hunting pharmacists: a playful MBTI quiz that
+draws your "fortune" hospital out of a pillbox maze, then shows that job plus a
+few similar alternatives. Job data (salary tier, location, curated feature tags
+like `免/少輪班`, `提供宿舍`) is curated in Notion.
 
 Full design rationale and decision history:
 [`plan/pharmacist-job-compare-plan-v3.md`](plan/pharmacist-job-compare-plan-v3.md).
@@ -54,27 +55,28 @@ npm run typecheck  # TypeScript validation, no emit
 ## Layout
 
 - `app/page.tsx` — Server Component, fetches Notion with `revalidate: 600`.
-- `app/components/JobsView.tsx` — the single `"use client"` island; holds
-  filter state and view mode (`卡片 / 比較表 / 依欄位`).
-- `app/components/{JobCard,ComparisonTable,FieldCompareView,TagButton}.tsx` —
-  the three view implementations + shared tag pill.
-- `app/lib/{notion,styles,types}.ts` — Notion fetch + parse, tag/tier styles
-  and city north-to-south ranking, type definitions.
-- `plan/` — v1–v3 planning docs (read in order for full rationale).
+- `app/components/spin/SpinApp.tsx` — the single `"use client"` island; the
+  `intro → quiz → maze → result` state machine.
+- `app/components/spin/` — quiz, pillbox maze, rolling capsule, result card,
+  alternatives, hospital icons (6 chibi archetypes).
+- `app/og/route.tsx` — Edge-runtime dynamic Open Graph image.
+- `app/lib/{notion,styles,types,quiz}.ts` — Notion fetch + parse, tag/tier
+  styles, type definitions, and the quiz scoring/weighting logic.
+- `plan/` — v1–v4 planning docs (read in order for full rationale).
 - `data/hospitals-reference.md` — Taiwan medical center reference list
   (curation aid, not used at runtime).
 
 ## Architectural notes
 
-- **One client island only** (`JobsView`). All other components are
+- **One client island only** (`SpinApp`). All other components are
   server-importable; they get pulled into the client tree as children of
-  `JobsView`. Matches plan v3 §6 "framework scope floor".
-- **No `/api/*` route**. The Server Component talks to Notion directly.
-- **Default order:** 薪資 tier `突出` first, then Notion insertion order within
-  tier. No global sort UI. Per-field sort exists only inside the `依欄位` view
-  (see plan v3 §10).
-- **City ranking is geographic** (north → south, Taiwan-aware), not
-  alphabetic. See `rankCity` in `app/lib/styles.ts`.
+  `SpinApp`. Matches plan §6 "framework scope floor".
+- **No `/api/*` route** other than the `/og` image. The Server Component talks
+  to Notion directly.
+- **Job ordering:** by hospital name (zh-Hant collation) via `sortJobs`; the
+  spin flow re-scores and weighted-samples downstream.
+- A structured filter/compare tool used to live at `/all` (`JobsView` + card /
+  table / field views) but was removed; the shared Notion data layer remains.
 
 ## Deployment
 

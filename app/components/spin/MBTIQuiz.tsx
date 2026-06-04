@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import {
-  IDOL_PRIORITIES,
   QUIZ,
   QUIZ_REGIONS,
+  chosenRankItems,
   type QuizAnswers,
   type QuizChoice,
 } from '../../lib/quiz';
@@ -22,7 +22,10 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
   const [step, setStep] = useState(0);
   const [choices, setChoices] = useState<QuizChoice[]>([]);
   const [regions, setRegions] = useState<Region[]>([]);
-  const [idolRank, setIdolRank] = useState<ArchetypeKey[]>([]);
+  // The final step ranks the answers the user actually clicked (by question id,
+  // in tap order). Mapped to idol archetypes on finish.
+  const [rankOrder, setRankOrder] = useState<string[]>([]);
+  const rankItems = chosenRankItems(choices);
 
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
 
@@ -39,11 +42,11 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
     );
   };
 
-  const tapIdol = (archetype: ArchetypeKey) => {
+  const tapRank = (id: string) => {
     // Tap to add (appends to the ranking); tap again to remove. Removing a
     // middle item renumbers the rest automatically (rank = indexOf).
-    setIdolRank((prev) =>
-      prev.includes(archetype) ? prev.filter((a) => a !== archetype) : [...prev, archetype],
+    setRankOrder((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   };
 
@@ -52,7 +55,20 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
     setStep(step - 1);
   };
 
-  const finish = () => onComplete({ choices, regions, idolRank });
+  const finish = () => {
+    // Map ranked answers to idol archetypes, drop answers with no idol, dedupe.
+    // idolRank[0] (top idol-bearing pick) is the idol on the result card.
+    const idolRank: ArchetypeKey[] = [];
+    const seen = new Set<ArchetypeKey>();
+    for (const id of rankOrder) {
+      const a = rankItems.find((it) => it.id === id)?.archetype;
+      if (a && !seen.has(a)) {
+        seen.add(a);
+        idolRank.push(a);
+      }
+    }
+    onComplete({ choices, regions, idolRank });
+  };
 
   return (
     <div className="mx-auto max-w-xl">
@@ -132,17 +148,17 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
         <>
           <h2 className="mb-2 text-2xl font-bold text-gray-900">最後，排出你的優先順序</h2>
           <p className="mb-6 text-sm text-gray-500">
-            依在意程度點選（第一個點的最重要）。排完 6 項才能完成。
+            這些是你剛剛的選擇，依在意程度點選（第一個點的最重要）。排完 {rankItems.length} 項才能完成。
           </p>
           <div className="space-y-3">
-            {IDOL_PRIORITIES.map((priority) => {
-              const rank = idolRank.indexOf(priority.archetype);
+            {rankItems.map((item) => {
+              const rank = rankOrder.indexOf(item.id);
               const ranked = rank >= 0;
               return (
                 <button
-                  key={priority.archetype}
+                  key={item.id}
                   type="button"
-                  onClick={() => tapIdol(priority.archetype)}
+                  onClick={() => tapRank(item.id)}
                   className={`flex w-full items-center gap-4 rounded-xl border-2 px-5 py-4 text-left transition-all ${
                     ranked
                       ? 'border-blue-500 bg-blue-50'
@@ -157,8 +173,8 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
                     {ranked ? rank + 1 : '·'}
                   </span>
                   <span className="min-w-0">
-                    <span className="block text-lg font-semibold text-gray-900">{priority.label}</span>
-                    <span className="block text-sm text-gray-500">{priority.hint}</span>
+                    <span className="block text-lg font-semibold text-gray-900">{item.label}</span>
+                    <span className="block text-sm text-gray-500">{item.hint}</span>
                   </span>
                 </button>
               );
@@ -167,8 +183,8 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
           <div className="mt-6 flex items-center justify-between">
             <button
               type="button"
-              onClick={() => setIdolRank([])}
-              disabled={idolRank.length === 0}
+              onClick={() => setRankOrder([])}
+              disabled={rankOrder.length === 0}
               className="text-sm text-gray-500 hover:underline disabled:opacity-40"
             >
               重設排序
@@ -176,7 +192,7 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
             <button
               type="button"
               onClick={finish}
-              disabled={idolRank.length < IDOL_PRIORITIES.length}
+              disabled={rankOrder.length < rankItems.length}
               className="rounded-full bg-blue-600 px-8 py-3 text-base font-semibold text-white shadow-md transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               看結果 →

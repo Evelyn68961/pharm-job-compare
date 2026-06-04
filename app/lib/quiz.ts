@@ -157,19 +157,29 @@ export const QUIZ: QuizQuestion[] = [
 // 離島 is excluded — the database has no offshore-island hospitals.
 export const QUIZ_REGIONS: Region[] = REGIONS.filter((r) => r !== '離島');
 
-// Final ranking step: the user orders these 6 priorities. The top-ranked one
-// maps to the idol that renders on the result card. Worded as values, not as
-// the character art — the idol stays a surprise until the result.
-export type IdolPriority = { archetype: ArchetypeKey; label: string; hint: string };
+// Final step: the user ranks the answers they actually picked. The idol is
+// decided by the QUESTION (the topic), not by which option (A/B) was chosen.
+// Each question maps to one idol; 薪資 (salary) has none. rank[0]'s idol (the
+// top idol-bearing pick) is the character rendered on the result card.
+const QUESTION_IDOL: Record<string, ArchetypeKey> = {
+  career: '佛系藥師', // 職涯
+  shift: '夜貓藥師', // 輪班
+  tier: '學霸藥師', // 等級
+  sector: '鐵腕藥師', // 公私
+  growth: '教魂藥師', // 進修
+  dorm: '北漂藥師', // 住宿
+  // salary: no idol
+};
 
-export const IDOL_PRIORITIES: IdolPriority[] = [
-  { archetype: '學霸藥師', label: '醫學中心練功', hint: '挑戰大院、學得多' },
-  { archetype: '教魂藥師', label: '跟著制度成長', hint: '教學、進修、認證' },
-  { archetype: '北漂藥師', label: '需要宿舍', hint: '離鄉工作、要住宿' },
-  { archetype: '鐵腕藥師', label: '公立穩定', hint: '部立、市立、榮民、國軍' },
-  { archetype: '夜貓藥師', label: '拼夜班津貼', hint: '輪班沒在怕、衝夜班費' },
-  { archetype: '佛系藥師', label: '工作生活平衡', hint: '下班好好過生活' },
-];
+export type RankItem = { id: string; label: string; hint: string; archetype?: ArchetypeKey };
+
+export function chosenRankItems(choices: QuizChoice[]): RankItem[] {
+  return QUIZ.map((q, i) => {
+    const choice = choices[i] ?? 'A';
+    const opt = q.options[choice];
+    return { id: q.id, label: opt.label, hint: opt.hint, archetype: QUESTION_IDOL[q.id] };
+  });
+}
 
 export type ScoredJob = { job: Job; weight: number };
 

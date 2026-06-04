@@ -13,19 +13,14 @@ import type { ArchetypeKey } from './icons/types';
 export function ResultCard({
   job,
   archetype,
-  onRestart,
-  onContinue,
 }: {
   job: Job;
   archetype?: ArchetypeKey;
-  onRestart: () => void;
-  onContinue: () => void;
 }) {
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
 
   return (
-    <div className="mx-auto max-w-xl space-y-6">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm text-gray-500">你的命運醫院是</p>
           <ShareButton job={job} archetype={archetype} />
@@ -84,43 +79,18 @@ export function ResultCard({
           </div>
         )}
 
-        <div className="mt-6 flex flex-col gap-2 border-t border-gray-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-          {job.sourceUrl104 ? (
+        {job.sourceUrl104 && (
+          <div className="mt-6 border-t border-gray-100 pt-4">
             <a
               href={job.sourceUrl104}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-md bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-blue-700 sm:order-2"
+              className="inline-block rounded-md bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-blue-700"
             >
               查看 104 職缺 →
             </a>
-          ) : (
-            <span className="sm:order-2" />
-          )}
-          <button
-            type="button"
-            onClick={onContinue}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 sm:order-1"
-          >
-            看其他適合的醫院 →
-          </button>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-amber-100 bg-amber-50 p-4 text-xs text-amber-900">
-        本網站由 <strong>輔大附醫藥劑部</strong> 整理，僅供參考。職缺資訊以
-        104 與醫院官網實際公告為準。
-      </div>
-
-      <div className="text-center">
-        <button
-          type="button"
-          onClick={onRestart}
-          className="text-xs text-gray-500 hover:text-gray-700 hover:underline"
-        >
-          ← 再玩一次
-        </button>
-      </div>
+          </div>
+        )}
     </div>
   );
 }

@@ -36,3 +36,14 @@
     opacity: 1;
   }
 }
+
+/* Idle bob for the landing-page hero cast of chibi pharmacists. */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}

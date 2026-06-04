@@ -15,24 +15,20 @@ export function AlternativesView({
   fjuhJob,
   idolRank,
   onRestart,
-  onBack,
 }: {
   winner: Job;
   alternatives: Job[];
   fjuhJob: Job | null;
   idolRank?: ArchetypeKey[];
   onRestart: () => void;
-  onBack: () => void;
 }) {
-  const winnerName = hospitalDisplayName(winner.hospitalName, winner.hospitalBriefName).header;
   const includeFjuhBelow = fjuhJob && fjuhJob.id !== winner.id;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-10">
-      <header className="space-y-2 text-center">
-        <p className="text-xs text-gray-500">你剛剛抽到 {winnerName}</p>
+    <div className="space-y-10">
+      <header className="space-y-2 border-t border-gray-100 pt-8 text-center">
         <h2 className="text-2xl font-bold text-gray-900">也很適合你的選擇</h2>
-        <p className="text-sm text-gray-600">這些醫院的氣氛跟你抽到的相近，也值得列入考慮</p>
+        <p className="text-sm text-gray-600">這些醫院跟你抽到的很相近，也值得列入考慮</p>
       </header>
 
       {alternatives.length === 0 ? (
@@ -52,14 +48,7 @@ export function AlternativesView({
 
       <FjuhSection fjuhJob={includeFjuhBelow ? fjuhJob : null} />
 
-      <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-        <button
-          type="button"
-          onClick={onBack}
-          className="rounded-full border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-        >
-          ← 回到結果
-        </button>
+      <div className="flex items-center justify-center border-t border-gray-100 pt-8">
         <button
           type="button"
           onClick={onRestart}
@@ -178,15 +167,11 @@ function FjuhSection({ fjuhJob }: { fjuhJob: Job | null }) {
       </header>
       <div className="rounded-2xl border border-amber-100 bg-amber-50 p-5 text-sm leading-relaxed text-amber-900 sm:p-6">
         <p>
-          這個網站是<strong>輔大附醫藥劑部</strong>幾位藥師整理的。
+          這個網站由<strong>輔大附醫藥劑部</strong>整理，把各家醫院的薪資、班別、宿舍等資訊
+          收在一起，方便正在找工作的藥師一次比較。
         </p>
         <p className="mt-3">
-          當年我們自己在找工作時，沒有一個地方能一次看完所有醫院的薪資、班別、宿舍跟氣氛，
-          所以就動手做了這個。
-        </p>
-        <p className="mt-3">
-          如果剛才轉到的氣氛跟你想要的工作環境很搭——順帶一提，輔大附醫也在徵藥師。
-          這裡有更多資訊。
+          如果剛剛抽到的醫院正合你意——偷偷說，輔大附醫也在徵藥師，歡迎往下看看 ↓
         </p>
       </div>
       {fjuhJob ? (

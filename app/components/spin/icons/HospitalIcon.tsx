@@ -23,6 +23,31 @@ const ARCHETYPE_COMPONENTS: Record<ArchetypeKey, ComponentType<ArchetypeComponen
 
 const FALLBACK_BRAND = '#94a3b8';
 
+// Standalone chibi (character + halo, no hospital badge/sparkle). Used by the
+// landing-page hero cast, where there's no Job to resolve — just an archetype
+// and colours to paint it with.
+export function ArchetypeAvatar({
+  archetype,
+  color,
+  secondaryColor,
+  size = 72,
+}: {
+  archetype: ArchetypeKey;
+  color: string;
+  secondaryColor?: string;
+  size?: number;
+}) {
+  const Character = ARCHETYPE_COMPONENTS[archetype];
+  return (
+    <div className="relative flex-shrink-0 drop-shadow-md" style={{ width: size, height: size }}>
+      <ArchetypeHalo brandColor={color} size={size} gradientId={`halo-cast-${archetype}`} />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Character size={Math.round(size * 0.86)} accentColor={color} secondaryColor={secondaryColor ?? color} />
+      </div>
+    </div>
+  );
+}
+
 export function HospitalIcon({ job, size = 96, archetype: forced }: HospitalIconProps) {
   const archetype = forced ?? resolveArchetype(job);
   const Character = ARCHETYPE_COMPONENTS[archetype];

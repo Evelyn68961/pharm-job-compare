@@ -8,6 +8,7 @@ import type { ArchetypeComponentProps, ArchetypeKey, HospitalIconProps } from '.
 import { AcademicAcePharmacist } from './archetypes/AcademicAcePharmacist';
 import { BeipiaoPharmacist } from './archetypes/BeipiaoPharmacist';
 import { IronArmPharmacist } from './archetypes/IronArmPharmacist';
+import { JinniuPharmacist } from './archetypes/JinniuPharmacist';
 import { NightOwlPharmacist } from './archetypes/NightOwlPharmacist';
 import { TeachingSoulPharmacist } from './archetypes/TeachingSoulPharmacist';
 import { ZenPharmacist } from './archetypes/ZenPharmacist';
@@ -19,6 +20,7 @@ const ARCHETYPE_COMPONENTS: Record<ArchetypeKey, ComponentType<ArchetypeComponen
   佛系藥師: ZenPharmacist,
   學霸藥師: AcademicAcePharmacist,
   鐵腕藥師: IronArmPharmacist,
+  金牛藥師: JinniuPharmacist,
 };
 
 const FALLBACK_BRAND = '#94a3b8';

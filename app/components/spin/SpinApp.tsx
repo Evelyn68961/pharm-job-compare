@@ -26,7 +26,7 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
 
   const winner = winnerIndex !== null ? candidates[winnerIndex]?.job ?? null : null;
   const alternatives = useMemo(
-    () => (winner ? resolveAlternatives(winner, jobs, answers?.regions ?? []) : []),
+    () => (winner && answers ? resolveAlternatives(winner, jobs, answers) : []),
     [winner, jobs, answers],
   );
 

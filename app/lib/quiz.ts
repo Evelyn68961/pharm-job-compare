@@ -8,7 +8,7 @@ import {
   type Tag,
 } from './types';
 import type { ArchetypeKey } from '../components/spin/icons/types';
-import { FJUH_WIN_MULT, isFjuh } from './resolveAlternatives';
+import { FJUH_WIN_MULT, isFjuh } from './fjuh';
 
 export type QuizChoice = 'A' | 'B';
 
@@ -159,8 +159,8 @@ export const QUIZ_REGIONS: Region[] = REGIONS.filter((r) => r !== '離島');
 
 // Final step: the user ranks the answers they actually picked. The idol is
 // decided by the QUESTION (the topic), not by which option (A/B) was chosen.
-// Each question maps to one idol; 薪資 (salary) has none. rank[0]'s idol (the
-// top idol-bearing pick) is the character rendered on the result card.
+// Each of the 7 questions maps to one idol. rank[0]'s idol (the top-ranked
+// pick) is the character rendered on the result card.
 const QUESTION_IDOL: Record<string, ArchetypeKey> = {
   career: '佛系藥師', // 職涯
   shift: '夜貓藥師', // 輪班
@@ -168,7 +168,7 @@ const QUESTION_IDOL: Record<string, ArchetypeKey> = {
   sector: '鐵腕藥師', // 公私
   growth: '教魂藥師', // 進修
   dorm: '北漂藥師', // 住宿
-  // salary: no idol
+  salary: '金牛藥師', // 薪資
 };
 
 export type RankItem = { id: string; label: string; hint: string; archetype?: ArchetypeKey };

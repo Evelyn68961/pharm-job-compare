@@ -65,6 +65,13 @@ function BadgeEmblem({
           <path d="M78 79.2 L78.9 81.1 L81 81.3 L79.4 82.7 L79.9 84.8 L78 83.7 L76.1 84.8 L76.6 82.7 L75 81.3 L77.1 81.1 Z" fill="white" />
         </>
       );
+    case '金牛藥師': // ancient coin (round, square hole) = wealth / salary
+      return (
+        <>
+          <circle cx="78" cy="82" r="6.6" fill="none" stroke="white" strokeWidth="2" />
+          <rect x="75.4" y="79.4" width="5.2" height="5.2" rx="0.6" fill="none" stroke="white" strokeWidth="1.6" />
+        </>
+      );
     default:
       return null;
   }

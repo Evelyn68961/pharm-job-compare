@@ -6,7 +6,8 @@ export type ArchetypeKey =
   | '夜貓藥師'
   | '佛系藥師'
   | '學霸藥師'
-  | '鐵腕藥師';
+  | '鐵腕藥師'
+  | '金牛藥師';
 
 export type ArchetypeComponentProps = {
   size: number;

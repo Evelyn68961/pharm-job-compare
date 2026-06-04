@@ -16,6 +16,7 @@ export const MAZE_EMBLEM_ARCHETYPES: ArchetypeKey[] = [
   '佛系藥師',
   '學霸藥師',
   '鐵腕藥師',
+  '金牛藥師',
 ];
 
 export function MazeEmblem({
@@ -80,6 +81,13 @@ export function MazeEmblem({
         <>
           <path d="M78 75 L85 77.2 V82 C85 86.3 78 89.3 78 89.3 C78 89.3 71 86.3 71 82 V77.2 Z" fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
           <path d="M78 79.2 L78.9 81.1 L81 81.3 L79.4 82.7 L79.9 84.8 L78 83.7 L76.1 84.8 L76.6 82.7 L75 81.3 L77.1 81.1 Z" fill={color} />
+        </>
+      );
+    case '金牛藥師': // ancient coin (round, square hole)
+      return (
+        <>
+          <circle cx="78" cy="82" r="6.6" fill="none" stroke={color} strokeWidth="2" />
+          <rect x="75.4" y="79.4" width="5.2" height="5.2" rx="0.6" fill="none" stroke={color} strokeWidth="1.6" />
         </>
       );
     default:

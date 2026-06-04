@@ -6,11 +6,10 @@ import { buildWheelCandidates, pickWeightedSample, type QuizAnswers } from '../.
 import { findFjuhJob, resolveAlternatives } from '../../lib/resolveAlternatives';
 import { MBTIQuiz } from './MBTIQuiz';
 import { PillboxMaze } from './PillboxMaze';
-import { MysteryBox } from './MysteryBox';
 import { ResultCard } from './ResultCard';
 import { AlternativesView } from './AlternativesView';
 
-type Stage = 'intro' | 'quiz' | 'maze' | 'box' | 'result' | 'alternatives';
+type Stage = 'intro' | 'quiz' | 'maze' | 'result' | 'alternatives';
 
 const POOL_SIZE = 30;
 const PILLBOX_CELLS = 14;
@@ -58,13 +57,9 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
           candidates={candidates}
           onResult={(idx) => {
             setWinnerIndex(idx);
-            setStage('box');
+            setStage('result');
           }}
         />
-      )}
-
-      {stage === 'box' && winnerIndex !== null && candidates[winnerIndex] && (
-        <MysteryBox job={candidates[winnerIndex].job} onOpen={() => setStage('result')} />
       )}
 
       {stage === 'result' && winner && (

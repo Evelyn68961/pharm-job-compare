@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Glow bloom behind the capsule when it cracks open at the centre. */
+@keyframes maze-glow {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The winning capsule lifting to the middle of the maze and growing before it
+   opens. Starts small (as if rising off its cell) and springs up to full size. */
+@keyframes capsule-rise {
+  from {
+    opacity: 0;
+    transform: scale(0.25) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Soft backdrop that fades in so the grid recedes behind the centred capsule. */
+@keyframes maze-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

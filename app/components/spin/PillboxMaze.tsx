@@ -49,6 +49,8 @@ export function PillboxMaze({
   const [pillIndex, setPillIndex] = useState(0);
   const [rolling, setRolling] = useState(false);
   const [highlight, setHighlight] = useState<number | null>(null);
+  const [centering, setCentering] = useState(false);
+  const [opening, setOpening] = useState(false);
   const [pillVariant, setPillVariant] = useState<PillVariant>(() => pickRandomPill());
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -66,6 +68,8 @@ export function PillboxMaze({
     if (rolling || cells.length === 0) return;
     setRolling(true);
     setHighlight(null);
+    setCentering(false);
+    setOpening(false);
 
     const winnerIdx = pickWeightedIndex(cells);
     const path = buildPath(pillIndex, winnerIdx, TOTAL_HOPS, cells.length);
@@ -82,14 +86,27 @@ export function PillboxMaze({
         timerRef.current = setTimeout(tick, delay);
       } else {
         setHighlight(winnerIdx);
+        // Settle on the winning cell → lift the capsule to the centre and grow
+        // it → crack it open there and reveal. No separate gift-box step.
         timerRef.current = setTimeout(() => {
-          setRolling(false);
-          onResult(winnerIdx);
-        }, 800);
+          setCentering(true);
+          timerRef.current = setTimeout(() => {
+            setOpening(true);
+            timerRef.current = setTimeout(() => {
+              setRolling(false);
+              onResult(winnerIdx);
+            }, 1100);
+          }, 560);
+        }, 350);
       }
     };
     tick();
   };
+
+  const winnerCell = highlight !== null ? cells[highlight] : undefined;
+  const winnerColor =
+    (winnerCell && safeBrandColor(winnerCell.job.brandColor)) ??
+    (highlight !== null ? FALLBACK_PALETTE[highlight % FALLBACK_PALETTE.length] : '#94a3b8');
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -161,7 +178,8 @@ export function PillboxMaze({
                       />
                     </svg>
                   </div>
-                  {isPill && (
+                  {/* In-cell capsule — hidden once it lifts off to the centre */}
+                  {isPill && !centering && (
                     <div
                       className="absolute inset-0 flex items-center justify-center"
                       style={{
@@ -177,6 +195,35 @@ export function PillboxMaze({
             }),
           ])}
         </div>
+
+        {/* Centred reveal — the winning capsule lifts to the middle, grows,
+            then cracks open. Overlays the whole grid. */}
+        {(centering || opening) && (
+          <div className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center">
+            {/* Backdrop so the grid recedes and the capsule reads clearly */}
+            <div
+              className="absolute inset-0 rounded-xl bg-white/70"
+              style={{ animation: 'maze-fade 350ms ease forwards' }}
+            />
+            {/* Glow bloom behind the capsule */}
+            <div
+              className="absolute h-44 w-44 rounded-full"
+              style={{
+                background: `radial-gradient(circle, ${winnerColor}99 0%, transparent 70%)`,
+                animation: 'maze-glow 600ms ease-out forwards',
+              }}
+            />
+            <div
+              className="relative"
+              style={{
+                animation: 'capsule-rise 500ms cubic-bezier(.34,1.56,.64,1) forwards',
+                filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.3))',
+              }}
+            >
+              <RollingPill variant={pillVariant} opening={opening} className="h-32 w-32" />
+            </div>
+          </div>
+        )}
       </div>
 
       <button
@@ -191,7 +238,7 @@ export function PillboxMaze({
       <p className="max-w-md text-center text-xs text-gray-500">
         共 {cells.length} 家為你量身篩選的醫院（MBTI top-30 加權抽 14）。
         <br />
-        藥丸停在哪格，就是你的命運醫院。
+        膠囊停在哪格就會打開，揭曉你的命運醫院。
       </p>
     </div>
   );

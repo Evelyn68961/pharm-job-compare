@@ -80,11 +80,12 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
 // follows the archetype priority order in resolveArchetype.ts.
 const HERO_CAST: { archetype: ArchetypeKey; color: string; secondary: string; arc: number }[] = [
   { archetype: '學霸藥師', color: '#6366f1', secondary: '#a5b4fc', arc: 10 },
-  { archetype: '教魂藥師', color: '#f59e0b', secondary: '#fbbf24', arc: 0 },
-  { archetype: '北漂藥師', color: '#3b82f6', secondary: '#93c5fd', arc: -6 },
+  { archetype: '教魂藥師', color: '#f59e0b', secondary: '#fbbf24', arc: 2 },
+  { archetype: '北漂藥師', color: '#3b82f6', secondary: '#93c5fd', arc: -4 },
   { archetype: '鐵腕藥師', color: '#ef4444', secondary: '#fca5a5', arc: -6 },
-  { archetype: '夜貓藥師', color: '#8b5cf6', secondary: '#c4b5fd', arc: 0 },
-  { archetype: '佛系藥師', color: '#10b981', secondary: '#6ee7b7', arc: 10 },
+  { archetype: '夜貓藥師', color: '#8b5cf6', secondary: '#c4b5fd', arc: -4 },
+  { archetype: '佛系藥師', color: '#10b981', secondary: '#6ee7b7', arc: 2 },
+  { archetype: '金牛藥師', color: '#ca8a04', secondary: '#fde047', arc: 10 },
 ];
 
 const FLOW_STEPS: { n: string; emoji: string; label: string }[] = [

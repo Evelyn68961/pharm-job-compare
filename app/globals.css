@@ -37,6 +37,15 @@
   }
 }
 
+/* Hide the scrollbar on the horizontal result swipe deck (still scrollable). */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Idle bob for the landing-page hero cast of chibi pharmacists. */
 @keyframes float {
   0%,

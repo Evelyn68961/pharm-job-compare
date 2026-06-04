@@ -8,6 +8,7 @@ import {
   type Tag,
 } from './types';
 import type { ArchetypeKey } from '../components/spin/icons/types';
+import { FJUH_WIN_MULT, isFjuh } from './resolveAlternatives';
 
 export type QuizChoice = 'A' | 'B';
 
@@ -212,7 +213,13 @@ export function buildWheelCandidates(jobs: Job[], answers: QuizAnswers): ScoredJ
   if (answers.regions.length > 0) {
     eligible = eligible.filter((j) => j.region != null && answers.regions.includes(j.region));
   }
-  const scored = eligible.map((job) => ({ job, weight: 1 + scoreJob(job, answers) }));
+  // FJUH gets an organic weight multiplier so it wins more often. This is
+  // region-gated for free: `eligible` is already region-filtered, so a
+  // non-eligible FJUH never reaches this map and never gets boosted.
+  const scored = eligible.map((job) => {
+    const base = 1 + scoreJob(job, answers);
+    return { job, weight: isFjuh(job) ? base * FJUH_WIN_MULT : base };
+  });
   // Sort by weight descending so the highest matches sit on the wheel's right side.
   scored.sort((a, b) => b.weight - a.weight);
   return scored;

@@ -3,11 +3,10 @@
 import { useMemo, useState } from 'react';
 import type { Job } from '../../lib/types';
 import { buildWheelCandidates, pickWeightedSample, type QuizAnswers } from '../../lib/quiz';
-import { findFjuhJob, resolveAlternatives } from '../../lib/resolveAlternatives';
+import { resolveAlternatives } from '../../lib/resolveAlternatives';
 import { MBTIQuiz } from './MBTIQuiz';
 import { PillboxMaze } from './PillboxMaze';
-import { ResultCard } from './ResultCard';
-import { AlternativesView } from './AlternativesView';
+import { ResultDeck } from './ResultDeck';
 import { ArchetypeAvatar } from './icons/HospitalIcon';
 import type { ArchetypeKey } from './icons/types';
 
@@ -25,7 +24,6 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
   // grid doesn't reshuffle if the component re-renders.
   const [candidates, setCandidates] = useState<ReturnType<typeof pickWeightedSample>>([]);
 
-  const fjuhJob = useMemo(() => findFjuhJob(jobs), [jobs]);
   const winner = winnerIndex !== null ? candidates[winnerIndex]?.job ?? null : null;
   const alternatives = useMemo(
     () => (winner ? resolveAlternatives(winner, jobs, answers?.regions ?? []) : []),
@@ -65,16 +63,12 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
       )}
 
       {stage === 'result' && winner && (
-        <div className="mx-auto max-w-2xl space-y-10">
-          <ResultCard job={winner} archetype={answers?.idolRank[0]} />
-          <AlternativesView
-            winner={winner}
-            alternatives={alternatives}
-            fjuhJob={fjuhJob}
-            idolRank={answers?.idolRank}
-            onRestart={restart}
-          />
-        </div>
+        <ResultDeck
+          winner={winner}
+          alternatives={alternatives}
+          idolRank={answers?.idolRank}
+          onRestart={restart}
+        />
       )}
     </div>
   );

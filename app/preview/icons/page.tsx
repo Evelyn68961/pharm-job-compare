@@ -25,8 +25,6 @@ function mockJob(overrides: Partial<Job> & Pick<Job, 'id' | 'hospitalName'>): Jo
     publicPrivate: null,
     region: null,
     city: null,
-    location: null,
-    phone: null,
     brandColor: '#2563eb',
     secondaryColor: null,
     salaryDisplay: null,

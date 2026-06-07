@@ -35,8 +35,6 @@ export type Job = {
   publicPrivate: PublicPrivate | null;
   region: Region | null;
   city: string | null;
-  location: string | null;
-  phone: string | null;
   brandColor: string | null;
   secondaryColor: string | null;
   salaryDisplay: string | null;

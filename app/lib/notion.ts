@@ -75,8 +75,6 @@ function parseJob(page: NotionPage): Job {
     publicPrivate: getSelect(p['公立/私立']) as PublicPrivate | null,
     region: getSelect(p['地區']) as Region | null,
     city: getText(p['縣市']),
-    location: getText(p['地點']),
-    phone: getPhone(p['電話']),
     brandColor: getText(p['識別色']),
     secondaryColor: getText(p['輔助色']),
     salaryDisplay: getText(p['薪資顯示字串']),
@@ -124,9 +122,4 @@ function getDate(prop: NotionProperty | undefined): string | null {
 function getUrl(prop: NotionProperty | undefined): string | null {
   const url = (prop as { url?: string | null } | undefined)?.url;
   return url ? url : null;
-}
-
-function getPhone(prop: NotionProperty | undefined): string | null {
-  const phone = (prop as { phone_number?: string | null } | undefined)?.phone_number;
-  return phone ? phone : null;
 }

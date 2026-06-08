@@ -22,6 +22,7 @@ export type Tag =
   | '專科藥師訓練'
   | '進階制度'
   | '全面藥事訓練'
+  | '臨床藥事服務'
   | '外派進修機會'
   | '簽約金'
   | '提供宿舍'
@@ -35,8 +36,6 @@ export type Job = {
   publicPrivate: PublicPrivate | null;
   region: Region | null;
   city: string | null;
-  location: string | null;
-  phone: string | null;
   brandColor: string | null;
   secondaryColor: string | null;
   salaryDisplay: string | null;

@@ -131,7 +131,7 @@ export const QUIZ: QuizQuestion[] = [
       B: {
         label: '把臨床功夫練扎實',
         hint: '重視實務經驗、貼近病人',
-        effect: { tags: ['全面藥事訓練'] },
+        effect: { tags: ['全面藥事訓練', '臨床藥事服務'] },
       },
     },
   },

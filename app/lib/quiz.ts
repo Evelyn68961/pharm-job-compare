@@ -217,7 +217,9 @@ export function scoreJob(job: Job, answers: QuizAnswers): number {
 // Hospitals always get baseline weight 1 so the wheel never has 0-weight slices.
 // Higher score → bigger slice → more likely to be picked.
 export function buildWheelCandidates(jobs: Job[], answers: QuizAnswers): ScoredJob[] {
-  let eligible = jobs.filter((j) => j.hospitalTier === '醫學中心' || j.hospitalTier === '區域醫院');
+  let eligible = jobs.filter(
+    (j) => j.isHiring && (j.hospitalTier === '醫學中心' || j.hospitalTier === '區域醫院'),
+  );
   // Region is a STRICT filter: if the user picked regions, only hospitals in
   // those regions are eligible. (No regions picked = no region restriction.)
   if (answers.regions.length > 0) {

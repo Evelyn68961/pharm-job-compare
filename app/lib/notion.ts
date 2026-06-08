@@ -86,6 +86,7 @@ function parseJob(page: NotionPage): Job {
     sourceUrl104: getUrl(p['104 原始連結']),
     source: getSelect(p['資料來源']) as DataSource | null,
     tags: getMultiSelect(p['特色標籤']) as Tag[],
+    isHiring: getCheckbox(p['招募中']),
   };
 }
 
@@ -122,4 +123,8 @@ function getDate(prop: NotionProperty | undefined): string | null {
 function getUrl(prop: NotionProperty | undefined): string | null {
   const url = (prop as { url?: string | null } | undefined)?.url;
   return url ? url : null;
+}
+
+function getCheckbox(prop: NotionProperty | undefined): boolean {
+  return (prop as { checkbox?: boolean } | undefined)?.checkbox ?? false;
 }

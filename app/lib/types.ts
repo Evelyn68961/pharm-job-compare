@@ -47,6 +47,9 @@ export type Job = {
   sourceUrl104: string | null;
   source: DataSource | null;
   tags: Tag[];
+  // Only hospitals with a current pharmacist opening are eligible for the spin
+  // wheel and recommendations (Notion 招募中 checkbox). Unchecked = excluded.
+  isHiring: boolean;
 };
 
 export function applyUrl(job: Job): string | null {

@@ -36,7 +36,6 @@ function mockJob(overrides: Partial<Job> & Pick<Job, 'id' | 'hospitalName'>): Jo
     sourceUrl104: null,
     source: null,
     tags: [] as Tag[],
-    isHiring: true,
     ...overrides,
   };
 }

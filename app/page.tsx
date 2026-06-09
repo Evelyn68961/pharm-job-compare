@@ -31,7 +31,9 @@ export async function generateMetadata({
 
   const og = new URLSearchParams({ archetype, hospital });
   if (colorHex) og.set('color', colorHex);
-  const ogUrl = `/og?${og.toString()}`;
+  // Use the portrait story image for the link-preview card too, so the shared
+  // image and the link card are the same (portrait) layout.
+  const ogUrl = `/og?${og.toString()}&format=story`;
 
   const headline = `我有機會成為${archetype}，命運醫院是${hospital}`;
 
@@ -40,7 +42,7 @@ export async function generateMetadata({
     openGraph: {
       title: headline,
       description: '你的命運醫院是哪間？',
-      images: [{ url: ogUrl, width: 1200, height: 630 }],
+      images: [{ url: ogUrl, width: 1080, height: 1920 }],
     },
     twitter: {
       card: 'summary_large_image',

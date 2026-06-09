@@ -18,6 +18,14 @@ const FALLBACK_PALETTE = [
 
 const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日'];
 
+// Playful "服用須知" disclaimer, laid out like a drug label: a short tag in the
+// left column, the note in the right. Tags are all 2 chars so the column aligns.
+const DISCLAIMER_ROWS: { tag: string; text: string }[] = [
+  { tag: '收錄', text: '主要收錄醫學中心與區域教學醫院，並非全台名冊。' },
+  { tag: '來源', text: '每筆都由藥師手動整理自 104 與官方網站，找得到才有，可能有缺漏或時間差。' },
+  { tag: '警語', text: '求職請以原始職缺公告為準，本品純屬參考與娛樂。' },
+];
+
 // Oval-ring geometry (a virtual coordinate box; everything is rendered as a
 // percentage of it so the whole organizer scales fluidly with its width).
 const BOX_W = 360;
@@ -123,7 +131,7 @@ export function PillboxMaze({
     (highlight !== null ? FALLBACK_PALETTE[highlight % FALLBACK_PALETTE.length] : '#94a3b8');
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center gap-6">
       {/* Oval weekly pill organizer: 7 day-compartments around the ring with
           the shuffle button in the hub. */}
       <div
@@ -244,11 +252,36 @@ export function PillboxMaze({
         )}
       </div>
 
-      <p className="max-w-md text-center text-xs text-gray-500">
-        一週七格，每天一家為你量身篩選的醫院。
+      <p className="text-center text-xs leading-relaxed text-gray-500" style={{ maxWidth: BOX_W }}>
+        一週七格，每天一家為你量身篩選的醫院；
         <br />
-        膠囊停在哪格就會打開，揭曉你的命運醫院。
+        膠囊停在哪格，就是你的命運醫院。
       </p>
+
+      {/* 服用須知 — playful prescription-label disclaimer. Width matches the oval
+          so its edges align; tag/note columns keep wrapped lines tidy. */}
+      <div
+        className="w-full overflow-hidden rounded-2xl border border-amber-200 bg-amber-50 shadow-sm"
+        style={{ maxWidth: BOX_W * 0.9 }}
+      >
+        <div className="flex items-center gap-2 border-b border-dashed border-amber-300 bg-amber-100 px-4 py-2">
+          <span aria-hidden className="text-base">💊</span>
+          <span className="text-sm font-extrabold tracking-wide text-amber-900">服用須知</span>
+          <span className="ml-auto text-[10px] font-medium text-amber-600">用藥前請詳閱 🎲</span>
+        </div>
+        <dl className="divide-y divide-amber-100/90 px-4">
+          {DISCLAIMER_ROWS.map((row) => (
+            <div key={row.tag} className="flex items-start gap-3 py-2.5">
+              <dt className="shrink-0">
+                <span className="inline-block rounded-md bg-amber-200/80 px-2 py-0.5 text-[11px] font-bold text-amber-800">
+                  {row.tag}
+                </span>
+              </dt>
+              <dd className="flex-1 text-[12px] leading-relaxed text-amber-900/90">{row.text}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
     </div>
   );
 }

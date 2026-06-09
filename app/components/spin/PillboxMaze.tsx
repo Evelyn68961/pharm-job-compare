@@ -8,30 +8,44 @@ import { MAZE_EMBLEM_ARCHETYPES, MAZE_EMBLEM_VIEWBOX, MazeEmblem } from './MazeE
 import { type PillVariant, RollingPill, pickRandomPill } from './RollingPill';
 import type { ArchetypeKey } from './icons/types';
 
-const COLS = 7;
-const ROWS = 2;
-const TOTAL_CELLS = COLS * ROWS; // 14
+const DAYS = 7;
+const TOTAL_CELLS = DAYS; // one compartment per weekday
 const TOTAL_HOPS = 18;
 const FALLBACK_PALETTE = [
   '#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa',
-  '#fb923c', '#22d3ee', '#f472b6', '#84cc16', '#fb7185',
-  '#38bdf8', '#facc15', '#c084fc', '#ef4444',
+  '#fb923c', '#22d3ee',
 ];
 
 const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日'];
-const ROW_LABELS = ['早', '晚'];
 
-// Pre-assign one archetype emblem + small rotation to each cell. Neighbors
-// (left, up) get a different emblem so adjacent cells never share the same
-// glyph — keeps the grid feeling scattered rather than gridded.
+// Oval-ring geometry (a virtual coordinate box; everything is rendered as a
+// percentage of it so the whole organizer scales fluidly with its width).
+const BOX_W = 360;
+const BOX_H = 300;
+const RX = 134; // horizontal ring radius
+const RY = 100; // vertical ring radius
+const CELL_PCT = 19.5; // compartment width as % of box width
+const HUB_PCT = 30; // hub button width as % of box width
+
+// Position of compartment `i` on the oval ring, as percentages of the box,
+// starting at the top (一) and going clockwise.
+function cellPos(i: number): { xPct: number; yPct: number } {
+  const a = (-90 + i * (360 / DAYS)) * (Math.PI / 180);
+  return {
+    xPct: ((BOX_W / 2 + RX * Math.cos(a)) / BOX_W) * 100,
+    yPct: ((BOX_H / 2 + RY * Math.sin(a)) / BOX_H) * 100,
+  };
+}
+
+// Pre-assign one archetype emblem + small rotation to each compartment.
+// Neighbours around the ring (including the wrap from 日 back to 一) get a
+// different emblem so adjacent compartments never share the same glyph.
 function assignEmblems(): { archetype: ArchetypeKey; rotation: number }[] {
   const result: { archetype: ArchetypeKey; rotation: number }[] = [];
   for (let i = 0; i < TOTAL_CELLS; i++) {
-    const row = Math.floor(i / COLS);
-    const col = i % COLS;
     const forbidden = new Set<ArchetypeKey>();
-    if (col > 0) forbidden.add(result[i - 1].archetype);
-    if (row > 0) forbidden.add(result[i - COLS].archetype);
+    if (i > 0) forbidden.add(result[i - 1].archetype);
+    if (i === TOTAL_CELLS - 1) forbidden.add(result[0].archetype); // wrap neighbour
     const choices = MAZE_EMBLEM_ARCHETYPES.filter((a) => !forbidden.has(a));
     const archetype = choices[Math.floor(Math.random() * choices.length)];
     result.push({ archetype, rotation: Math.random() * 24 - 12 });
@@ -54,7 +68,7 @@ export function PillboxMaze({
   const [pillVariant, setPillVariant] = useState<PillVariant>(() => pickRandomPill());
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Pad / truncate to exactly TOTAL_CELLS slots so the grid always fills.
+  // Pad / truncate to exactly TOTAL_CELLS slots so the ring always fills.
   const cells = useMemo(() => candidates.slice(0, TOTAL_CELLS), [candidates]);
   const emblems = useMemo(() => assignEmblems(), []);
 
@@ -110,99 +124,103 @@ export function PillboxMaze({
 
   return (
     <div className="flex flex-col items-center gap-6">
-      {/* Day header */}
-      <div className="grid w-full max-w-2xl" style={{ gridTemplateColumns: `2rem repeat(${COLS}, 1fr)` }}>
-        <div />
-        {DAY_LABELS.map((d) => (
-          <div key={d} className="text-center text-xs font-medium text-gray-500">
-            {d}
-          </div>
-        ))}
-      </div>
+      {/* Oval weekly pill organizer: 7 day-compartments around the ring with
+          the shuffle button in the hub. */}
+      <div
+        className="relative w-full"
+        style={{ maxWidth: BOX_W, aspectRatio: `${BOX_W} / ${BOX_H}` }}
+      >
+        {/* Oval shell */}
+        <div className="absolute inset-0 rounded-[50%] border border-gray-200 bg-gradient-to-b from-white to-gray-100 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.35)]" />
 
-      <div className="relative w-full max-w-2xl">
-        <div className="grid gap-2" style={{ gridTemplateColumns: `2rem repeat(${COLS}, 1fr)` }}>
-          {Array.from({ length: ROWS }).flatMap((_, row) => [
-            // Row label
+        {/* Day compartments around the ring */}
+        {Array.from({ length: TOTAL_CELLS }).map((_, idx) => {
+          const cell = cells[idx];
+          const { xPct, yPct } = cellPos(idx);
+          const isPill = idx === pillIndex;
+          const isHighlight = highlight === idx;
+          const baseColor = cell
+            ? safeBrandColor(cell.job.brandColor) ?? FALLBACK_PALETTE[idx % FALLBACK_PALETTE.length]
+            : '#e5e7eb';
+          return (
             <div
-              key={`label-${row}`}
-              className="flex items-center justify-center text-xs font-medium text-gray-500"
+              key={`cell-${idx}`}
+              className={`absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center transition-transform duration-150 ${
+                isHighlight ? 'z-20 scale-110' : 'z-10'
+              }`}
+              style={{ left: `${xPct}%`, top: `${yPct}%`, width: `${CELL_PCT}%` }}
             >
-              {ROW_LABELS[row]}
-            </div>,
-            // Cells in this row
-            ...Array.from({ length: COLS }).map((_, col) => {
-              const idx = row * COLS + col;
-              const cell = cells[idx];
-              const isPill = idx === pillIndex;
-              const isHighlight = highlight === idx;
-              const baseColor = cell
-                ? safeBrandColor(cell.job.brandColor) ?? FALLBACK_PALETTE[idx % FALLBACK_PALETTE.length]
-                : '#e5e7eb';
-              return (
-                <div
-                  key={`cell-${idx}`}
-                  className={`relative aspect-square rounded-lg border-2 transition-all duration-150 ${
-                    isHighlight
-                      ? 'border-amber-400 ring-4 ring-amber-200 scale-110'
-                      : 'border-gray-200'
-                  }`}
-                  style={{
-                    backgroundColor: isHighlight ? baseColor : '#f9fafb',
-                  }}
-                >
-                  {/* Slot inset */}
+              <div className="relative w-full" style={{ aspectRatio: '1' }}>
+                {/* Soft glow under the landed/winning cell */}
+                {isHighlight && (
                   <div
-                    className="absolute inset-1.5 rounded-md"
-                    style={{
-                      backgroundColor: isHighlight ? 'transparent' : `${baseColor}22`,
-                      boxShadow: isHighlight ? 'none' : 'inset 0 2px 4px rgba(0,0,0,0.06)',
-                    }}
+                    className="absolute inset-0 rounded-full"
+                    style={{ background: `radial-gradient(circle, ${baseColor}55 0%, transparent 70%)` }}
                   />
-                  {/* Emblem watermark — random per cell, adjacent cells never share */}
-                  <div
-                    className="pointer-events-none absolute inset-2 flex items-center justify-center"
-                    style={{ transform: `rotate(${emblems[idx].rotation}deg)` }}
+                )}
+                {/* Emblem — random per cell, adjacent cells never share */}
+                <div
+                  className="pointer-events-none absolute inset-1 flex items-center justify-center"
+                  style={{ transform: `rotate(${emblems[idx].rotation}deg)` }}
+                >
+                  <svg
+                    viewBox={MAZE_EMBLEM_VIEWBOX}
+                    preserveAspectRatio="xMidYMid meet"
+                    className="h-full w-full"
+                    style={{ opacity: isHighlight ? 0.95 : 0.5 }}
+                    aria-hidden
                   >
-                    <svg
-                      viewBox={MAZE_EMBLEM_VIEWBOX}
-                      preserveAspectRatio="xMidYMid meet"
-                      className="h-full w-full"
-                      style={{ opacity: isHighlight ? 0.85 : 0.28 }}
-                      aria-hidden
-                    >
-                      <MazeEmblem
-                        archetype={emblems[idx].archetype}
-                        color={isHighlight ? 'white' : '#475569'}
-                        bgColor={baseColor}
-                      />
-                    </svg>
-                  </div>
-                  {/* In-cell capsule — hidden once it lifts off to the centre */}
-                  {isPill && !centering && (
-                    <div
-                      className="absolute inset-0 flex items-center justify-center"
-                      style={{
-                        transition: 'transform 150ms ease',
-                        filter: 'drop-shadow(0 3px 5px rgba(0,0,0,0.35))',
-                      }}
-                    >
-                      <RollingPill variant={pillVariant} className="h-3/4 w-3/4" />
-                    </div>
-                  )}
+                    <MazeEmblem
+                      archetype={emblems[idx].archetype}
+                      color={baseColor}
+                      bgColor="#ffffff"
+                    />
+                  </svg>
                 </div>
-              );
-            }),
-          ])}
-        </div>
+                {/* In-cell capsule — hidden once it lifts off to the centre */}
+                {isPill && !centering && (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center"
+                    style={{
+                      transition: 'transform 150ms ease',
+                      filter: 'drop-shadow(0 3px 5px rgba(0,0,0,0.35))',
+                    }}
+                  >
+                    <RollingPill variant={pillVariant} className="h-3/4 w-3/4" />
+                  </div>
+                )}
+              </div>
+              {/* Day label */}
+              <span
+                className={`mt-1 text-xs font-semibold ${
+                  isHighlight ? 'text-amber-600' : 'text-gray-500'
+                }`}
+              >
+                {DAY_LABELS[idx]}
+              </span>
+            </div>
+          );
+        })}
+
+        {/* Hub: shuffle button in the middle of the oval */}
+        <button
+          type="button"
+          onClick={roll}
+          disabled={rolling}
+          className="absolute z-30 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full bg-gray-900 text-white shadow-[0_8px_20px_-6px_rgba(0,0,0,0.6)] transition-all hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60"
+          style={{ left: '50%', top: '50%', width: `${HUB_PCT}%`, aspectRatio: '1' }}
+        >
+          <span className="text-2xl leading-none">💊</span>
+          <span className="mt-1 text-sm font-semibold">{rolling ? '滾動中…' : '滾動藥丸'}</span>
+        </button>
 
         {/* Centred reveal — the winning capsule lifts to the middle, grows,
-            then cracks open. Overlays the whole grid. */}
+            then cracks open. Overlays the whole organizer. */}
         {(centering || opening) && (
           <div className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center">
-            {/* Backdrop so the grid recedes and the capsule reads clearly */}
+            {/* Backdrop so the ring recedes and the capsule reads clearly */}
             <div
-              className="absolute inset-0 rounded-xl bg-white/70"
+              className="absolute inset-0 rounded-[50%] bg-white/70"
               style={{ animation: 'maze-fade 350ms ease forwards' }}
             />
             {/* Glow bloom behind the capsule */}
@@ -226,17 +244,8 @@ export function PillboxMaze({
         )}
       </div>
 
-      <button
-        type="button"
-        onClick={roll}
-        disabled={rolling}
-        className="rounded-full bg-gray-900 px-8 py-3 text-base font-semibold text-white shadow-md transition-all hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {rolling ? '滾動中…' : '💊 滾動藥丸'}
-      </button>
-
       <p className="max-w-md text-center text-xs text-gray-500">
-        共 {cells.length} 家為你量身篩選的醫院（MBTI top-30 加權抽 14）。
+        一週七格，每天一家為你量身篩選的醫院。
         <br />
         膠囊停在哪格就會打開，揭曉你的命運醫院。
       </p>

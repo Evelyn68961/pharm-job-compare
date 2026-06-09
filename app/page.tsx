@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { fetchJobs, sortJobs } from './lib/notion';
 import { hospitalDisplayName, safeBrandColor } from './lib/styles';
 import { SLUG_ARCHETYPE } from './lib/archetypeSlug';
+import { jobCode } from './lib/shareCode';
 import { resolveArchetype } from './components/spin/icons/resolveArchetype';
 import { SpinApp } from './components/spin/SpinApp';
 
@@ -20,7 +21,8 @@ export async function generateMetadata({
 
   const result = await fetchJobs();
   if (!result.ok) return {};
-  const job = result.jobs.find((x) => x.id === j);
+  // `j` is the hashed job code (see ShareButton / shareCode).
+  const job = result.jobs.find((x) => jobCode(x.id) === j);
   if (!job) return {};
 
   const archetype = (a && SLUG_ARCHETYPE[a]) || resolveArchetype(job);

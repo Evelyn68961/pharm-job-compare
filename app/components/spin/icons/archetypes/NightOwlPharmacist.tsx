@@ -42,8 +42,10 @@ export function NightOwlPharmacist({ size, accentColor, secondaryColor }: Archet
       <circle cx="60.5" cy="43.5" r="2.3" fill="#F4A8A0" fillOpacity="0.65" />
       <path d="M46 45.5 Q50 48.5 54 45.5" fill="none" stroke="#B06A4F" strokeWidth="1.8" strokeLinecap="round" />
 
-      <text x="24" y="26" fontSize="9" fontWeight={700} fill="#4F46E5" style={{ fontFamily: 'system-ui, sans-serif' }} transform="rotate(-12 24 26)">z</text>
-      <text x="18" y="20" fontSize="6.5" fontWeight={700} fill="#4F46E5" style={{ fontFamily: 'system-ui, sans-serif' }} transform="rotate(-12 18 20)">z</text>
+      {/* Floating sleepy "z"s as stroked paths — satori (the OG image renderer)
+          does not support <text> nodes, so these must stay as <path>. */}
+      <path d="M23 18 H30 L23 26 H30" fill="none" stroke="#4F46E5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" transform="rotate(-12 24 26)" />
+      <path d="M16 14.5 H21.5 L16 20 H21.5" fill="none" stroke="#4F46E5" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" transform="rotate(-12 18 20)" />
     </svg>
   );
 }

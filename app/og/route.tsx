@@ -1,19 +1,42 @@
 import { ImageResponse } from 'next/og';
 import type { NextRequest } from 'next/server';
+import type { ComponentType, ReactNode } from 'react';
+import type { ArchetypeComponentProps, ArchetypeKey } from '../components/spin/icons/types';
+import { AcademicAcePharmacist } from '../components/spin/icons/archetypes/AcademicAcePharmacist';
+import { BeipiaoPharmacist } from '../components/spin/icons/archetypes/BeipiaoPharmacist';
+import { IronArmPharmacist } from '../components/spin/icons/archetypes/IronArmPharmacist';
+import { JinniuPharmacist } from '../components/spin/icons/archetypes/JinniuPharmacist';
+import { NightOwlPharmacist } from '../components/spin/icons/archetypes/NightOwlPharmacist';
+import { TeachingSoulPharmacist } from '../components/spin/icons/archetypes/TeachingSoulPharmacist';
+import { ZenPharmacist } from '../components/spin/icons/archetypes/ZenPharmacist';
+import { MazeEmblem } from '../components/spin/MazeEmblem';
 
 export const runtime = 'edge';
 
-const FIXED_CHARS = '藥師命運轉盤抽到你呢來找職醫院';
+// Every Chinese glyph + CJK punctuation rendered by either layout must be listed
+// here so the Google Fonts `&text=` subset includes it — anything missing
+// renders as tofu (□).
+const FIXED_CHARS = '藥師命運轉盤你玩過嗎我有機會成為醫院呢尋找的「」：？';
 
-async function loadFont(text: string): Promise<ArrayBuffer | null> {
+const CHAR_BY_NAME: Record<string, ComponentType<ArchetypeComponentProps>> = {
+  學霸藥師: AcademicAcePharmacist,
+  北漂藥師: BeipiaoPharmacist,
+  鐵腕藥師: IronArmPharmacist,
+  金牛藥師: JinniuPharmacist,
+  夜貓藥師: NightOwlPharmacist,
+  教魂藥師: TeachingSoulPharmacist,
+  佛系藥師: ZenPharmacist,
+};
+
+async function loadFont(text: string, weight: number): Promise<ArrayBuffer | null> {
   try {
     const cssRes = await fetch(
-      `https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@700&text=${encodeURIComponent(text)}&display=swap`,
+      `https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@${weight}&text=${encodeURIComponent(text)}&display=swap`,
       {
-        headers: {
-          'User-Agent':
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        },
+        // An old User-Agent forces Google Fonts to serve TrueType (.ttf). A
+        // modern UA returns WOFF2, which satori (next/og) cannot parse —
+        // "Unsupported OpenType signature wOF2" → the route 500s.
+        headers: { 'User-Agent': 'Mozilla/4.0' },
       },
     );
     if (!cssRes.ok) return null;
@@ -34,102 +57,259 @@ function safeColor(raw: string | null): string {
   return /^[0-9a-fA-F]{6}$/.test(hex) ? `#${hex}` : '#3b82f6';
 }
 
+// Blend a hex colour toward white. Returns a FULLY OPAQUE hex so the rendered
+// PNG has no transparency — a translucent background goes black on Instagram
+// Stories / dark viewers and swallows the dark text.
+function tint(hex: string, whiteRatio: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const mix = (c: number) => Math.round(c + (255 - c) * whiteRatio);
+  const toHex = (c: number) => mix(c).toString(16).padStart(2, '0');
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
+  const { searchParams, host } = new URL(req.url);
   const archetype = searchParams.get('archetype')?.slice(0, 20) ?? '';
   const hospital = searchParams.get('hospital')?.slice(0, 30) ?? '';
   const color = safeColor(searchParams.get('color'));
+  // `format=story` → 1080×1920 portrait, for sharing as an image file to
+  // Instagram Stories / Threads. The default 1200×630 stays for link previews.
+  const isStory = searchParams.get('format') === 'story';
+
+  // The address printed on the image. Prefer the canonical site URL so it's
+  // always the real domain (not a Vercel preview host or the LAN IP in dev).
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const displayHost = siteUrl ? new URL(siteUrl).host : host;
 
   const personalized = Boolean(archetype || hospital);
   const text = FIXED_CHARS + archetype + hospital;
-  const fontData = await loadFont(text);
+  const [regular, bold] = await Promise.all([loadFont(text, 400), loadFont(text, 700)]);
+  const fonts = [
+    regular && { name: 'NotoSansTC', data: regular, weight: 400 as const, style: 'normal' as const },
+    bold && { name: 'NotoSansTC', data: bold, weight: 700 as const, style: 'normal' as const },
+  ].filter(Boolean) as { name: string; data: ArrayBuffer; weight: 400 | 700; style: 'normal' }[];
 
-  return new ImageResponse(
-    (
+  const Character = CHAR_BY_NAME[archetype];
+  const emblemKey = archetype in CHAR_BY_NAME ? (archetype as ArchetypeKey) : null;
+  const background = `linear-gradient(160deg, ${tint(color, 0.93)} 0%, ${tint(color, 0.68)} 100%)`;
+
+  // Big character art on a soft white disc (no border per design); the disc just
+  // keeps the white-coat art legible over the tinted watermark.
+  const idol = (diameter: number) =>
+    Character ? (
       <div
         style={{
-          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: diameter,
+          height: diameter,
+          borderRadius: diameter,
+          backgroundColor: '#ffffff',
+          boxShadow: `0 20px 60px ${tint(color, 0.25)}`,
+        }}
+      >
+        <Character size={Math.round(diameter * 0.84)} accentColor={color} secondaryColor={color} />
+      </div>
+    ) : null;
+
+  // Faint per-archetype emblem watermark. MazeEmblem returns a React fragment;
+  // satori does NOT flatten fragments inside <svg>, so its paths must be pulled
+  // out and placed as DIRECT children of the <svg> or nothing renders.
+  const emblemPaths: ReactNode = emblemKey
+    ? (MazeEmblem({ archetype: emblemKey, color, bgColor: tint(color, 0.93) }) as { props: { children: ReactNode } } | null)
+        ?.props.children
+    : null;
+  const mark = (left: number, top: number, size: number, opacity: number) =>
+    emblemPaths ? (
+      <div style={{ position: 'absolute', left, top, width: size, height: size, display: 'flex', opacity }}>
+        <svg width={size} height={size} viewBox="66 69 26 26">
+          {emblemPaths}
+        </svg>
+      </div>
+    ) : null;
+
+  const header = (size: number) => (
+    <div style={{ display: 'flex', fontSize: size, color: '#64748b' }}>
+      <div style={{ display: 'flex', fontWeight: 400 }}>你玩過「</div>
+      <div style={{ display: 'flex', fontWeight: 700, color: '#0f172a' }}>藥師命運轉盤</div>
+      <div style={{ display: 'flex', fontWeight: 400 }}>」嗎</div>
+    </div>
+  );
+
+  const element = isStory ? (
+    <div
+      style={{
+        position: 'relative',
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        background,
+        fontFamily: 'NotoSansTC',
+      }}
+    >
+      {/* Watermark layer */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex' }}>
+        {mark(-90, 130, 380, 0.16)}
+        {mark(790, 380, 300, 0.13)}
+        {mark(-60, 1150, 400, 0.13)}
+        {mark(820, 1470, 280, 0.16)}
+      </div>
+
+      {/* Content */}
+      <div
+        style={{
+          position: 'relative',
           width: '100%',
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
-          background: `linear-gradient(135deg, ${color}22 0%, ${color}66 100%)`,
-          padding: 60,
-          fontFamily: 'NotoSansTC',
+          justifyContent: 'space-between',
+          padding: 90,
         }}
       >
-        <div
-          style={{
-            fontSize: 32,
-            color: '#475569',
-            letterSpacing: 2,
-            marginBottom: 24,
-          }}
-        >
-          藥師命運轉盤
-        </div>
+        {header(42)}
 
         {personalized ? (
-          <>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            {idol(520)}
             {archetype && (
-              <div
-                style={{
-                  fontSize: 64,
-                  fontWeight: 700,
-                  color: '#0f172a',
-                  marginBottom: 24,
-                }}
-              >
-                我抽到 {archetype}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 44 }}>
+                <div style={{ display: 'flex', fontSize: 46, fontWeight: 400, color: '#475569', marginBottom: 12 }}>
+                  我有機會成為
+                </div>
+                <div style={{ display: 'flex', fontSize: 104, fontWeight: 700, color: '#0f172a' }}>
+                  {archetype}
+                </div>
               </div>
             )}
             {hospital && (
-              <div
-                style={{
-                  display: 'flex',
-                  padding: '24px 48px',
-                  backgroundColor: color,
-                  color: 'white',
-                  borderRadius: 100,
-                  fontSize: 56,
-                  fontWeight: 700,
-                  marginBottom: 40,
-                  boxShadow: `0 12px 32px ${color}55`,
-                }}
-              >
-                {hospital}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 40 }}>
+                <div style={{ display: 'flex', fontSize: 38, fontWeight: 400, color: '#475569', marginBottom: 16 }}>
+                  命運醫院
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    padding: '30px 60px',
+                    backgroundColor: color,
+                    color: 'white',
+                    borderRadius: 140,
+                    fontSize: 72,
+                    fontWeight: 700,
+                    boxShadow: `0 16px 48px ${tint(color, 0.2)}`,
+                  }}
+                >
+                  {hospital}
+                </div>
               </div>
             )}
-            <div style={{ fontSize: 30, color: '#64748b' }}>
-              來找你的命運醫院 →
-            </div>
-          </>
+          </div>
         ) : (
-          <>
-            <div
-              style={{
-                fontSize: 96,
-                fontWeight: 700,
-                color: '#0f172a',
-                marginBottom: 24,
-              }}
-            >
-              你的命運醫院
-            </div>
-            <div style={{ fontSize: 36, color: '#475569' }}>
-              來抽一張你的職業命運
-            </div>
-          </>
+          <div style={{ display: 'flex', fontSize: 110, fontWeight: 700, color: '#0f172a' }}>
+            尋找你的命運醫院
+          </div>
         )}
+
+        {/* CTA + host: the link travels with the image even when posted without a
+            clickable preview card. */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ display: 'flex', fontSize: 46, fontWeight: 700, color: '#0f172a', marginBottom: 14 }}>
+            你呢？尋找你的命運醫院 →
+          </div>
+          <div style={{ display: 'flex', fontSize: 34, fontWeight: 400, color: '#64748b' }}>{displayHost}</div>
+        </div>
       </div>
-    ),
-    {
-      width: 1200,
-      height: 630,
-      fonts: fontData
-        ? [{ name: 'NotoSansTC', data: fontData, weight: 700, style: 'normal' }]
-        : undefined,
-    },
+    </div>
+  ) : (
+    <div
+      style={{
+        position: 'relative',
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        background,
+        fontFamily: 'NotoSansTC',
+      }}
+    >
+      {/* Watermark layer */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex' }}>
+        {mark(980, -50, 320, 0.15)}
+        {mark(-60, 350, 300, 0.13)}
+        {mark(450, 430, 200, 0.12)}
+      </div>
+
+      {/* Content */}
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 56,
+          padding: 72,
+        }}
+      >
+        {personalized && idol(380)}
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          {header(30)}
+
+          {personalized ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              {archetype && (
+                <div style={{ display: 'flex', alignItems: 'baseline', marginTop: 20 }}>
+                  <div style={{ display: 'flex', fontSize: 34, fontWeight: 400, color: '#475569' }}>我有機會成為</div>
+                </div>
+              )}
+              {archetype && (
+                <div style={{ display: 'flex', fontSize: 66, fontWeight: 700, color: '#0f172a', marginTop: 6 }}>
+                  {archetype}
+                </div>
+              )}
+              {hospital && (
+                <div style={{ display: 'flex', alignItems: 'center', marginTop: 24 }}>
+                  <div style={{ display: 'flex', fontSize: 32, fontWeight: 400, color: '#475569', marginRight: 16 }}>
+                    命運醫院
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      padding: '18px 40px',
+                      backgroundColor: color,
+                      color: 'white',
+                      borderRadius: 100,
+                      fontSize: 48,
+                      fontWeight: 700,
+                      boxShadow: `0 12px 32px ${tint(color, 0.2)}`,
+                    }}
+                  >
+                    {hospital}
+                  </div>
+                </div>
+              )}
+              <div style={{ display: 'flex', fontSize: 30, fontWeight: 400, color: '#64748b', marginTop: 28 }}>
+                你呢？尋找你的命運醫院 → {displayHost}
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', fontSize: 84, fontWeight: 700, color: '#0f172a', marginTop: 12 }}>
+              尋找你的命運醫院
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
+
+  return new ImageResponse(element, {
+    width: isStory ? 1080 : 1200,
+    height: isStory ? 1920 : 630,
+    fonts: fonts.length ? fonts : undefined,
+  });
 }

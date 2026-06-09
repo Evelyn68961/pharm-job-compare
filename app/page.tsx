@@ -48,13 +48,6 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold">
-          <span className="text-gray-900">藥師</span>
-          <span className="ml-1 text-blue-600">命運轉盤</span>
-        </h1>
-      </header>
-
       {result.ok ? (
         result.jobs.length === 0 ? (
           <EmptyState />

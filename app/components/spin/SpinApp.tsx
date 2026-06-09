@@ -96,7 +96,7 @@ const FLOW_STEPS: { n: string; emoji: string; label: string }[] = [
 
 function Intro({ onStart, totalHospitals }: { onStart: () => void; totalHospitals: number }) {
   return (
-    <div className="relative mx-auto max-w-2xl overflow-hidden rounded-3xl border border-emerald-100/80 bg-gradient-to-br from-amber-50 via-rose-50 to-emerald-50 px-6 py-12 text-center shadow-sm sm:px-10">
+    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 via-rose-50 to-emerald-50 px-6 py-12 text-center sm:px-10">
       {/* Faint background capsules for texture */}
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.07]">
         <span className="absolute left-6 top-10 text-6xl">💊</span>

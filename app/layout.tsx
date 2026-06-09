@@ -12,13 +12,13 @@ export const metadata: Metadata = {
     description: '8 題 MBTI 為你抽出命運醫院',
     type: 'website',
     locale: 'zh_TW',
-    images: [{ url: '/og', width: 1200, height: 630 }],
+    images: [{ url: '/og?format=story', width: 1080, height: 1920 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '藥師命運轉盤',
     description: '8 題 MBTI 為你抽出命運醫院',
-    images: ['/og'],
+    images: ['/og?format=story'],
   },
 };
 

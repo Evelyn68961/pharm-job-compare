@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import type { Job } from '../../lib/types';
 import { hospitalDisplayName, safeBrandColor } from '../../lib/styles';
-import { ARCHETYPE_SLUG } from '../../lib/archetypeSlug';
-import { jobCode } from '../../lib/shareCode';
 import { resolveArchetype } from './icons/resolveArchetype';
 import type { ArchetypeKey } from './icons/types';
 
@@ -27,11 +25,10 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
 
   // Clean, user-facing link: short ASCII params only. generateMetadata resolves
   // ?j=<id> back to the hospital and builds the personalized OG card.
-  const shareUrl = () => {
-    // Short hashed code keeps the visible link tidy (…/?j=k3p9x&a=zen).
-    const p = new URLSearchParams({ j: jobCode(job.id), a: ARCHETYPE_SLUG[archetype] });
-    return `${window.location.origin}/?${p.toString()}`;
-  };
+  // The plain site link — no query params, so it stays short in chat. The
+  // personalized result rides along in the share text (and in the image that
+  // 分享圖片 sends); the link itself previews the generic card.
+  const shareUrl = () => `${window.location.origin}/`;
   // Internal: the /og image route still takes the real Chinese names.
   const ogParams = () => {
     const params = new URLSearchParams({ archetype, hospital: header });

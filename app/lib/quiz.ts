@@ -76,29 +76,29 @@ export const QUIZ: QuizQuestion[] = [
     prompt: '對輪班的態度？',
     options: {
       A: {
-        label: '拒絕大夜！',
-        hint: '希望免大夜或少輪班',
-        effect: { tags: ['無大夜', '免/少輪班'] },
-      },
-      B: {
         label: '願意拼夜班費',
         hint: '輪班 OK，夜班津貼優渥更好',
         effect: { tags: ['夜班津貼優渥'] },
+      },
+      B: {
+        label: '拒絕大夜！',
+        hint: '希望免大夜或少輪班',
+        effect: { tags: ['無大夜', '免/少輪班'] },
       },
     },
   },
   {
     id: 'tier',
-    prompt: '想去哪種等級的醫院？',
+    prompt: '醫學中心 vs 區域醫院？',
     options: {
       A: {
-        label: '醫學中心練功',
-        hint: '學東西多，壓力可以接受',
+        label: '醫學中心衝一波',
+        hint: '資源光環拉滿，但節奏快、壓力大',
         effect: { hospitalTier: '醫學中心' },
       },
       B: {
-        label: '區域醫院步調穩',
-        hint: '想要平衡 + 完整經驗',
+        label: '區域教學醫院更對味',
+        hint: '一樣有專科訓練，還能親自上手、生活有餘裕',
         effect: { hospitalTier: '區域醫院' },
       },
     },
@@ -108,14 +108,14 @@ export const QUIZ: QuizQuestion[] = [
     prompt: '公立 vs 私立？',
     options: {
       A: {
-        label: '公立穩定',
-        hint: '保障足、年資制度完整',
-        effect: { publicPrivate: '公立' },
-      },
-      B: {
         label: '私立彈性',
         hint: '薪資、升遷空間較有彈性',
         effect: { publicPrivate: '私立' },
+      },
+      B: {
+        label: '公立穩定',
+        hint: '保障足、年資制度完整',
+        effect: { publicPrivate: '公立' },
       },
     },
   },

@@ -111,12 +111,9 @@ function DeckCard({
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-sm font-medium text-gray-500">
-          {isWinner ? '✨ 你的命運醫院' : '也推薦給你'}
-        </p>
-        <ShareButton job={job} archetype={archetype} />
-      </div>
+      <p className="text-sm font-medium text-gray-500">
+        {isWinner ? '✨ 你的命運醫院' : '也推薦給你'}
+      </p>
 
       <div className="mt-4 flex items-center gap-4">
         <HospitalIcon job={job} size={96} archetype={archetype} />
@@ -170,18 +167,19 @@ function DeckCard({
         </div>
       )}
 
-      {job.sourceUrl104 && (
-        <div className="mt-5 border-t border-gray-100 pt-4">
+      <div className="mt-5 space-y-2 border-t border-gray-100 pt-4">
+        {job.sourceUrl104 && (
           <a
             href={job.sourceUrl104}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block rounded-md bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-blue-700"
+            className="block rounded-md bg-blue-600 px-4 py-2 text-center text-sm font-semibold text-white hover:bg-blue-700"
           >
             查看 104 職缺 →
           </a>
-        </div>
-      )}
+        )}
+        <ShareButton job={job} archetype={archetype} />
+      </div>
     </div>
   );
 }

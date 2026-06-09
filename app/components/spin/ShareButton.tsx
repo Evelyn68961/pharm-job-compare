@@ -91,17 +91,17 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   };
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex w-full items-center gap-2">
       <button
         type="button"
         onClick={handleLinkShare}
-        className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
+        className="inline-flex flex-1 items-center justify-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50"
         aria-label="分享連結"
       >
         {status === 'copied' ? (
           <>
             <span>✓</span>
-            <span>已複製連結</span>
+            <span>已複製</span>
           </>
         ) : (
           <>
@@ -115,7 +115,7 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
         type="button"
         onClick={handleImageShare}
         disabled={status === 'loading'}
-        className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-60"
+        className="inline-flex flex-1 items-center justify-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-60"
         aria-label="分享圖片到 Instagram"
       >
         {status === 'loading' ? (

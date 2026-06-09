@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Job } from '../../lib/types';
 import { hospitalDisplayName, safeBrandColor } from '../../lib/styles';
+import { ARCHETYPE_SLUG } from '../../lib/archetypeSlug';
 import { resolveArchetype } from './icons/resolveArchetype';
 import type { ArchetypeKey } from './icons/types';
 
@@ -23,7 +24,14 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   const { header } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
   const brand = safeBrandColor(job.brandColor)?.slice(1);
 
-  const buildParams = () => {
+  // Clean, user-facing link: short ASCII params only. generateMetadata resolves
+  // ?j=<id> back to the hospital and builds the personalized OG card.
+  const shareUrl = () => {
+    const p = new URLSearchParams({ j: job.id, a: ARCHETYPE_SLUG[archetype] });
+    return `${window.location.origin}/?${p.toString()}`;
+  };
+  // Internal: the /og image route still takes the real Chinese names.
+  const ogParams = () => {
     const params = new URLSearchParams({ archetype, hospital: header });
     if (brand) params.set('color', brand);
     return params;
@@ -32,17 +40,17 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
 
   // Link share → tappable preview card on LINE / Threads / FB / WhatsApp.
   const handleLinkShare = async () => {
-    const shareUrl = `${window.location.origin}/?${buildParams().toString()}`;
+    const url = shareUrl();
     if (navigator.share) {
       try {
-        await navigator.share({ title: '藥師命運轉盤', text: shareText, url: shareUrl });
+        await navigator.share({ title: '藥師命運轉盤', text: shareText, url });
       } catch {
         // User cancelled the share sheet.
       }
       return;
     }
     try {
-      await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+      await navigator.clipboard.writeText(`${shareText} ${url}`);
       setStatus('copied');
       setTimeout(() => setStatus('idle'), 2000);
     } catch {
@@ -52,9 +60,8 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
 
   // Image share → the portrait story PNG, so Instagram appears in the sheet.
   const handleImageShare = async () => {
-    const params = buildParams();
-    const shareUrl = `${window.location.origin}/?${params.toString()}`;
-    const imgUrl = `${window.location.origin}/og?${params.toString()}&format=story`;
+    const url = shareUrl();
+    const imgUrl = `${window.location.origin}/og?${ogParams().toString()}&format=story`;
     try {
       setStatus('loading');
       const res = await fetch(imgUrl);
@@ -63,7 +70,7 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
       const file = new File([blob], 'pharm-fate.png', { type: blob.type || 'image/png' });
 
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], text: shareText, url: shareUrl });
+        await navigator.share({ files: [file], text: shareText, url });
       } else {
         // Desktop / no file-share: download the image so it can be posted manually.
         const objectUrl = URL.createObjectURL(blob);

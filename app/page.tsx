@@ -1,31 +1,37 @@
 import type { Metadata } from 'next';
 import { fetchJobs, sortJobs } from './lib/notion';
+import { hospitalDisplayName, safeBrandColor } from './lib/styles';
+import { SLUG_ARCHETYPE } from './lib/archetypeSlug';
+import { resolveArchetype } from './components/spin/icons/resolveArchetype';
 import { SpinApp } from './components/spin/SpinApp';
 
-type SearchParams = Promise<{ archetype?: string; hospital?: string; color?: string }>;
+// Shared links carry only short ASCII params (`?j=<job id>&a=<archetype slug>`)
+// to keep the URL tidy in chat apps. We resolve the id back to the hospital here
+// to build the personalized OG card; the /og route still takes the real names.
+type SearchParams = Promise<{ j?: string; a?: string }>;
 
 export async function generateMetadata({
   searchParams,
 }: {
   searchParams: SearchParams;
 }): Promise<Metadata> {
-  const params = await searchParams;
-  const archetype = params.archetype?.slice(0, 20);
-  const hospital = params.hospital?.slice(0, 30);
-  const color = params.color;
-  if (!archetype && !hospital) return {};
+  const { j, a } = await searchParams;
+  if (!j) return {};
 
-  const og = new URLSearchParams();
-  if (archetype) og.set('archetype', archetype);
-  if (hospital) og.set('hospital', hospital);
-  if (color) og.set('color', color);
+  const result = await fetchJobs();
+  if (!result.ok) return {};
+  const job = result.jobs.find((x) => x.id === j);
+  if (!job) return {};
+
+  const archetype = (a && SLUG_ARCHETYPE[a]) || resolveArchetype(job);
+  const hospital = hospitalDisplayName(job.hospitalName, job.hospitalBriefName).header;
+  const colorHex = safeBrandColor(job.brandColor)?.slice(1);
+
+  const og = new URLSearchParams({ archetype, hospital });
+  if (colorHex) og.set('color', colorHex);
   const ogUrl = `/og?${og.toString()}`;
 
-  const headline = archetype && hospital
-    ? `我抽到 ${archetype}：${hospital}`
-    : archetype
-      ? `我抽到 ${archetype}`
-      : `我抽到 ${hospital}`;
+  const headline = `我有機會成為${archetype}，命運醫院是${hospital}`;
 
   return {
     title: `${headline} · 藥師命運轉盤`,

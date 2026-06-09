@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import type { Job } from '../../lib/types';
 import { buildWheelCandidates, pickWeightedSample, type QuizAnswers } from '../../lib/quiz';
 import { resolveAlternatives } from '../../lib/resolveAlternatives';
@@ -106,15 +106,14 @@ function Intro({ onStart, totalHospitals }: { onStart: () => void; totalHospital
       </div>
 
       <div className="relative space-y-7">
-        {/* Hero cast — the six chibi archetypes in a gentle bobbing arc */}
-        <div className="flex flex-wrap items-end justify-center gap-x-1 gap-y-2">
+        {/* Hero cast — the seven chibi archetypes. On phones they lock to a
+            tidy 4 + 3 (quarter-width cells); on sm+ they flow in one row. */}
+        <div className="flex flex-wrap items-center justify-center gap-y-3 sm:gap-x-1">
           {HERO_CAST.map((c, i) => (
             <div
               key={c.archetype}
-              style={{
-                marginTop: c.arc,
-                animation: `float 3s ease-in-out ${i * 0.25}s infinite`,
-              }}
+              className="flex w-1/4 justify-center sm:w-auto"
+              style={{ animation: `float 3s ease-in-out ${i * 0.25}s infinite` }}
             >
               <ArchetypeAvatar
                 archetype={c.archetype}
@@ -128,27 +127,31 @@ function Intro({ onStart, totalHospitals }: { onStart: () => void; totalHospital
 
         {/* Title */}
         <div className="space-y-2">
-          <h2 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-5xl">
             <span className="text-gray-900">藥師</span>
             <span className="bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">
               命運轉盤
             </span>
           </h2>
-          <p className="text-lg font-medium text-gray-700 sm:text-xl">
+          <p className="text-base font-medium text-gray-700 sm:text-xl">
             8 題測驗，為你抽出命定的那一間。
           </p>
         </div>
 
-        {/* Compact 3-step flow */}
-        <div className="flex items-center justify-center gap-2 text-sm font-medium text-gray-600">
+        {/* Compact 3-step flow — stacks vertically on phones, row on sm+ */}
+        <div className="flex flex-col items-center justify-center gap-1 text-sm font-medium text-gray-600 sm:flex-row sm:gap-2">
           {FLOW_STEPS.map((s, i) => (
-            <div key={s.n} className="flex items-center gap-2">
+            <Fragment key={s.n}>
               <span className="flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 shadow-sm">
                 <span aria-hidden>{s.emoji}</span>
                 {s.label}
               </span>
-              {i < FLOW_STEPS.length - 1 && <span className="text-gray-300">→</span>}
-            </div>
+              {i < FLOW_STEPS.length - 1 && (
+                <span className="rotate-90 text-xs leading-none text-gray-300 sm:rotate-0 sm:text-sm" aria-hidden>
+                  →
+                </span>
+              )}
+            </Fragment>
           ))}
         </div>
 

@@ -1,5 +1,5 @@
 import type { Job } from './types';
-import { buildWheelCandidates, scoreJob, type QuizAnswers } from './quiz';
+import { affinity, buildWheelCandidates, type QuizAnswers } from './quiz';
 import { FJUH_ALT_RATE, isFjuh } from './fjuh';
 
 const MAX_ALTERNATIVES = 3;
@@ -18,11 +18,11 @@ export function resolveAlternatives(
     .map((s) => s.job)
     .filter((j) => j.id !== winner.id);
 
-  // Rank by the PURE match score (scoreJob), not the FJUH-boosted wheel weight —
-  // the win boost is for the winner draw only; FJUH's presence in the
-  // recommendations is governed solely by FJUH_ALT_RATE below.
+  // Rank by the PURE affinity (no FJUH boost), so the recs respect tier/sector
+  // the same two-sided way the winner did — the win boost is for the winner draw
+  // only; FJUH's presence here is governed solely by FJUH_ALT_RATE below.
   const picks = [...pool]
-    .sort((a, b) => scoreJob(b, answers) - scoreJob(a, answers))
+    .sort((a, b) => affinity(b, answers) - affinity(a, answers))
     .slice(0, MAX_ALTERNATIVES);
 
   // Seed FJUH into the recommendations sometimes. `pool` is already region- and

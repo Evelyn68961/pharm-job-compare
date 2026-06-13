@@ -24,6 +24,10 @@ export type QuizAnswers = {
 
 type Effect = {
   tags?: Tag[];
+  // Rewards hospitals that have NONE of these tags — used for "the plain side" of
+  // a question (e.g. 工作單純 = doesn't carry the growth labels), where the real
+  // signal is the ABSENCE of the other option's tags rather than a tag of its own.
+  withoutTags?: Tag[];
   hospitalTier?: HospitalTier;
   salaryTier?: SalaryTier;
   publicPrivate?: PublicPrivate;
@@ -51,7 +55,9 @@ export const QUIZ: QuizQuestion[] = [
       B: {
         label: '想專注把份內工作做好',
         hint: '工作單純穩定，準時下班',
-        effect: { tags: ['工作單純'] },
+        // No hospital is literally tagged 工作單純, so "plain & stable" = a hospital
+        // that doesn't carry the growth labels from option A.
+        effect: { withoutTags: ['專科藥師訓練', '進階制度'] },
       },
     },
   },
@@ -185,11 +191,20 @@ export type ScoredJob = { job: Job; weight: number };
 
 const POINTS = {
   tag: 2,
-  hospitalTier: 3,
-  salaryTier: 3,
-  publicPrivate: 2,
 };
 
+// Two-sided multiplier for the binary categorical preferences (醫院等級 / 公私).
+// A match scales the weight up, the OPPOSITE scales it down — so picking 公立
+// actively pushes 私立 hospitals down rather than merely failing to lift 公立.
+// Combined tier+sector match vs. neither is a 16× swing, so the choice clearly
+// bites, but nothing is eliminated (the pool never collapses and FJUH survives).
+const CATEGORICAL_MATCH = 2;
+const CATEGORICAL_MISS = 0.5;
+
+// Additive flavour score from the tag preferences only. The categorical fields
+// (tier / sector / salary) are deliberately NOT here — they're handled
+// multiplicatively in `categoricalMultiplier`, because as either/or categories
+// the opposite choice should penalise, not just under-reward (see CATEGORICAL_*).
 export function scoreJob(job: Job, answers: QuizAnswers): number {
   let score = 0;
   for (let i = 0; i < QUIZ.length; i++) {
@@ -201,21 +216,48 @@ export function scoreJob(job: Job, answers: QuizAnswers): number {
         if (job.tags.includes(tag)) score += POINTS.tag;
       }
     }
-    if (effect.hospitalTier && job.hospitalTier === effect.hospitalTier) {
-      score += POINTS.hospitalTier;
-    }
-    if (effect.salaryTier && job.salaryTier === effect.salaryTier) {
-      score += POINTS.salaryTier;
-    }
-    if (effect.publicPrivate && job.publicPrivate === effect.publicPrivate) {
-      score += POINTS.publicPrivate;
+    // Reward the absence of the other option's tags (the "plain side").
+    if (effect.withoutTags && effect.withoutTags.every((t) => !job.tags.includes(t))) {
+      score += POINTS.tag;
     }
   }
   return score;
 }
 
-// Hospitals always get baseline weight 1 so the wheel never has 0-weight slices.
-// Higher score → bigger slice → more likely to be picked.
+// Two-sided categorical fit for 醫院等級 (tier), 公立/私立 (sector) and 薪資等級
+// (salary). Each answered question multiplies the weight by MATCH or MISS — so
+// e.g. "想要高薪" (突出) actively pushes 一般 hospitals down, not just lifts the
+// 突出 ones. A missing field on the job is neutral (×1) — we don't penalise
+// unknown data (salary is blank on ~12 hospitals).
+export function categoricalMultiplier(job: Job, answers: QuizAnswers): number {
+  let mult = 1;
+  for (let i = 0; i < QUIZ.length; i++) {
+    const choice = answers.choices[i];
+    if (!choice) continue;
+    const effect = QUIZ[i].options[choice].effect;
+    if (effect.hospitalTier && job.hospitalTier != null) {
+      mult *= job.hospitalTier === effect.hospitalTier ? CATEGORICAL_MATCH : CATEGORICAL_MISS;
+    }
+    if (effect.publicPrivate && job.publicPrivate != null) {
+      mult *= job.publicPrivate === effect.publicPrivate ? CATEGORICAL_MATCH : CATEGORICAL_MISS;
+    }
+    if (effect.salaryTier && job.salaryTier != null) {
+      mult *= job.salaryTier === effect.salaryTier ? CATEGORICAL_MATCH : CATEGORICAL_MISS;
+    }
+  }
+  return mult;
+}
+
+// Pure preference fit (no FJUH boost): the additive flavour score lifted into a
+// baseline weight (so it's never 0), then scaled by the two-sided categorical
+// multiplier. Used both for the wheel weight and to rank the recommendation
+// cards, so the winner and the recs respect tier/sector the same way.
+export function affinity(job: Job, answers: QuizAnswers): number {
+  return (1 + scoreJob(job, answers)) * categoricalMultiplier(job, answers);
+}
+
+// Hospitals always keep a positive weight so the wheel never has a 0-weight
+// slice. Higher affinity → bigger slice → more likely to be picked.
 export function buildWheelCandidates(jobs: Job[], answers: QuizAnswers): ScoredJob[] {
   let eligible = jobs.filter((j) => j.hospitalTier === '醫學中心' || j.hospitalTier === '區域醫院');
   // Region is a STRICT filter: if the user picked regions, only hospitals in
@@ -227,7 +269,7 @@ export function buildWheelCandidates(jobs: Job[], answers: QuizAnswers): ScoredJ
   // region-gated for free: `eligible` is already region-filtered, so a
   // non-eligible FJUH never reaches this map and never gets boosted.
   const scored = eligible.map((job) => {
-    const base = 1 + scoreJob(job, answers);
+    const base = affinity(job, answers);
     return { job, weight: isFjuh(job) ? base * FJUH_WIN_MULT : base };
   });
   // Sort by weight descending so the highest matches sit on the wheel's right side.

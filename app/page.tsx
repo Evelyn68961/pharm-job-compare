@@ -1,56 +1,9 @@
-import type { Metadata } from 'next';
 import { fetchJobs, sortJobs } from './lib/notion';
-import { hospitalDisplayName, safeBrandColor } from './lib/styles';
-import { SLUG_ARCHETYPE } from './lib/archetypeSlug';
-import { jobCode } from './lib/shareCode';
-import { resolveArchetype } from './components/spin/icons/resolveArchetype';
 import { SpinApp } from './components/spin/SpinApp';
 
-// Shared links carry only short ASCII params (`?j=<job id>&a=<archetype slug>`)
-// to keep the URL tidy in chat apps. We resolve the id back to the hospital here
-// to build the personalized OG card; the /og route still takes the real names.
-type SearchParams = Promise<{ j?: string; a?: string }>;
-
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}): Promise<Metadata> {
-  const { j, a } = await searchParams;
-  if (!j) return {};
-
-  const result = await fetchJobs();
-  if (!result.ok) return {};
-  // `j` is the hashed job code (see ShareButton / shareCode).
-  const job = result.jobs.find((x) => jobCode(x.id) === j);
-  if (!job) return {};
-
-  const archetype = (a && SLUG_ARCHETYPE[a]) || resolveArchetype(job);
-  const hospital = hospitalDisplayName(job.hospitalName, job.hospitalBriefName).header;
-  const colorHex = safeBrandColor(job.brandColor)?.slice(1);
-
-  const og = new URLSearchParams({ archetype, hospital });
-  if (colorHex) og.set('color', colorHex);
-  // Landscape (1200x630) — link-preview cards crop/break portrait images.
-  const ogUrl = `/og?${og.toString()}`;
-
-  const headline = `我有機會成為${archetype}，命運醫院是${hospital}`;
-
-  return {
-    title: `${headline} · 藥師命運轉盤`,
-    openGraph: {
-      title: headline,
-      description: '你的命運醫院是哪間？',
-      images: [{ url: ogUrl, width: 1200, height: 630 }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: headline,
-      description: '你的命運醫院是哪間？',
-      images: [ogUrl],
-    },
-  };
-}
+// Shares send the bare site link, so the page keeps the default site metadata
+// from layout.tsx (the personalized result rides in the shared image, not the
+// link's preview card).
 
 export default async function HomePage() {
   const result = await fetchJobs();

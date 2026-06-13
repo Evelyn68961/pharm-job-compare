@@ -16,11 +16,17 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   const archetype = forced ?? resolveArchetype(job);
   const { header } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
   const brand = safeBrandColor(job.brandColor)?.slice(1);
-  const shareText = `我有機會成為${archetype}，命運醫院是${header}！你呢？`;
+  // The real, public link — always shared (even from the dev server) so
+  // recipients get pharm-job-compare.vercel.app, not a LAN IP. It lives in the
+  // share TEXT so it reliably appears alongside the image (apps sometimes drop a
+  // separate url when a file is attached). Update if the production domain changes.
+  const siteLink = 'https://pharm-job-compare.vercel.app';
+  const shareText = `我有機會成為${archetype}，命運醫院是${header}！你呢？\n${siteLink}`;
 
   const handleShare = async () => {
+    // The image is fetched from whatever server runs this page (works on the dev
+    // server too); the shared LINK is always the production one (in shareText).
     const origin = window.location.origin;
-    const url = `${origin}/`; // bare link — nothing after the domain
     const og = new URLSearchParams({ archetype, hospital: header });
     if (brand) og.set('color', brand);
     const imgUrl = `${origin}/og?${og.toString()}&format=story`;
@@ -32,26 +38,26 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
       const blob = await res.blob();
       const file = new File([blob], 'pharm-fate.png', { type: blob.type || 'image/png' });
 
-      // Best path: personalized image + bare link in one share.
+      // One tap: image first, with the vercel app link alongside it (in text).
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], url, text: shareText });
+        await navigator.share({ files: [file], text: shareText });
         setStatus('idle');
         return;
       }
-      // No file-share support → share just the bare link.
+      // No file-share support → share the text (which carries the link).
       if (navigator.share) {
-        await navigator.share({ title: '藥師命運轉盤', text: shareText, url });
+        await navigator.share({ title: '藥師命運轉盤', text: shareText });
         setStatus('idle');
         return;
       }
-      // No Web Share (desktop) → download the image and copy the link.
+      // No Web Share (desktop) → download the image and copy the text + link.
       const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = objectUrl;
       a.download = 'pharm-fate.png';
       a.click();
       URL.revokeObjectURL(objectUrl);
-      await navigator.clipboard.writeText(`${shareText} ${url}`);
+      await navigator.clipboard.writeText(shareText);
       setStatus('copied');
       setTimeout(() => setStatus('idle'), 2000);
     } catch (err) {

@@ -288,8 +288,8 @@ export function pickWeightedIndex(candidates: ScoredJob[], rand = Math.random())
 }
 
 // Pick `n` distinct entries from the highest-scoring `poolSize` candidates,
-// weighted by score. Used to fill the 14-cell pillbox: MBTI does the
-// heavy filtering (top-30), then a weighted draw picks the 14 finalists.
+// weighted by score. Used to fill the 7-cell pillbox: MBTI does the
+// heavy filtering (top-30), then a weighted draw picks the 7 finalists.
 export function pickWeightedSample(
   all: ScoredJob[],
   poolSize: number,

@@ -13,14 +13,17 @@ import type { ArchetypeKey } from './icons/types';
 type Stage = 'intro' | 'quiz' | 'maze' | 'result';
 
 const POOL_SIZE = 30;
-const PILLBOX_CELLS = 14;
+// The pillbox ring has 7 compartments (one per weekday — see PillboxMaze's
+// TOTAL_CELLS = DAYS = 7), so sample exactly 7 finalists. Sampling more just
+// discards the overflow when the maze slices to its 7 cells.
+const PILLBOX_CELLS = 7;
 
 export function SpinApp({ jobs }: { jobs: Job[] }) {
   const [stage, setStage] = useState<Stage>('intro');
   const [answers, setAnswers] = useState<QuizAnswers | null>(null);
   const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
 
-  // Stable per-quiz: pick the 14 finalists once when answers commit, so the
+  // Stable per-quiz: pick the 7 finalists once when answers commit, so the
   // grid doesn't reshuffle if the component re-renders.
   const [candidates, setCandidates] = useState<ReturnType<typeof pickWeightedSample>>([]);
 
@@ -88,6 +91,8 @@ const HERO_CAST: { archetype: ArchetypeKey; color: string; secondary: string; ar
   { archetype: '金牛藥師', color: '#ca8a04', secondary: '#fde047', arc: 10 },
 ];
 
+// "8 題" = the 7 A/B questions in QUIZ (quiz.ts) + the region-select step.
+// Intentional — don't "correct" it to 7 by counting only the QUIZ array.
 const FLOW_STEPS: { n: string; emoji: string; label: string }[] = [
   { n: '①', emoji: '📝', label: '8 題測驗' },
   { n: '②', emoji: '💊', label: '滾動藥丸' },

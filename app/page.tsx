@@ -1,38 +1,45 @@
 import type { Metadata } from 'next';
 import { fetchJobs, sortJobs } from './lib/notion';
+import { hospitalDisplayName, safeBrandColor } from './lib/styles';
+import { SLUG_ARCHETYPE } from './lib/archetypeSlug';
+import { jobCode } from './lib/shareCode';
+import { resolveArchetype } from './components/spin/icons/resolveArchetype';
 import { SpinApp } from './components/spin/SpinApp';
 
-// Shares send a link carrying ?archetype&hospital&color. We read those here and
-// point the OG tags at the matching /og image so chat apps (LINE/WhatsApp/IG)
-// render a PERSONALIZED, tappable preview card that opens the site. Without this
-// the link would fall back to the generic site card in layout.tsx.
-type SearchParams = Promise<{ archetype?: string; hospital?: string; color?: string }>;
+// Shared links carry only short ASCII params (`?j=<job code>&a=<archetype slug>`)
+// to keep the URL tidy in chat apps. We resolve the code back to the hospital
+// here and build the personalized OG card so chat apps (LINE/WhatsApp/IG) render
+// a tappable preview that opens the site; the /og route still takes the real
+// Chinese names. Without this the link falls back to layout.tsx's generic card.
+type SearchParams = Promise<{ j?: string; a?: string }>;
 
 export async function generateMetadata({
   searchParams,
 }: {
   searchParams: SearchParams;
 }): Promise<Metadata> {
-  const params = await searchParams;
-  const archetype = params.archetype?.slice(0, 20);
-  const hospital = params.hospital?.slice(0, 30);
-  const color = params.color;
-  // No personalization params → keep the default site metadata from layout.tsx.
-  if (!archetype && !hospital) return {};
+  const { j, a } = await searchParams;
+  // No job code → keep the default site metadata from layout.tsx.
+  if (!j) return {};
 
-  const og = new URLSearchParams();
-  if (archetype) og.set('archetype', archetype);
-  if (hospital) og.set('hospital', hospital);
-  if (color) og.set('color', color);
+  const result = await fetchJobs();
+  if (!result.ok) return {};
+  // `j` is the hashed job code (see ShareButton / shareCode).
+  const job = result.jobs.find((x) => jobCode(x.id) === j);
+  if (!job) return {};
+
+  // `a` carries the displayed archetype (may differ from the hospital's own when
+  // it's a ranked-idol pick); fall back to the resolved one if absent/unknown.
+  const archetype = (a && SLUG_ARCHETYPE[a]) || resolveArchetype(job);
+  const hospital = hospitalDisplayName(job.hospitalName, job.hospitalBriefName).header;
+  const colorHex = safeBrandColor(job.brandColor)?.slice(1);
+
+  const og = new URLSearchParams({ archetype, hospital });
+  if (colorHex) og.set('color', colorHex);
   // Landscape (1200×630) — link-preview cards crop/letterbox portrait images.
   const ogUrl = `/og?${og.toString()}`;
 
-  const headline =
-    archetype && hospital
-      ? `我有機會成為${archetype}，命運醫院是${hospital}`
-      : archetype
-        ? `我有機會成為${archetype}`
-        : `我的命運醫院是${hospital}`;
+  const headline = `我有機會成為${archetype}，命運醫院是${hospital}`;
 
   return {
     title: `${headline} · 藥師命運轉盤`,

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import type { Job } from '../../lib/types';
 import { hospitalDisplayName, safeBrandColor } from '../../lib/styles';
+import { ARCHETYPE_SLUG } from '../../lib/archetypeSlug';
+import { jobCode } from '../../lib/shareCode';
 import { resolveArchetype } from './icons/resolveArchetype';
 import type { ArchetypeKey } from './icons/types';
 
@@ -31,11 +33,13 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
     return p.toString();
   };
 
-  // The public link, personalized via query params so the preview card matches
-  // this result. Always the production domain (even from the dev server) so
-  // recipients get pharm-job-compare.vercel.app, not a LAN IP. Update if the
-  // production domain changes.
-  const siteLink = `https://pharm-job-compare.vercel.app/?${ogParams()}`;
+  // The public link, personalized via SHORT ASCII params (`?j=<job code>&a=<slug>`)
+  // so it stays tidy in chat apps — page.tsx's generateMetadata resolves them
+  // back to the real names for the preview card. Always the production domain
+  // (even from the dev server) so recipients get pharm-job-compare.vercel.app,
+  // not a LAN IP. Update if the production domain changes.
+  const linkParams = new URLSearchParams({ j: jobCode(job.id), a: ARCHETYPE_SLUG[archetype] });
+  const siteLink = `https://pharm-job-compare.vercel.app/?${linkParams.toString()}`;
   const shareMessage = `我有機會成為${archetype}，命運醫院是${header}！你呢？`;
   // Desktop/clipboard fallback has no share sheet, so glue the link onto the text.
   const shareText = `${shareMessage}\n${siteLink}`;

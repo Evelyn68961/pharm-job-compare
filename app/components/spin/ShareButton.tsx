@@ -40,7 +40,7 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   // not a LAN IP. Update if the production domain changes.
   const linkParams = new URLSearchParams({ j: jobCode(job.id), a: ARCHETYPE_SLUG[archetype] });
   const siteLink = `https://pharm-job-compare.vercel.app/?${linkParams.toString()}`;
-  const shareMessage = `我有機會成為${archetype}，命運醫院是${header}！你呢？`;
+  const shareMessage = `我有機會成為${archetype}，命運醫院是${header}！你呢？快來測測看！`;
   // Desktop/clipboard fallback has no share sheet, so glue the link onto the text.
   const shareText = `${shareMessage}\n${siteLink}`;
 

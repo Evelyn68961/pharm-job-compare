@@ -1,9 +1,54 @@
+import type { Metadata } from 'next';
 import { fetchJobs, sortJobs } from './lib/notion';
 import { SpinApp } from './components/spin/SpinApp';
 
-// Shares send the bare site link, so the page keeps the default site metadata
-// from layout.tsx (the personalized result rides in the shared image, not the
-// link's preview card).
+// Shares send a link carrying ?archetype&hospital&color. We read those here and
+// point the OG tags at the matching /og image so chat apps (LINE/WhatsApp/IG)
+// render a PERSONALIZED, tappable preview card that opens the site. Without this
+// the link would fall back to the generic site card in layout.tsx.
+type SearchParams = Promise<{ archetype?: string; hospital?: string; color?: string }>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const archetype = params.archetype?.slice(0, 20);
+  const hospital = params.hospital?.slice(0, 30);
+  const color = params.color;
+  // No personalization params → keep the default site metadata from layout.tsx.
+  if (!archetype && !hospital) return {};
+
+  const og = new URLSearchParams();
+  if (archetype) og.set('archetype', archetype);
+  if (hospital) og.set('hospital', hospital);
+  if (color) og.set('color', color);
+  // Landscape (1200×630) — link-preview cards crop/letterbox portrait images.
+  const ogUrl = `/og?${og.toString()}`;
+
+  const headline =
+    archetype && hospital
+      ? `我有機會成為${archetype}，命運醫院是${hospital}`
+      : archetype
+        ? `我有機會成為${archetype}`
+        : `我的命運醫院是${hospital}`;
+
+  return {
+    title: `${headline} · 藥師命運轉盤`,
+    openGraph: {
+      title: headline,
+      description: '你的命運醫院是哪間？快來測測看！',
+      images: [{ url: ogUrl, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: headline,
+      description: '你的命運醫院是哪間？快來測測看！',
+      images: [ogUrl],
+    },
+  };
+}
 
 export default async function HomePage() {
   const result = await fetchJobs();

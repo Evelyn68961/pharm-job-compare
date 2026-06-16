@@ -276,7 +276,12 @@ export async function GET(req: NextRequest) {
           padding: 72,
         }}
       >
-        {personalized && idol(380)}
+        {/* marginLeft nudges the idol ~10% (of the 1200px width) toward the
+            middle so it doesn't hug the left edge; a centred flex row passes
+            half the margin to the idol and half to the text block. */}
+        {personalized && (
+          <div style={{ display: 'flex', marginLeft: 240 }}>{idol(380)}</div>
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           {header(30)}
@@ -314,9 +319,6 @@ export async function GET(req: NextRequest) {
                   </div>
                 </div>
               )}
-              <div style={{ display: 'flex', fontSize: 30, fontWeight: 400, color: '#64748b', marginTop: 28 }}>
-                你呢？尋找你的命運醫院 → {displayHost}
-              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', fontSize: 84, fontWeight: 700, color: '#0f172a', marginTop: 12 }}>

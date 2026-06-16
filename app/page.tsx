@@ -45,13 +45,13 @@ export async function generateMetadata({
     title: `${headline} · 藥師命運轉盤`,
     openGraph: {
       title: headline,
-      description: '尋找你的命運醫院，你也來測測看！',
+      description: '尋找你的命運醫院',
       images: [{ url: ogUrl, width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: headline,
-      description: '尋找你的命運醫院，你也來測測看！',
+      description: '尋找你的命運醫院',
       images: [ogUrl],
     },
   };

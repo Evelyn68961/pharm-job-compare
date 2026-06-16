@@ -127,7 +127,7 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
         type="button"
         onClick={handleSavePortrait}
         disabled={portrait === 'loading'}
-        className="inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-60"
+        className="inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 disabled:opacity-60"
         aria-label="存成限時動態圖片"
       >
         {portrait === 'saved' ? (

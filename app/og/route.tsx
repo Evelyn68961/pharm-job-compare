@@ -334,11 +334,13 @@ export async function GET(req: NextRequest) {
     height: isStory ? 1920 : 630,
     fonts: fonts.length ? fonts : undefined,
     headers: {
-      // The image is a pure function of the query params, so let the CDN cache
-      // it hard — first hit pays the font-fetch + render cost, every repeat
-      // (and every other user with the same archetype/hospital/colour) is
-      // served instantly from the edge instead of re-rendering.
-      'Cache-Control': 'public, immutable, no-transform, max-age=31536000',
+      // Cache hard at the edge (the image is a pure function of the params) but
+      // NOT immutable/1-year: while we iterate on the layout an immutable cache
+      // freezes the old render for a year, so redeploys never reach already-seen
+      // param combos. A day of s-maxage + a week of stale-while-revalidate keeps
+      // it fast while letting layout changes propagate. For an instant, total
+      // bust, bump OG_VERSION in page.tsx (it changes the image URL).
+      'Cache-Control': 'public, no-transform, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
     },
   });
 }

@@ -17,11 +17,14 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   const { header } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
   const brand = safeBrandColor(job.brandColor)?.slice(1);
   // The real, public link — always shared (even from the dev server) so
-  // recipients get pharm-job-compare.vercel.app, not a LAN IP. It lives in the
-  // share TEXT so it reliably appears alongside the image (apps sometimes drop a
-  // separate url when a file is attached). Update if the production domain changes.
+  // recipients get pharm-job-compare.vercel.app, not a LAN IP. Passed in the
+  // dedicated `url` field: when a file is attached, receiving apps drop `text`/
+  // `title` but keep `url` + `file` (w3c/web-share#279), so the link survives
+  // alongside the image. Update if the production domain changes.
   const siteLink = 'https://pharm-job-compare.vercel.app';
-  const shareText = `我有機會成為${archetype}，命運醫院是${header}！你呢？\n${siteLink}`;
+  const shareMessage = `我有機會成為${archetype}，命運醫院是${header}！你呢？`;
+  // Desktop/clipboard fallback has no share sheet, so glue the link onto the text.
+  const shareText = `${shareMessage}\n${siteLink}`;
 
   const handleShare = async () => {
     // The image is fetched from whatever server runs this page (works on the dev
@@ -38,15 +41,17 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
       const blob = await res.blob();
       const file = new File([blob], 'pharm-fate.png', { type: blob.type || 'image/png' });
 
-      // One tap: image first, with the vercel app link alongside it (in text).
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], text: shareText });
+      // One tap: image + the vercel link in the `url` field (survives the file
+      // attachment where `text` wouldn't). `text` carries the human message.
+      const fileShare = { files: [file], text: shareMessage, url: siteLink };
+      if (navigator.canShare?.(fileShare)) {
+        await navigator.share(fileShare);
         setStatus('idle');
         return;
       }
-      // No file-share support → share the text (which carries the link).
+      // No file-share support → share message + link (no image).
       if (navigator.share) {
-        await navigator.share({ title: '藥師命運轉盤', text: shareText });
+        await navigator.share({ title: '藥師命運轉盤', text: shareMessage, url: siteLink });
         setStatus('idle');
         return;
       }

@@ -119,7 +119,7 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
         ) : (
           <>
             <span>📤</span>
-            <span>分享我的命運醫院</span>
+            <span>分享結果</span>
           </>
         )}
       </button>

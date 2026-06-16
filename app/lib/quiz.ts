@@ -15,7 +15,7 @@ export type QuizChoice = 'A' | 'B';
 // The user's full input from the spin quiz:
 // - choices: one A/B answer per QUIZ question (these pick the hospital)
 // - regions: 0+ regions the user is open to (multi-select)
-// - idolRank: the 6 idol themes in the user's order; idolRank[0] = rendered idol
+// - idolRank: the user's top idol themes in order (top 4 picks); idolRank[0] = rendered idol
 export type QuizAnswers = {
   choices: QuizChoice[];
   regions: Region[];

@@ -18,6 +18,11 @@ const REGION_STEP = QUIZ.length;
 const RANK_STEP = QUIZ.length + 1;
 const TOTAL_STEPS = QUIZ.length + 2;
 
+// Only the top few picks matter — idolRank[0] is the rendered idol, the rest are
+// just tie-breakers — so the user ranks their top N and stops, rather than
+// ordering every answer.
+const RANK_LIMIT = 4;
+
 export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) => void }) {
   const [step, setStep] = useState(0);
   const [choices, setChoices] = useState<QuizChoice[]>([]);
@@ -42,12 +47,17 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
     );
   };
 
+  const rankCap = Math.min(RANK_LIMIT, rankItems.length);
+
   const tapRank = (id: string) => {
     // Tap to add (appends to the ranking); tap again to remove. Removing a
-    // middle item renumbers the rest automatically (rank = indexOf).
-    setRankOrder((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    // middle item renumbers the rest automatically (rank = indexOf). Adding
+    // stops once the top `rankCap` are picked — ranking everything isn't needed.
+    setRankOrder((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= rankCap) return prev;
+      return [...prev, id];
+    });
   };
 
   const back = () => {
@@ -146,14 +156,17 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
 
       {step === RANK_STEP && (
         <>
-          <h2 className="mb-2 text-2xl font-bold text-gray-900">最後，排出你的優先順序</h2>
+          <h2 className="mb-2 text-2xl font-bold text-gray-900">最後，排出你的前 {rankCap} 名</h2>
           <p className="mb-6 text-sm text-gray-500">
-            這些是你剛剛的選擇，依在意程度點選（第一個點的最重要）。排完 {rankItems.length} 項才能完成。
+            從剛剛的選擇裡，挑出你最在意的 {rankCap} 項。
           </p>
           <div className="space-y-3">
             {rankItems.map((item) => {
               const rank = rankOrder.indexOf(item.id);
               const ranked = rank >= 0;
+              // Once the top `rankCap` are picked, the rest can't be added —
+              // dim them so they don't look tappable.
+              const capped = !ranked && rankOrder.length >= rankCap;
               return (
                 <button
                   key={item.id}
@@ -162,7 +175,9 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
                   className={`flex w-full items-center gap-4 rounded-xl border-2 px-5 py-4 text-left transition-all ${
                     ranked
                       ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 bg-white hover:border-blue-300'
+                      : capped
+                        ? 'border-gray-200 bg-white opacity-40'
+                        : 'border-gray-200 bg-white hover:border-blue-300'
                   }`}
                 >
                   <span
@@ -192,7 +207,7 @@ export function MBTIQuiz({ onComplete }: { onComplete: (answers: QuizAnswers) =>
             <button
               type="button"
               onClick={finish}
-              disabled={rankOrder.length < rankItems.length}
+              disabled={rankOrder.length < rankCap}
               className="rounded-full bg-blue-600 px-8 py-3 text-base font-semibold text-white shadow-md transition-all hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               看結果 →

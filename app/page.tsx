@@ -13,6 +13,11 @@ import { SpinApp } from './components/spin/SpinApp';
 // Chinese names. Without this the link falls back to layout.tsx's generic card.
 type SearchParams = Promise<{ j?: string; a?: string }>;
 
+// Bump whenever the /og image LAYOUT changes. It's appended to the image URL, so
+// a new value is a brand-new URL that sidesteps every stale cache (our edge cache
+// + LINE/social scrapers) and forces a fresh render. Invisible to users.
+const OG_VERSION = '2';
+
 export async function generateMetadata({
   searchParams,
 }: {
@@ -36,6 +41,7 @@ export async function generateMetadata({
 
   const og = new URLSearchParams({ archetype, hospital });
   if (colorHex) og.set('color', colorHex);
+  og.set('v', OG_VERSION);
   // Landscape (1200×630) — link-preview cards crop/letterbox portrait images.
   const ogUrl = `/og?${og.toString()}`;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Job } from '../../lib/types';
 import { hospitalDisplayName, safeBrandColor } from '../../lib/styles';
 import { resolveArchetype } from './icons/resolveArchetype';
@@ -12,10 +12,37 @@ import type { ArchetypeKey } from './icons/types';
 // so the link itself can stay bare.
 export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: ArchetypeKey }) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'copied'>('idle');
+  // The story image is slow to render cold, so we warm it as soon as the card
+  // mounts and reuse the in-flight promise — tapping share then resolves
+  // instantly (or just waits out the remainder) instead of starting from zero.
+  const imageRef = useRef<Promise<Blob | null> | null>(null);
 
   const archetype = forced ?? resolveArchetype(job);
   const { header } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
   const brand = safeBrandColor(job.brandColor)?.slice(1);
+
+  const fetchImage = (): Promise<Blob | null> => {
+    // The image is fetched from whatever server runs this page (works on the dev
+    // server too); the shared LINK is always the production one (in shareText).
+    const origin = window.location.origin;
+    const og = new URLSearchParams({ archetype, hospital: header });
+    if (brand) og.set('color', brand);
+    const imgUrl = `${origin}/og?${og.toString()}&format=story`;
+    return fetch(imgUrl)
+      .then((res) => (res.ok ? res.blob() : null))
+      .catch(() => null);
+  };
+
+  const getImage = (): Promise<Blob | null> => {
+    if (!imageRef.current) imageRef.current = fetchImage();
+    return imageRef.current;
+  };
+
+  // Warm the OG image once on mount so the share tap doesn't pay a cold render.
+  useEffect(() => {
+    getImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // The real, public link — always shared (even from the dev server) so
   // recipients get pharm-job-compare.vercel.app, not a LAN IP. Passed in the
   // dedicated `url` field: when a file is attached, receiving apps drop `text`/
@@ -27,18 +54,11 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   const shareText = `${shareMessage}\n${siteLink}`;
 
   const handleShare = async () => {
-    // The image is fetched from whatever server runs this page (works on the dev
-    // server too); the shared LINK is always the production one (in shareText).
-    const origin = window.location.origin;
-    const og = new URLSearchParams({ archetype, hospital: header });
-    if (brand) og.set('color', brand);
-    const imgUrl = `${origin}/og?${og.toString()}&format=story`;
-
     try {
       setStatus('loading');
-      const res = await fetch(imgUrl);
-      if (!res.ok) throw new Error('og fetch failed');
-      const blob = await res.blob();
+      // Reuse the image warmed on mount; only blocks if it's still in flight.
+      const blob = await getImage();
+      if (!blob) throw new Error('og fetch failed');
       const file = new File([blob], 'pharm-fate.png', { type: blob.type || 'image/png' });
 
       // One tap: image + the vercel link in the `url` field (survives the file

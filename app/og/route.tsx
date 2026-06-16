@@ -18,6 +18,13 @@ export const runtime = 'edge';
 // renders as tofu (□).
 const FIXED_CHARS = '藥師命運轉盤你玩過嗎我有機會成為醫院呢尋找的「」：？';
 
+// The URL + arrow are Latin/symbol, not CJK — they must be in the subset too or
+// the printed link (pharm-job-compare.vercel.app) and the → render as tofu. The
+// host is built from query params at request time, so include the full ASCII set
+// a domain can use rather than trying to subset the exact host string.
+const ASCII_CHARS =
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.:/-_→';
+
 const CHAR_BY_NAME: Record<string, ComponentType<ArchetypeComponentProps>> = {
   學霸藥師: AcademicAcePharmacist,
   北漂藥師: BeipiaoPharmacist,
@@ -84,7 +91,7 @@ export async function GET(req: NextRequest) {
   const displayHost = siteUrl ? new URL(siteUrl).host : host;
 
   const personalized = Boolean(archetype || hospital);
-  const text = FIXED_CHARS + archetype + hospital;
+  const text = FIXED_CHARS + ASCII_CHARS + archetype + hospital;
   const [regular, bold] = await Promise.all([loadFont(text, 400), loadFont(text, 700)]);
   const fonts = [
     regular && { name: 'NotoSansTC', data: regular, weight: 400 as const, style: 'normal' as const },
@@ -214,13 +221,27 @@ export async function GET(req: NextRequest) {
           </div>
         )}
 
-        {/* CTA + host: the link travels with the image even when posted without a
-            clickable preview card. */}
+        {/* CTA + host: on LINE the share-sheet link is dropped, so this printed
+            URL is the ONLY way the address reaches the recipient — keep it bold
+            and high-contrast in a pill so it reads clearly as "go here". */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ display: 'flex', fontSize: 46, fontWeight: 700, color: '#0f172a', marginBottom: 14 }}>
+          <div style={{ display: 'flex', fontSize: 44, fontWeight: 700, color: '#0f172a', marginBottom: 20 }}>
             你呢？尋找你的命運醫院 →
           </div>
-          <div style={{ display: 'flex', fontSize: 34, fontWeight: 400, color: '#64748b' }}>{displayHost}</div>
+          <div
+            style={{
+              display: 'flex',
+              padding: '20px 44px',
+              backgroundColor: '#ffffff',
+              border: `4px solid ${color}`,
+              borderRadius: 999,
+              fontSize: 40,
+              fontWeight: 700,
+              color: '#0f172a',
+            }}
+          >
+            {displayHost}
+          </div>
         </div>
       </div>
     </div>
@@ -311,5 +332,12 @@ export async function GET(req: NextRequest) {
     width: isStory ? 1080 : 1200,
     height: isStory ? 1920 : 630,
     fonts: fonts.length ? fonts : undefined,
+    headers: {
+      // The image is a pure function of the query params, so let the CDN cache
+      // it hard — first hit pays the font-fetch + render cost, every repeat
+      // (and every other user with the same archetype/hospital/colour) is
+      // served instantly from the edge instead of re-rendering.
+      'Cache-Control': 'public, immutable, no-transform, max-age=31536000',
+    },
   });
 }

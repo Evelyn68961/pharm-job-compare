@@ -29,14 +29,17 @@ export function FjuhContactForm({ job }: { job: Job }) {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
-    const data = new FormData(form);
+    // Submit as JSON, not multipart/form-data: Web3Forms reads multipart field
+    // NAMES from part headers (Latin-1), which mangles Chinese labels like 姓名
+    // into mojibake. JSON keeps the keys in the UTF-8 body, so they stay intact.
+    const data = Object.fromEntries(new FormData(form));
     setStatus('sending');
 
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: data,
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(data),
       });
       const json = await res.json();
       if (json.success) {

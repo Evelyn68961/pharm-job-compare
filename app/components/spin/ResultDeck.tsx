@@ -5,6 +5,8 @@ import type { Job } from '../../lib/types';
 import { HOSPITAL_TIER_BADGE, TIER_BADGE, hospitalDisplayName } from '../../lib/styles';
 import { HospitalIcon } from './icons/HospitalIcon';
 import { ShareButton } from './ShareButton';
+import { FjuhContactForm } from './FjuhContactForm';
+import { isFjuh } from '../../lib/fjuh';
 import type { ArchetypeKey } from './icons/types';
 
 // The result screen is a horizontal swipe deck (no vertical scroll): card 1 is
@@ -180,6 +182,9 @@ function DeckCard({
         )}
         <ShareButton job={job} archetype={archetype} />
       </div>
+
+      {/* FJUH-only: a quiet "leave your contact" form that emails the team. */}
+      {isFjuh(job) && <FjuhContactForm job={job} />}
     </div>
   );
 }

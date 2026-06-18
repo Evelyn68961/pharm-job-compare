@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Job } from '../../lib/types';
 
 // Lightweight contact form shown ONLY on 輔大附醫 (FJUH) cards in the result
@@ -23,6 +23,17 @@ export function FjuhContactForm({ job }: { job: Job }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
 
+  // Which shared link this visitor arrived through: the `?ref=` tag (e.g.
+  // ?ref=evelyn vs ?ref=official) lets us tell whose link a submission came from.
+  // Captured once on mount — the spin flow never navigates, so the tag persists,
+  // but reading it here is robust even if the address bar later changes. No tag
+  // → "direct" (typed the URL, organic share, etc.).
+  const source = useRef('direct');
+  useEffect(() => {
+    const r = new URLSearchParams(window.location.search).get('ref');
+    if (r) source.current = r.trim().slice(0, 40);
+  }, []);
+
   // No key configured → render nothing (keeps the card clean in dev).
   if (!ACCESS_KEY) return null;
 
@@ -32,7 +43,11 @@ export function FjuhContactForm({ job }: { job: Job }) {
     // Submit as JSON, not multipart/form-data: Web3Forms reads multipart field
     // NAMES from part headers (Latin-1), which mangles Chinese labels like 姓名
     // into mojibake. JSON keeps the keys in the UTF-8 body, so they stay intact.
-    const data = Object.fromEntries(new FormData(form));
+    const data = Object.fromEntries(new FormData(form)) as Record<string, FormDataEntryValue>;
+    // Stamp the link source onto the lead + surface it in the subject so it's
+    // visible in the inbox list without opening the mail.
+    data['連結來源'] = source.current;
+    data['subject'] = `藥師命運轉盤｜${job.hospitalName} 職缺聯絡（來源：${source.current}）`;
     setStatus('sending');
 
     try {
@@ -77,9 +92,9 @@ export function FjuhContactForm({ job }: { job: Job }) {
     <form onSubmit={handleSubmit} className="mt-3 space-y-3 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
       <p className="text-sm font-medium text-gray-700">留下聯絡方式，我們會與你聯繫</p>
 
-      {/* Context for the inbox — which hospital + a readable subject. */}
+      {/* Context for the inbox — hospital here; subject + 連結來源 are added in
+          handleSubmit so the link source is included. */}
       <input type="hidden" name="access_key" value={ACCESS_KEY} />
-      <input type="hidden" name="subject" value={`藥師命運轉盤｜${job.hospitalName} 職缺聯絡`} />
       <input type="hidden" name="from_name" value="藥師命運轉盤" />
       <input type="hidden" name="來源醫院" value={job.hospitalName} />
       {/* Honeypot: bots fill this, humans never see it. */}

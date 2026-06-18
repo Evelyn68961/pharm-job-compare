@@ -41,8 +41,6 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   const linkParams = new URLSearchParams({ j: jobCode(job.id), a: ARCHETYPE_SLUG[archetype] });
   const siteLink = `https://pharm-job-compare.vercel.app/?${linkParams.toString()}`;
   const shareMessage = `我有機會成為${archetype}，命運醫院是${header}！你呢？快來測測看！`;
-  // Desktop/clipboard fallback has no share sheet, so glue the link onto the text.
-  const shareText = `${shareMessage}\n${siteLink}`;
 
   // Prime the landscape OG image so the receiving app's first scrape of the
   // preview card is served warm from the CDN instead of a cold render. Same
@@ -53,10 +51,18 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   }, []);
 
   const handleShare = async () => {
+    // Propagate the inbound ?ref= tag into the shared link so source attribution
+    // sticks through the share chain: a lead from someone who arrived via
+    // ?ref=evelyn and re-shared still counts as evelyn (see FjuhContactForm).
+    const ref = new URLSearchParams(window.location.search).get('ref');
+    const url = ref
+      ? `${siteLink}&ref=${encodeURIComponent(ref.trim().slice(0, 40))}`
+      : siteLink;
+    const shareText = `${shareMessage}\n${url}`;
     try {
       // Share the LINK (no file) so the app renders the personalized preview card.
       if (navigator.share) {
-        await navigator.share({ title: '藥師命運轉盤', text: shareMessage, url: siteLink });
+        await navigator.share({ title: '藥師命運轉盤', text: shareMessage, url });
         return;
       }
       // No Web Share (desktop) → copy the message + link to the clipboard.

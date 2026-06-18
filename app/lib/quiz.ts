@@ -95,17 +95,17 @@ export const QUIZ: QuizQuestion[] = [
   },
   {
     id: 'tier',
-    prompt: '醫學中心 vs 區域醫院？',
+    prompt: '區域醫院 vs 醫學中心？',
     options: {
       A: {
-        label: '醫學中心衝一波',
-        hint: '資源光環拉滿，但節奏快、壓力大',
-        effect: { hospitalTier: '醫學中心' },
-      },
-      B: {
         label: '區域教學醫院更對味',
         hint: '一樣有專科訓練，還能親自上手、生活有餘裕',
         effect: { hospitalTier: '區域醫院' },
+      },
+      B: {
+        label: '醫學中心衝一波',
+        hint: '資源光環拉滿，但節奏快、壓力大',
+        effect: { hospitalTier: '醫學中心' },
       },
     },
   },

@@ -9,16 +9,17 @@ export const metadata: Metadata = {
   description: '8 題 MBTI 為你抽出命運醫院。輔大附醫藥劑部出品。',
   openGraph: {
     title: '藥師命運轉盤',
-    description: '8 題 MBTI 為你抽出命運醫院',
+    description: '你是哪種藥師？8 題 MBTI 抽出你的命運醫院',
     type: 'website',
     locale: 'zh_TW',
-    images: [{ url: '/og', width: 1200, height: 630 }],
+    // `?v=` busts social-scraper caches when the default card art changes.
+    images: [{ url: '/og?v=3', width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '藥師命運轉盤',
-    description: '8 題 MBTI 為你抽出命運醫院',
-    images: ['/og'],
+    description: '你是哪種藥師？8 題 MBTI 抽出你的命運醫院',
+    images: ['/og?v=3'],
   },
 };
 

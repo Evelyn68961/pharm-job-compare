@@ -12,7 +12,7 @@ import type { Job } from '../../lib/types';
 // from https://web3forms.com — without it the form stays hidden.
 const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
 
-const TIME_OPTIONS = ['不限時段', '平日上午', '平日下午', '平日晚上', '假日'];
+const TIME_OPTIONS = ['平日上午', '平日下午', '平日晚上'];
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 

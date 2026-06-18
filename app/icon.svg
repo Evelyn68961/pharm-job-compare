@@ -1,24 +1,41 @@
 <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#60a5fa"/>
-      <stop offset="1" stop-color="#2563eb"/>
+    <linearGradient id="tile" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="1" stop-color="#6366f1"/>
     </linearGradient>
-    <clipPath id="cap">
-      <rect x="24.5" y="11" width="15" height="42" rx="7.5"/>
-    </clipPath>
   </defs>
-  <!-- Brand tile -->
-  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
-  <!-- Two-tone capsule, tilted like the rolling pill -->
-  <g transform="rotate(-40 32 32)">
-    <g clip-path="url(#cap)">
-      <rect x="24.5" y="11" width="15" height="21" fill="#ffffff"/>
-      <rect x="24.5" y="32" width="15" height="21" fill="#dbeafe"/>
-      <rect x="24.5" y="30.8" width="15" height="2.4" fill="#93c5fd"/>
-    </g>
-    <rect x="24.5" y="11" width="15" height="42" rx="7.5" fill="none" stroke="#1e40af" stroke-opacity="0.18" stroke-width="1.5"/>
-    <!-- highlight glint -->
-    <rect x="27.5" y="14.5" width="3.5" height="13" rx="1.75" fill="#ffffff" opacity="0.6"/>
+
+  <!-- Brand tile (matches the OG card's blue→indigo) -->
+  <rect width="64" height="64" rx="14" fill="url(#tile)"/>
+
+  <!-- 轉盤: white disc base -->
+  <circle cx="32" cy="32" r="26" fill="#ffffff" stroke="#1e293b" stroke-width="1.6"/>
+
+  <!-- Fortune-wheel wedges in the pale pharmacy palette (RollingPill colours),
+       slate spokes like a spinner. 8 segments, 45° each, from 12 o'clock. -->
+  <g stroke="#334155" stroke-width="0.7" stroke-linejoin="round">
+    <path d="M32 32 L32 9 A23 23 0 0 1 48.3 15.7 Z" fill="#fde68a"/>
+    <path d="M32 32 L48.3 15.7 A23 23 0 0 1 55 32 Z" fill="#a7f3d0"/>
+    <path d="M32 32 L55 32 A23 23 0 0 1 48.3 48.3 Z" fill="#bae6fd"/>
+    <path d="M32 32 L48.3 48.3 A23 23 0 0 1 32 55 Z" fill="#fbcfe8"/>
+    <path d="M32 32 L32 55 A23 23 0 0 1 15.7 48.3 Z" fill="#fed7aa"/>
+    <path d="M32 32 L15.7 48.3 A23 23 0 0 1 9 32 Z" fill="#e9d5ff"/>
+    <path d="M32 32 L9 32 A23 23 0 0 1 15.7 15.7 Z" fill="#fef3c7"/>
+    <path d="M32 32 L15.7 15.7 A23 23 0 0 1 32 9 Z" fill="#c4b5fd"/>
   </g>
+
+  <!-- The two-tone capsule across the centre (the site's RollingPill motif:
+       split shells, pale duo, strong slate silhouette), tilted like a spin. -->
+  <g transform="rotate(-32 32 32)">
+    <path d="M32 25.5 H24.5 A6.5 6.5 0 0 0 24.5 38.5 H32 Z"
+          fill="#ffffff" stroke="#1e293b" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M32 25.5 H39.5 A6.5 6.5 0 0 1 39.5 38.5 H32 Z"
+          fill="#bae6fd" stroke="#1e293b" stroke-width="1.7" stroke-linejoin="round"/>
+    <!-- glint -->
+    <rect x="22" y="28.5" width="9" height="2.4" rx="1.2" fill="#ffffff" opacity="0.7"/>
+  </g>
+
+  <!-- Spinner pointer at 12 o'clock -->
+  <path d="M27.5 4.5 H36.5 L32 12 Z" fill="#1e293b" stroke="#ffffff" stroke-width="0.8" stroke-linejoin="round"/>
 </svg>

@@ -8,9 +8,12 @@ import type { Job } from '../../lib/types';
 // inbox via Web3Forms — its access key is a public, email-bound key meant to be
 // embedded client-side, so there's no server route to maintain.
 //
-// Set NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY in .env.local (and in Vercel) to your key
-// from https://web3forms.com — without it the form stays hidden.
-const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+// The access key is a PUBLIC, email-bound key (it only ever delivers to the
+// inbox it was registered with, and is already shipped in the client bundle), so
+// it's hardcoded here as a default — that way the form works with zero env/Vercel
+// config. NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY overrides it if you ever rotate keys.
+const ACCESS_KEY =
+  process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || '2ed2ed94-6dab-4f2e-90e8-c3b1b6dbc38c';
 
 const TIME_OPTIONS = ['平日上午', '平日下午', '平日晚上'];
 

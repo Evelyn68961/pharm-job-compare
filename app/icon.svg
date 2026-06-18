@@ -1,0 +1,24 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </linearGradient>
+    <clipPath id="cap">
+      <rect x="24.5" y="11" width="15" height="42" rx="7.5"/>
+    </clipPath>
+  </defs>
+  <!-- Brand tile -->
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <!-- Two-tone capsule, tilted like the rolling pill -->
+  <g transform="rotate(-40 32 32)">
+    <g clip-path="url(#cap)">
+      <rect x="24.5" y="11" width="15" height="21" fill="#ffffff"/>
+      <rect x="24.5" y="32" width="15" height="21" fill="#dbeafe"/>
+      <rect x="24.5" y="30.8" width="15" height="2.4" fill="#93c5fd"/>
+    </g>
+    <rect x="24.5" y="11" width="15" height="42" rx="7.5" fill="none" stroke="#1e40af" stroke-opacity="0.18" stroke-width="1.5"/>
+    <!-- highlight glint -->
+    <rect x="27.5" y="14.5" width="3.5" height="13" rx="1.75" fill="#ffffff" opacity="0.6"/>
+  </g>
+</svg>

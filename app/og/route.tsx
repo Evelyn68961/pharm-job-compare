@@ -98,8 +98,13 @@ export async function GET(req: NextRequest) {
     bold && { name: 'NotoSansTC', data: bold, weight: 700 as const, style: 'normal' as const },
   ].filter(Boolean) as { name: string; data: ArrayBuffer; weight: 400 | 700; style: 'normal' }[];
 
-  const Character = CHAR_BY_NAME[archetype];
-  const emblemKey = archetype in CHAR_BY_NAME ? (archetype as ArchetypeKey) : null;
+  // The bare-link / default card (no params) still deserves a face: fall back to
+  // the flagship 學霸藥師 mascot + its emblem watermark so an un-personalized
+  // share looks as inviting as a result card, not a wall of text.
+  const FALLBACK_ARCHETYPE: ArchetypeKey = '學霸藥師';
+  const Character = CHAR_BY_NAME[archetype] ?? (personalized ? undefined : CHAR_BY_NAME[FALLBACK_ARCHETYPE]);
+  const emblemKey: ArchetypeKey | null =
+    archetype in CHAR_BY_NAME ? (archetype as ArchetypeKey) : personalized ? null : FALLBACK_ARCHETYPE;
   const background = `linear-gradient(160deg, ${tint(color, 0.93)} 0%, ${tint(color, 0.68)} 100%)`;
 
   // Big character art on a soft white disc (no border per design); the disc just
@@ -277,8 +282,9 @@ export async function GET(req: NextRequest) {
         }}
       >
         {/* marginLeft nudges the idol toward the middle so it doesn't hug the
-            left edge; a centred flex row passes half the margin to the idol. */}
-        {personalized && (
+            left edge; a centred flex row passes half the margin to the idol.
+            Shown for the default card too (Character falls back to the mascot). */}
+        {Character && (
           <div style={{ display: 'flex', marginLeft: 120 }}>{idol(380)}</div>
         )}
 

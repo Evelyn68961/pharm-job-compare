@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { Job } from '../../lib/types';
 import { HOSPITAL_TIER_BADGE, TIER_BADGE, hospitalDisplayName } from '../../lib/styles';
 import { HospitalIcon } from './icons/HospitalIcon';
@@ -53,6 +53,7 @@ export function ResultDeck({
 
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [trackHeight, setTrackHeight] = useState<number | undefined>(undefined);
 
   const onScroll = () => {
     const el = scrollerRef.current;
@@ -67,19 +68,32 @@ export function ResultDeck({
     el.scrollTo({ left: clamped * el.clientWidth, behavior: 'smooth' });
   };
 
+  // Cards have different heights. Size the swipe track to the ACTIVE card (not the
+  // tallest), so there's no dead space below short cards or the comparison card.
+  // ResizeObserver also catches the FJUH contact form expanding/collapsing.
+  useEffect(() => {
+    const slide = scrollerRef.current?.children[active] as HTMLElement | undefined;
+    if (!slide) return;
+    const update = () => setTrackHeight(slide.offsetHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(slide);
+    return () => ro.disconnect();
+  }, [active, totalSlides]);
+
   return (
     <div className="mx-auto max-w-xl">
       <div className="relative">
-        {/* Swipe track */}
-        {/* items-stretch (default) + flex-1 on each card = every slide takes the
-            tallest card's height, so no dead space and the dots sit right under. */}
+        {/* Swipe track — height follows the active card (see trackHeight effect),
+            so cards keep their natural height with no forced equal-height blank. */}
         <div
           ref={scrollerRef}
           onScroll={onScroll}
-          className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto"
+          style={{ height: trackHeight }}
+          className="no-scrollbar flex snap-x snap-mandatory items-start overflow-x-auto transition-[height] duration-200"
         >
           {cards.map((job, i) => (
-            <div key={job.id} className="flex w-full shrink-0 snap-center flex-col px-0.5 py-1">
+            <div key={job.id} className="w-full shrink-0 snap-center px-0.5 py-1">
               <DeckCard
                 job={job}
                 archetype={idolRank?.[i]}
@@ -88,7 +102,7 @@ export function ResultDeck({
             </div>
           ))}
           {showCompare && (
-            <div className="flex w-full shrink-0 snap-center flex-col px-0.5 py-1">
+            <div className="w-full shrink-0 snap-center px-0.5 py-1">
               <ComparisonCard
                 columns={compareCols}
                 onPickFjuh={fjuhTargetIdx >= 0 ? () => goTo(fjuhTargetIdx) : undefined}
@@ -96,7 +110,7 @@ export function ResultDeck({
             </div>
           )}
           {fjuhBenchmark && (
-            <div key={`fjuh-${fjuhBenchmark.id}`} className="flex w-full shrink-0 snap-center flex-col px-0.5 py-1">
+            <div key={`fjuh-${fjuhBenchmark.id}`} className="w-full shrink-0 snap-center px-0.5 py-1">
               <DeckCard job={fjuhBenchmark} label="也可參考" />
             </div>
           )}
@@ -163,7 +177,7 @@ function DeckCard({
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
 
   return (
-    <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-base font-medium text-gray-500">
         {label ?? (isWinner ? '✨ 你的命運醫院' : '也推薦給你')}
       </p>
@@ -270,7 +284,7 @@ function ComparisonCard({
   const active = COMPARE_ROWS[sel];
 
   return (
-    <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">📊 一次比較</p>
       <h2 className="mt-1 text-xl font-bold text-gray-900">幫你排排看</h2>
 

@@ -138,6 +138,26 @@ export function FjuhContactForm({ job }: { job: Job }) {
         </select>
       </label>
 
+      {/* 個資法第 8 條告知義務：誰蒐集、目的、項目、利用範圍與當事人權利，
+          搭配一個必填的同意勾選（未勾選無法送出，且同意紀錄會一併送出）。 */}
+      <p className="rounded-md border border-gray-200 bg-white/70 p-3 text-[11px] leading-relaxed text-gray-500">
+        本表單由<strong className="text-gray-700">輔大附醫藥劑部</strong>蒐集你的姓名、Email
+        與方便聯絡時間（及連結來源標記），僅用於本次職缺聯繫，不作其他用途；你可隨時來信要求查詢或刪除你的個人資料。
+      </p>
+
+      <label className="flex items-start gap-2 text-xs text-gray-600">
+        <input
+          type="checkbox"
+          name="個資同意"
+          value="同意"
+          required
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+        />
+        <span>
+          我同意輔大附醫藥劑部蒐集我的姓名與聯絡方式，僅用於本次職缺聯繫，並了解可隨時來信要求刪除。
+        </span>
+      </label>
+
       {status === 'error' && (
         <p className="text-xs text-red-600">送出失敗，請稍後再試一次。</p>
       )}

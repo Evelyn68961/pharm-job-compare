@@ -10,7 +10,6 @@ import type { ArchetypeKey } from './icons/types';
 
 const DAYS = 7;
 const TOTAL_CELLS = DAYS; // one compartment per weekday
-const TOTAL_HOPS = 18;
 const FALLBACK_PALETTE = [
   '#60a5fa', '#34d399', '#fbbf24', '#f87171', '#a78bfa',
   '#fb923c', '#22d3ee',
@@ -68,8 +67,9 @@ export function PillboxMaze({
   candidates: ScoredJob[];
   onResult: (winnerIndex: number) => void;
 }) {
-  const [pillIndex, setPillIndex] = useState(0);
+  const [pillIndex] = useState(0);
   const [rolling, setRolling] = useState(false);
+  const [lit, setLit] = useState<number[]>([]);
   const [highlight, setHighlight] = useState<number | null>(null);
   const [centering, setCentering] = useState(false);
   const [opening, setOpening] = useState(false);
@@ -89,27 +89,27 @@ export function PillboxMaze({
   const roll = () => {
     if (rolling || cells.length === 0) return;
     setRolling(true);
+    setLit([]);
     setHighlight(null);
     setCentering(false);
     setOpening(false);
+    setPillVariant(pickRandomPill());
 
     const winnerIdx = pickWeightedIndex(cells);
-    const path = buildPath(pillIndex, winnerIdx, TOTAL_HOPS, cells.length);
 
+    // Light the compartments up one by one, sweeping clockwise around the ring.
+    // Each light lingers a little longer than the last so the ring "fills" with
+    // building anticipation. Once every compartment glows, the capsule pops up
+    // in the centre and cracks open to reveal the winner.
     let step = 0;
     const tick = () => {
-      const next = path[step];
-      setPillIndex(next);
+      setLit((prev) => [...prev, step]);
       step += 1;
-      if (step < path.length) {
-        // Slow down as we approach the end.
-        const ratio = step / path.length;
-        const delay = 90 + Math.pow(ratio, 2.2) * 320;
+      if (step < cells.length) {
+        const delay = 170 + step * 45;
         timerRef.current = setTimeout(tick, delay);
       } else {
         setHighlight(winnerIdx);
-        // Settle on the winning cell → lift the capsule to the centre and grow
-        // it → crack it open there and reveal. No separate gift-box step.
         timerRef.current = setTimeout(() => {
           setCentering(true);
           timerRef.current = setTimeout(() => {
@@ -119,7 +119,7 @@ export function PillboxMaze({
               onResult(winnerIdx);
             }, 1100);
           }, 560);
-        }, 350);
+        }, 450);
       }
     };
     tick();
@@ -147,23 +147,27 @@ export function PillboxMaze({
           const { xPct, yPct } = cellPos(idx);
           const isPill = idx === pillIndex;
           const isHighlight = highlight === idx;
+          const isLit = lit.includes(idx);
           const baseColor = cell
             ? safeBrandColor(cell.job.brandColor) ?? FALLBACK_PALETTE[idx % FALLBACK_PALETTE.length]
             : '#e5e7eb';
           return (
             <div
               key={`cell-${idx}`}
-              className={`absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center transition-transform duration-150 ${
-                isHighlight ? 'z-20 scale-110' : 'z-10'
+              className={`absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center transition-transform duration-200 ${
+                isHighlight ? 'z-20 scale-110' : isLit ? 'z-20 scale-105' : 'z-10'
               }`}
               style={{ left: `${xPct}%`, top: `${yPct}%`, width: `${CELL_PCT}%` }}
             >
               <div className="relative w-full" style={{ aspectRatio: '1' }}>
-                {/* Soft glow under the landed/winning cell */}
-                {isHighlight && (
+                {/* Soft glow under each compartment as it lights up; brightest on
+                    the winning cell. */}
+                {(isLit || isHighlight) && (
                   <div
-                    className="absolute inset-0 rounded-full"
-                    style={{ background: `radial-gradient(circle, ${baseColor}55 0%, transparent 70%)` }}
+                    className="absolute inset-0 rounded-full transition-opacity duration-300"
+                    style={{
+                      background: `radial-gradient(circle, ${baseColor}${isHighlight ? '66' : '44'} 0%, transparent 70%)`,
+                    }}
                   />
                 )}
                 {/* Emblem — random per cell, adjacent cells never share */}
@@ -174,8 +178,8 @@ export function PillboxMaze({
                   <svg
                     viewBox={MAZE_EMBLEM_VIEWBOX}
                     preserveAspectRatio="xMidYMid meet"
-                    className="h-full w-full"
-                    style={{ opacity: isHighlight ? 0.95 : 0.5 }}
+                    className="h-full w-full transition-opacity duration-300"
+                    style={{ opacity: isHighlight ? 0.95 : isLit ? 0.8 : 0.4 }}
                     aria-hidden
                   >
                     <MazeEmblem
@@ -185,8 +189,9 @@ export function PillboxMaze({
                     />
                   </svg>
                 </div>
-                {/* In-cell capsule — hidden once it lifts off to the centre */}
-                {isPill && !centering && (
+                {/* In-cell capsule — sits idle in its compartment before the roll;
+                    hidden during the lighting sweep, then popped up at the centre. */}
+                {isPill && !rolling && (
                   <div
                     className="absolute inset-0 flex items-center justify-center"
                     style={{
@@ -200,8 +205,8 @@ export function PillboxMaze({
               </div>
               {/* Day label */}
               <span
-                className={`mt-1 text-xs font-semibold ${
-                  isHighlight ? 'text-amber-600' : 'text-gray-500'
+                className={`mt-1 text-xs font-semibold transition-colors ${
+                  isHighlight ? 'text-amber-600' : isLit ? 'text-amber-500' : 'text-gray-500'
                 }`}
               >
                 {DAY_LABELS[idx]}
@@ -219,7 +224,7 @@ export function PillboxMaze({
           style={{ left: '50%', top: '50%', width: `${HUB_PCT}%`, aspectRatio: '1' }}
         >
           <span className="text-2xl leading-none">💊</span>
-          <span className="mt-1 text-sm font-semibold">{rolling ? '滾動中…' : '滾動藥丸'}</span>
+          <span className="mt-1 text-sm font-semibold">{rolling ? '點亮中…' : '點亮藥盒'}</span>
         </button>
 
         {/* Centred reveal — the winning capsule lifts to the middle, grows,
@@ -255,7 +260,7 @@ export function PillboxMaze({
       <p className="text-center text-xs leading-relaxed text-gray-500" style={{ maxWidth: BOX_W }}>
         一週七格，每天一家為你量身篩選的醫院；
         <br />
-        膠囊停在哪格，就是你的命運醫院。
+        七格依序點亮，膠囊就會跳出揭曉你的命運醫院。
       </p>
 
       {/* 服用須知 — playful prescription-label disclaimer. Width matches the oval
@@ -284,21 +289,4 @@ export function PillboxMaze({
       </div>
     </div>
   );
-}
-
-// Generate a path from `start` to `end` with `steps` hops, sprinkled with
-// random intermediate cells so the pill looks like it's rolling around.
-function buildPath(start: number, end: number, steps: number, cellCount: number): number[] {
-  const path: number[] = [];
-  let prev = start;
-  for (let i = 0; i < steps - 1; i++) {
-    let next;
-    do {
-      next = Math.floor(Math.random() * cellCount);
-    } while (next === prev);
-    path.push(next);
-    prev = next;
-  }
-  path.push(end);
-  return path;
 }

@@ -254,11 +254,12 @@ const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
   },
 ];
 
-// The 5th deck slide: a side-by-side table of the result hospitals. 輔大附醫 is
-// always present as a column (appended upstream when it isn't already a result)
-// and gets a subtle blue tint + a neutral 「也可參考」 nudge to draw the eye. It
-// is NOT labelled as the maker — per CLAUDE.md the FJUH credit line must never
-// reappear in the UI, so the tag stays a generic "worth a look", not a credit.
+// The 5th deck slide: an attribute-at-a-time comparison. A segmented selector
+// bar (薪資 / 輪班 / 宿舍 / 特色 / 連結) picks ONE attribute; all hospitals are then
+// listed as rows showing just that value — so every hospital fits in one view
+// with no horizontal scroll. 輔大附醫 is always one of the rows (appended upstream
+// when it isn't a result), with a subtle tint + a tappable 「也可參考 →」 that jumps
+// to its contact-form card. Per CLAUDE.md it is never labelled as the maker.
 function ComparisonCard({
   columns,
   onPickFjuh,
@@ -266,74 +267,62 @@ function ComparisonCard({
   columns: CompareCol[];
   onPickFjuh?: () => void;
 }) {
+  const [sel, setSel] = useState(0);
+  const active = COMPARE_ROWS[sel];
+
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">📊 一次比較</p>
       <h2 className="mt-1 text-xl font-bold text-gray-900">幫你排排看</h2>
 
-      <div className="mt-4 overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead>
-            <tr>
-              <th className="sticky left-0 z-10 bg-white px-2 py-2" />
-              {columns.map((c) => {
-                const { header } = hospitalDisplayName(c.job.hospitalName, c.job.hospitalBriefName);
-                return (
-                  <th
-                    key={c.job.id}
-                    className={`min-w-[7rem] border-b border-gray-200 px-3 py-2 align-bottom font-semibold text-gray-900 ${
-                      c.fjuh ? 'bg-blue-50' : ''
-                    }`}
-                  >
-                    {c.fjuh && onPickFjuh ? (
-                      <button
-                        type="button"
-                        onClick={onPickFjuh}
-                        className="block text-left font-semibold text-gray-900"
-                      >
-                        {header}
-                        <span className="mt-1 block text-[10px] font-medium text-blue-600 underline">
-                          也可參考 →
-                        </span>
-                      </button>
-                    ) : (
-                      <>
-                        {header}
-                        {c.fjuh && (
-                          <span className="mt-1 block text-[10px] font-medium text-blue-600">
-                            也可參考
-                          </span>
-                        )}
-                      </>
-                    )}
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-          <tbody>
-            {COMPARE_ROWS.map((row) => (
-              <tr key={row.label} className="align-top">
-                <th
-                  scope="row"
-                  className="sticky left-0 z-10 whitespace-nowrap bg-white px-2 py-2 font-medium text-gray-500"
-                >
-                  {row.label}
-                </th>
-                {columns.map((c) => (
-                  <td
-                    key={c.job.id}
-                    className={`whitespace-pre-wrap border-t border-gray-100 px-3 py-2 text-gray-800 ${
-                      c.fjuh ? 'bg-blue-50/60' : ''
-                    }`}
-                  >
-                    {row.render(c.job)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* Attribute selector — pick one thing to compare across all hospitals. */}
+      <div className="mt-4 flex gap-1 rounded-xl bg-gray-100 p-1">
+        {COMPARE_ROWS.map((row, i) => (
+          <button
+            key={row.label}
+            type="button"
+            onClick={() => setSel(i)}
+            aria-pressed={i === sel}
+            className={`flex-1 rounded-lg px-1 py-1.5 text-sm font-medium transition-colors ${
+              i === sel
+                ? 'bg-white text-blue-600 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {row.label}
+          </button>
+        ))}
+      </div>
+
+      {/* All hospitals as rows, showing only the selected attribute. */}
+      <div className="mt-4">
+        {columns.map((c) => {
+          const { header } = hospitalDisplayName(c.job.hospitalName, c.job.hospitalBriefName);
+          return (
+            <div
+              key={c.job.id}
+              className={`flex items-center justify-between gap-3 border-t border-gray-100 px-2 py-3 ${
+                c.fjuh ? 'bg-blue-50/60' : ''
+              }`}
+            >
+              <div className="min-w-0">
+                {c.fjuh && onPickFjuh ? (
+                  <button type="button" onClick={onPickFjuh} className="block text-left">
+                    <span className="font-semibold text-gray-900">{header}</span>
+                    <span className="mt-0.5 block text-[10px] font-medium text-blue-600 underline">
+                      也可參考 →
+                    </span>
+                  </button>
+                ) : (
+                  <span className="font-semibold text-gray-900">{header}</span>
+                )}
+              </div>
+              <div className="max-w-[55%] whitespace-pre-wrap text-right text-sm text-gray-800">
+                {active.render(c.job)}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

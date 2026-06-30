@@ -204,8 +204,8 @@ function ArrowButton({ side, onClick }: { side: 'left' | 'right'; onClick: () =>
       type="button"
       onClick={onClick}
       aria-label={side === 'left' ? '上一張' : '下一張'}
-      className={`absolute top-1/2 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 shadow-md transition-colors hover:bg-gray-50 sm:flex ${
-        side === 'left' ? '-left-4' : '-right-4'
+      className={`absolute top-1/2 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-3xl leading-none text-gray-700 shadow-lg transition-all hover:scale-105 hover:bg-gray-50 hover:text-gray-900 active:scale-95 sm:flex ${
+        side === 'left' ? '-left-6' : '-right-6'
       }`}
     >
       {side === 'left' ? '‹' : '›'}

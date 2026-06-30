@@ -163,7 +163,7 @@ function DeckCard({
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
 
   return (
-    <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+    <div className="flex flex-1 flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">
         {label ?? (isWinner ? '✨ 你的命運醫院' : '也推薦給你')}
       </p>
@@ -236,6 +236,15 @@ function DeckCard({
 
       {/* FJUH-only: a quiet "leave your contact" form that emails the team. */}
       {isFjuh(job) && <FjuhContactForm job={job} />}
+
+      {/* Job blurb pinned to the card bottom (mt-auto) — fills the slack the
+          equal-height stretch leaves on shorter cards with a useful mini posting.
+          Clamped so a long summary doesn't blow up every card's height. */}
+      {job.jobSummary && (
+        <p className="mt-auto whitespace-pre-line border-t border-gray-100 pt-4 text-sm leading-relaxed text-gray-600 line-clamp-4">
+          {job.jobSummary}
+        </p>
+      )}
     </div>
   );
 }

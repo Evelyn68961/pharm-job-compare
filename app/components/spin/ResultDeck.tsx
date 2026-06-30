@@ -163,8 +163,8 @@ function DeckCard({
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
 
   return (
-    <div className="flex flex-1 flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
-      <p className="text-sm font-medium text-gray-500">
+    <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+      <p className="text-base font-medium text-gray-500">
         {label ?? (isWinner ? '✨ 你的命運醫院' : '也推薦給你')}
       </p>
 
@@ -201,18 +201,18 @@ function DeckCard({
       </div>
 
       {(job.salaryDisplay || job.shiftDescription) && (
-        <dl className="mt-5 space-y-2.5 border-t border-gray-100 pt-4 text-sm">
+        <dl className="mt-6 space-y-4 border-t border-gray-100 pt-5 text-base">
           {job.salaryDisplay && <Field label="薪資" value={job.salaryDisplay} />}
           {job.shiftDescription && <Field label="班別" value={job.shiftDescription} />}
         </dl>
       )}
 
       {job.tags.length > 0 && (
-        <div className="mt-4 flex flex-wrap gap-1.5 border-t border-gray-100 pt-4">
+        <div className="mt-5 flex flex-wrap gap-2 border-t border-gray-100 pt-5">
           {job.tags.map((t) => (
             <span
               key={t}
-              className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs text-gray-700"
+              className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-sm text-gray-700"
             >
               {t}
             </span>
@@ -220,7 +220,7 @@ function DeckCard({
         </div>
       )}
 
-      <div className="mt-5 space-y-2 border-t border-gray-100 pt-4">
+      <div className="mt-6 space-y-2 border-t border-gray-100 pt-5">
         {job.sourceUrl104 && (
           <a
             href={job.sourceUrl104}
@@ -236,15 +236,6 @@ function DeckCard({
 
       {/* FJUH-only: a quiet "leave your contact" form that emails the team. */}
       {isFjuh(job) && <FjuhContactForm job={job} />}
-
-      {/* Job blurb pinned to the card bottom (mt-auto) — fills the slack the
-          equal-height stretch leaves on shorter cards with a useful mini posting.
-          Clamped so a long summary doesn't blow up every card's height. */}
-      {job.jobSummary && (
-        <p className="mt-auto whitespace-pre-line border-t border-gray-100 pt-4 text-sm leading-relaxed text-gray-600 line-clamp-4">
-          {job.jobSummary}
-        </p>
-      )}
     </div>
   );
 }
@@ -256,11 +247,12 @@ const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
   { label: '薪資', render: (j) => j.salaryDisplay || '—' },
   { label: '輪班', render: (j) => j.shiftDescription || '—' },
   { label: '宿舍', render: (j) => j.dormitory || '—' },
+  { label: '工作內容', render: (j) => j.jobSummary || '—' },
   { label: '特色', render: (j) => (j.tags.length ? j.tags.join('、') : '—') },
 ];
 
 // The 5th deck slide: an attribute-at-a-time comparison. A segmented selector
-// bar (薪資 / 輪班 / 宿舍 / 特色) picks ONE attribute; all hospitals are then listed
+// bar (薪資 / 輪班 / 宿舍 / 工作內容 / 特色) picks ONE attribute; all hospitals are listed
 // as rows showing just that value — every hospital fits in one view, no scroll.
 // Each row shows the hospital name with its 104 link underneath. 輔大附醫 is always
 // one of the rows (appended upstream when it isn't a result); its WHOLE ROW is a
@@ -290,7 +282,7 @@ function ComparisonCard({
             type="button"
             onClick={() => setSel(i)}
             aria-pressed={i === sel}
-            className={`flex-1 rounded-lg px-1 py-1.5 text-sm font-medium transition-colors ${
+            className={`flex-1 whitespace-nowrap rounded-lg px-1 py-1.5 text-xs font-medium transition-colors ${
               i === sel
                 ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-500 hover:text-gray-700'
@@ -340,7 +332,7 @@ function ComparisonCard({
                   </a>
                 )}
               </div>
-              <div className="max-w-[55%] whitespace-pre-wrap text-right text-sm text-gray-800">
+              <div className="line-clamp-4 max-w-[60%] whitespace-pre-wrap text-right text-sm text-gray-800">
                 {active.render(c.job)}
               </div>
             </div>
@@ -353,8 +345,8 @@ function ComparisonCard({
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-[4rem_1fr] gap-2">
-      <dt className="text-gray-500">{label}</dt>
+    <div className="grid grid-cols-[5rem_1fr] gap-3">
+      <dt className="font-medium text-gray-500">{label}</dt>
       <dd className="whitespace-pre-wrap text-gray-900">{value}</dd>
     </div>
   );

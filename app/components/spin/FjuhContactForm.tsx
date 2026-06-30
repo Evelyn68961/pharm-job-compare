@@ -90,7 +90,7 @@ export function FjuhContactForm({ job }: { job: Job }) {
 
   return (
     <form onSubmit={handleSubmit} className="mt-3 space-y-3 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
-      <p className="text-sm font-medium text-gray-700">留下聯絡方式，我們會與你聯繫</p>
+      <p className="text-sm font-medium text-gray-700">留下聯絡方式，輔醫藥劑部會與你聯繫</p>
 
       {/* Context for the inbox — hospital here; subject + 連結來源 are added in
           handleSubmit so the link source is included. */}

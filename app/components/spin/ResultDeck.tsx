@@ -83,6 +83,14 @@ export function ResultDeck({
 
   return (
     <div className="mx-auto max-w-xl">
+      {/* Swipe hint ABOVE the cards so it's visible immediately — a tall result
+          card otherwise pushes the dots/hint below the phone viewport. First card
+          only (clears once they swipe). */}
+      {totalSlides > 1 && active === 0 && (
+        <p className="mb-3 animate-pulse text-center text-sm font-medium text-blue-600">
+          👈 左右滑動看更多醫院與比較 👉
+        </p>
+      )}
       <div className="relative">
         {/* Swipe track — height follows the active card (see trackHeight effect),
             so cards keep their natural height with no forced equal-height blank. */}
@@ -124,15 +132,6 @@ export function ResultDeck({
           <ArrowButton side="right" onClick={() => goTo(active + 1)} />
         )}
       </div>
-
-      {/* Swipe hint — sits directly under the cards (phones hide the desktop
-          arrows: hidden sm:flex, so touch users get no cue more cards exist).
-          First card only, clears once they swipe, mobile-only. */}
-      {totalSlides > 1 && active === 0 && (
-        <p className="mt-3 animate-pulse text-center text-xs font-medium text-gray-500 sm:hidden">
-          👈 左右滑動，看推薦與比較 👉
-        </p>
-      )}
 
       {/* Pagination dots */}
       <div className="mt-3 flex items-center justify-center gap-2">

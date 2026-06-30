@@ -83,7 +83,7 @@ export function FjuhContactForm({ job }: { job: Job }) {
         onClick={() => setOpen(true)}
         className="mt-3 block w-full rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-center text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100"
       >
-        📩 問現職輔大附醫藥師：薪資、輪班、考核
+        📩 問現職藥師：薪資、輪班、考核
       </button>
     );
   }

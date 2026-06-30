@@ -71,7 +71,7 @@ export function FjuhContactForm({ job }: { job: Job }) {
   if (status === 'sent') {
     return (
       <div className="mt-5 rounded-lg border border-green-200 bg-green-50 p-4 text-center text-sm text-green-700">
-        ✅ 已收到你的聯絡方式，我們會盡快與你聯繫！
+        ✅ 已收到！現職輔大附醫藥師會盡快與你聯繫
       </div>
     );
   }
@@ -83,14 +83,14 @@ export function FjuhContactForm({ job }: { job: Job }) {
         onClick={() => setOpen(true)}
         className="mt-3 block w-full rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-center text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100"
       >
-        📩 想進一步了解？留下聯絡方式
+        📩 由現職輔大附醫藥師回覆你的問題（薪資、輪班、考核）
       </button>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="mt-3 space-y-3 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
-      <p className="text-sm font-medium text-gray-700">留下聯絡方式，輔醫藥劑部會與你聯繫</p>
+      <p className="text-sm font-medium text-gray-700">留下聯絡方式，由現職藥師親自與你聯繫</p>
 
       {/* Context for the inbox — hospital here; subject + 連結來源 are added in
           handleSubmit so the link source is included. */}

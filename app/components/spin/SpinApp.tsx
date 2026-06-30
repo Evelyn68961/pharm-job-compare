@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState } from 'react';
 import type { Job } from '../../lib/types';
 import { buildWheelCandidates, pickWeightedSample, type QuizAnswers } from '../../lib/quiz';
 import { resolveAlternatives } from '../../lib/resolveAlternatives';
+import { isFjuh } from '../../lib/fjuh';
 import { MBTIQuiz } from './MBTIQuiz';
 import { PillboxMaze } from './PillboxMaze';
 import { ResultDeck } from './ResultDeck';
@@ -32,6 +33,11 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
     () => (winner && answers ? resolveAlternatives(winner, jobs, answers) : []),
     [winner, jobs, answers],
   );
+
+  // The 輔大附醫 benchmark for the comparison card. Pulled from the FULL job list
+  // (not the region-filtered candidates) so it's always available to show as an
+  // honest, labelled comparison column — even if the user excluded its region.
+  const fjuh = useMemo(() => jobs.find(isFjuh) ?? null, [jobs]);
 
   const restart = () => {
     setStage('intro');
@@ -70,6 +76,7 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
           winner={winner}
           alternatives={alternatives}
           idolRank={answers?.idolRank}
+          fjuh={fjuh}
           onRestart={restart}
         />
       )}

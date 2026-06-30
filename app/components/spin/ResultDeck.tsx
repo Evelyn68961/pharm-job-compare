@@ -237,10 +237,10 @@ const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
 ];
 
 // The 5th deck slide: a side-by-side table of the result hospitals. 輔大附醫 is
-// always present as a column (appended upstream when it isn't already a result),
-// but it renders IDENTICALLY to every other hospital — no tint, no label, no
-// "made by" credit. Per CLAUDE.md the FJUH credit line must never reappear in the
-// UI, so the column blends in completely.
+// always present as a column (appended upstream when it isn't already a result)
+// and gets a subtle blue tint + a neutral 「也可參考」 nudge to draw the eye. It
+// is NOT labelled as the maker — per CLAUDE.md the FJUH credit line must never
+// reappear in the UI, so the tag stays a generic "worth a look", not a credit.
 function ComparisonCard({ columns }: { columns: CompareCol[] }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
@@ -257,9 +257,16 @@ function ComparisonCard({ columns }: { columns: CompareCol[] }) {
                 return (
                   <th
                     key={c.job.id}
-                    className="min-w-[7rem] border-b border-gray-200 px-3 py-2 align-bottom font-semibold text-gray-900"
+                    className={`min-w-[7rem] border-b border-gray-200 px-3 py-2 align-bottom font-semibold text-gray-900 ${
+                      c.fjuh ? 'bg-blue-50' : ''
+                    }`}
                   >
                     {header}
+                    {c.fjuh && (
+                      <span className="mt-1 block text-[10px] font-medium text-blue-600">
+                        也可參考
+                      </span>
+                    )}
                   </th>
                 );
               })}
@@ -277,7 +284,9 @@ function ComparisonCard({ columns }: { columns: CompareCol[] }) {
                 {columns.map((c) => (
                   <td
                     key={c.job.id}
-                    className="whitespace-pre-wrap border-t border-gray-100 px-3 py-2 text-gray-800"
+                    className={`whitespace-pre-wrap border-t border-gray-100 px-3 py-2 text-gray-800 ${
+                      c.fjuh ? 'bg-blue-50/60' : ''
+                    }`}
                   >
                     {row.render(c.job)}
                   </td>

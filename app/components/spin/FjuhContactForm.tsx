@@ -15,7 +15,7 @@ import type { Job } from '../../lib/types';
 const ACCESS_KEY =
   process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || '2ed2ed94-6dab-4f2e-90e8-c3b1b6dbc38c';
 
-const TIME_OPTIONS = ['平日上午', '平日下午', '平日晚上'];
+const TIME_OPTIONS = ['平日上午 (9-12點)', '平日下午 (13-17點)'];
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 

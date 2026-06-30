@@ -30,18 +30,26 @@ export function ResultDeck({
 }) {
   const cards = [winner, ...alternatives].slice(0, 4);
 
-  // Final swipe card: a side-by-side comparison of the result hospitals, with
-  // 輔大附醫 (the maker) ALWAYS present as an honest, LABELLED benchmark column.
-  // It's appended only when it isn't already among the results (deduped via
-  // isFjuh). Region-gating deliberately does NOT apply here: this column is
-  // openly "比較基準／製作單位", not a disguised result, so it can't read as the
-  // "FJUH leaked past my region filter" bug the resolver guards against.
+  // Comparison card columns: the result hospitals, plus 輔大附醫 always present —
+  // appended as an extra column only when it isn't already among the results
+  // (deduped via isFjuh). Tapping the FJUH column jumps to a 輔大附醫 card so the
+  // visitor can leave contact info (see fjuhTargetIdx / onPickFjuh below).
   const compareCols: CompareCol[] = cards.map((job) => ({ job, fjuh: isFjuh(job) }));
-  if (fjuh && !compareCols.some((c) => c.fjuh)) {
-    compareCols.push({ job: fjuh, fjuh: true });
+  const fjuhResultIdx = cards.findIndex((j) => isFjuh(j));
+  const fjuhBenchmark = fjuh && fjuhResultIdx < 0 ? fjuh : null;
+  if (fjuhBenchmark) {
+    compareCols.push({ job: fjuhBenchmark, fjuh: true });
   }
   const showCompare = compareCols.length >= 2;
-  const totalSlides = cards.length + (showCompare ? 1 : 0);
+
+  // Slide order: result cards · comparison · (FJUH benchmark card, if appended).
+  // The benchmark card is a real 輔大附醫 card (with the contact form) so a visitor
+  // who taps the FJUH column lands somewhere they can leave contact info, even
+  // when FJUH wasn't one of their results.
+  const benchmarkSlideIdx = cards.length + (showCompare ? 1 : 0);
+  const totalSlides = cards.length + (showCompare ? 1 : 0) + (fjuhBenchmark ? 1 : 0);
+  const fjuhTargetIdx =
+    fjuhResultIdx >= 0 ? fjuhResultIdx : fjuhBenchmark ? benchmarkSlideIdx : -1;
 
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -79,7 +87,15 @@ export function ResultDeck({
           ))}
           {showCompare && (
             <div className="w-full shrink-0 snap-center px-0.5">
-              <ComparisonCard columns={compareCols} />
+              <ComparisonCard
+                columns={compareCols}
+                onPickFjuh={fjuhTargetIdx >= 0 ? () => goTo(fjuhTargetIdx) : undefined}
+              />
+            </div>
+          )}
+          {fjuhBenchmark && (
+            <div key={`fjuh-${fjuhBenchmark.id}`} className="w-full shrink-0 snap-center px-0.5">
+              <DeckCard job={fjuhBenchmark} label="也可參考" />
             </div>
           )}
         </div>
@@ -125,18 +141,20 @@ export function ResultDeck({
 function DeckCard({
   job,
   archetype,
-  isWinner,
+  isWinner = false,
+  label,
 }: {
   job: Job;
   archetype?: ArchetypeKey;
-  isWinner: boolean;
+  isWinner?: boolean;
+  label?: string;
 }) {
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">
-        {isWinner ? '✨ 你的命運醫院' : '也推薦給你'}
+        {label ?? (isWinner ? '✨ 你的命運醫院' : '也推薦給你')}
       </p>
 
       <div className="mt-4 flex items-center gap-4">
@@ -241,7 +259,13 @@ const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
 // and gets a subtle blue tint + a neutral 「也可參考」 nudge to draw the eye. It
 // is NOT labelled as the maker — per CLAUDE.md the FJUH credit line must never
 // reappear in the UI, so the tag stays a generic "worth a look", not a credit.
-function ComparisonCard({ columns }: { columns: CompareCol[] }) {
+function ComparisonCard({
+  columns,
+  onPickFjuh,
+}: {
+  columns: CompareCol[];
+  onPickFjuh?: () => void;
+}) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">📊 一次比較</p>
@@ -261,11 +285,26 @@ function ComparisonCard({ columns }: { columns: CompareCol[] }) {
                       c.fjuh ? 'bg-blue-50' : ''
                     }`}
                   >
-                    {header}
-                    {c.fjuh && (
-                      <span className="mt-1 block text-[10px] font-medium text-blue-600">
-                        也可參考
-                      </span>
+                    {c.fjuh && onPickFjuh ? (
+                      <button
+                        type="button"
+                        onClick={onPickFjuh}
+                        className="block text-left font-semibold text-gray-900"
+                      >
+                        {header}
+                        <span className="mt-1 block text-[10px] font-medium text-blue-600 underline">
+                          也可參考 →
+                        </span>
+                      </button>
+                    ) : (
+                      <>
+                        {header}
+                        {c.fjuh && (
+                          <span className="mt-1 block text-[10px] font-medium text-blue-600">
+                            也可參考
+                          </span>
+                        )}
+                      </>
                     )}
                   </th>
                 );

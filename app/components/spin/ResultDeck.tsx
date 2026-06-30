@@ -247,12 +247,12 @@ const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
   { label: '薪資', render: (j) => j.salaryDisplay || '—' },
   { label: '輪班', render: (j) => j.shiftDescription || '—' },
   { label: '宿舍', render: (j) => j.dormitory || '—' },
-  { label: '特色', render: (j) => (j.tags.length ? j.tags.join('、') : '—') },
   { label: '工作內容', render: (j) => j.jobSummary || '—' },
+  { label: '特色', render: (j) => (j.tags.length ? j.tags.join('、') : '—') },
 ];
 
 // The 5th deck slide: an attribute-at-a-time comparison. A segmented selector
-// bar (薪資 / 輪班 / 宿舍 / 特色 / 工作內容) picks ONE attribute; all hospitals are listed
+// bar (薪資 / 輪班 / 宿舍 / 工作內容 / 特色) picks ONE attribute; all hospitals are listed
 // as rows showing just that value — every hospital fits in one view, no scroll.
 // Each row shows the hospital name with its 104 link underneath. 輔大附醫 is always
 // one of the rows (appended upstream when it isn't a result); its WHOLE ROW is a

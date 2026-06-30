@@ -124,6 +124,15 @@ export function ResultDeck({
         ))}
       </div>
 
+      {/* Swipe hint — phones hide the desktop arrows (hidden sm:flex), so touch
+          users get no cue that more cards exist. Show a nudge on the first card
+          only (it clears once they swipe), mobile-only since desktop has arrows. */}
+      {totalSlides > 1 && active === 0 && (
+        <p className="mt-3 animate-pulse text-center text-xs font-medium text-gray-400 sm:hidden">
+          👈 左右滑動，看推薦與一次比較 👉
+        </p>
+      )}
+
       {/* Footer: restart */}
       <div className="mt-6 flex flex-col items-center gap-3">
         <button

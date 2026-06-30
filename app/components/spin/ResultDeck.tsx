@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import type { Job } from '../../lib/types';
 import { HOSPITAL_TIER_BADGE, TIER_BADGE, hospitalDisplayName } from '../../lib/styles';
 import { HospitalIcon } from './icons/HospitalIcon';
@@ -13,18 +13,44 @@ import type { ArchetypeKey } from './icons/types';
 // the 命運醫院 winner, cards 2–4 are recommendations. FJUH may be seeded into
 // the recommendations upstream (resolveAlternatives) — by design it looks like
 // any other card here, never a labelled ad.
+type CompareCol = { job: Job; fjuh: boolean };
+
 export function ResultDeck({
   winner,
   alternatives,
   idolRank,
+  fjuh,
   onRestart,
 }: {
   winner: Job;
   alternatives: Job[];
   idolRank?: ArchetypeKey[];
+  fjuh?: Job | null;
   onRestart: () => void;
 }) {
   const cards = [winner, ...alternatives].slice(0, 4);
+
+  // Comparison card columns: the result hospitals, plus 輔大附醫 always present —
+  // appended as an extra column only when it isn't already among the results
+  // (deduped via isFjuh). Tapping the FJUH column jumps to a 輔大附醫 card so the
+  // visitor can leave contact info (see fjuhTargetIdx / onPickFjuh below).
+  const compareCols: CompareCol[] = cards.map((job) => ({ job, fjuh: isFjuh(job) }));
+  const fjuhResultIdx = cards.findIndex((j) => isFjuh(j));
+  const fjuhBenchmark = fjuh && fjuhResultIdx < 0 ? fjuh : null;
+  if (fjuhBenchmark) {
+    compareCols.push({ job: fjuhBenchmark, fjuh: true });
+  }
+  const showCompare = compareCols.length >= 2;
+
+  // Slide order: result cards · comparison · (FJUH benchmark card, if appended).
+  // The benchmark card is a real 輔大附醫 card (with the contact form) so a visitor
+  // who taps the FJUH column lands somewhere they can leave contact info, even
+  // when FJUH wasn't one of their results.
+  const benchmarkSlideIdx = cards.length + (showCompare ? 1 : 0);
+  const totalSlides = cards.length + (showCompare ? 1 : 0) + (fjuhBenchmark ? 1 : 0);
+  const fjuhTargetIdx =
+    fjuhResultIdx >= 0 ? fjuhResultIdx : fjuhBenchmark ? benchmarkSlideIdx : -1;
+
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
@@ -37,7 +63,7 @@ export function ResultDeck({
   const goTo = (i: number) => {
     const el = scrollerRef.current;
     if (!el) return;
-    const clamped = Math.max(0, Math.min(cards.length - 1, i));
+    const clamped = Math.max(0, Math.min(totalSlides - 1, i));
     el.scrollTo({ left: clamped * el.clientWidth, behavior: 'smooth' });
   };
 
@@ -59,22 +85,35 @@ export function ResultDeck({
               />
             </div>
           ))}
+          {showCompare && (
+            <div className="w-full shrink-0 snap-center px-0.5">
+              <ComparisonCard
+                columns={compareCols}
+                onPickFjuh={fjuhTargetIdx >= 0 ? () => goTo(fjuhTargetIdx) : undefined}
+              />
+            </div>
+          )}
+          {fjuhBenchmark && (
+            <div key={`fjuh-${fjuhBenchmark.id}`} className="w-full shrink-0 snap-center px-0.5">
+              <DeckCard job={fjuhBenchmark} label="也可參考" />
+            </div>
+          )}
         </div>
 
         {/* Desktop arrows */}
         {active > 0 && (
           <ArrowButton side="left" onClick={() => goTo(active - 1)} />
         )}
-        {active < cards.length - 1 && (
+        {active < totalSlides - 1 && (
           <ArrowButton side="right" onClick={() => goTo(active + 1)} />
         )}
       </div>
 
       {/* Pagination dots */}
       <div className="mt-4 flex items-center justify-center gap-2">
-        {cards.map((job, i) => (
+        {Array.from({ length: totalSlides }).map((_, i) => (
           <button
-            key={job.id}
+            key={i}
             type="button"
             aria-label={`第 ${i + 1} 張`}
             onClick={() => goTo(i)}
@@ -102,18 +141,20 @@ export function ResultDeck({
 function DeckCard({
   job,
   archetype,
-  isWinner,
+  isWinner = false,
+  label,
 }: {
   job: Job;
   archetype?: ArchetypeKey;
-  isWinner: boolean;
+  isWinner?: boolean;
+  label?: string;
 }) {
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">
-        {isWinner ? '✨ 你的命運醫院' : '也推薦給你'}
+        {label ?? (isWinner ? '✨ 你的命運醫院' : '也推薦給你')}
       </p>
 
       <div className="mt-4 flex items-center gap-4">
@@ -184,6 +225,116 @@ function DeckCard({
 
       {/* FJUH-only: a quiet "leave your contact" form that emails the team. */}
       {isFjuh(job) && <FjuhContactForm job={job} />}
+    </div>
+  );
+}
+
+// The five comparison rows the owner picked. Each renders a single hospital's
+// cell for that attribute; missing data shows an em dash so columns stay aligned.
+const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
+  { label: '薪資', render: (j) => j.salaryDisplay || '—' },
+  { label: '輪班', render: (j) => j.shiftDescription || '—' },
+  { label: '宿舍', render: (j) => j.dormitory || '—' },
+  { label: '特色', render: (j) => (j.tags.length ? j.tags.join('、') : '—') },
+  {
+    label: '連結',
+    render: (j) =>
+      j.sourceUrl104 ? (
+        <a
+          href={j.sourceUrl104}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-blue-600 underline"
+        >
+          104 →
+        </a>
+      ) : (
+        '—'
+      ),
+  },
+];
+
+// The 5th deck slide: a side-by-side table of the result hospitals. 輔大附醫 is
+// always present as a column (appended upstream when it isn't already a result)
+// and gets a subtle blue tint + a neutral 「也可參考」 nudge to draw the eye. It
+// is NOT labelled as the maker — per CLAUDE.md the FJUH credit line must never
+// reappear in the UI, so the tag stays a generic "worth a look", not a credit.
+function ComparisonCard({
+  columns,
+  onPickFjuh,
+}: {
+  columns: CompareCol[];
+  onPickFjuh?: () => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+      <p className="text-sm font-medium text-gray-500">📊 一次比較</p>
+      <h2 className="mt-1 text-xl font-bold text-gray-900">幫你排排看</h2>
+
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full border-collapse text-left text-sm">
+          <thead>
+            <tr>
+              <th className="sticky left-0 z-10 bg-white px-2 py-2" />
+              {columns.map((c) => {
+                const { header } = hospitalDisplayName(c.job.hospitalName, c.job.hospitalBriefName);
+                return (
+                  <th
+                    key={c.job.id}
+                    className={`min-w-[7rem] border-b border-gray-200 px-3 py-2 align-bottom font-semibold text-gray-900 ${
+                      c.fjuh ? 'bg-blue-50' : ''
+                    }`}
+                  >
+                    {c.fjuh && onPickFjuh ? (
+                      <button
+                        type="button"
+                        onClick={onPickFjuh}
+                        className="block text-left font-semibold text-gray-900"
+                      >
+                        {header}
+                        <span className="mt-1 block text-[10px] font-medium text-blue-600 underline">
+                          也可參考 →
+                        </span>
+                      </button>
+                    ) : (
+                      <>
+                        {header}
+                        {c.fjuh && (
+                          <span className="mt-1 block text-[10px] font-medium text-blue-600">
+                            也可參考
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {COMPARE_ROWS.map((row) => (
+              <tr key={row.label} className="align-top">
+                <th
+                  scope="row"
+                  className="sticky left-0 z-10 whitespace-nowrap bg-white px-2 py-2 font-medium text-gray-500"
+                >
+                  {row.label}
+                </th>
+                {columns.map((c) => (
+                  <td
+                    key={c.job.id}
+                    className={`whitespace-pre-wrap border-t border-gray-100 px-3 py-2 text-gray-800 ${
+                      c.fjuh ? 'bg-blue-50/60' : ''
+                    }`}
+                  >
+                    {row.render(c.job)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

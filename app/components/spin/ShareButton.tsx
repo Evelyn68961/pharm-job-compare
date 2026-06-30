@@ -11,7 +11,7 @@ import type { ArchetypeKey } from './icons/types';
 // Two ways to share, for two different surfaces:
 //   • Primary 「分享我的命運醫院」 → shares a LINK carrying ?archetype&hospital&color.
 //     Chat apps (LINE/WhatsApp/Telegram) fetch the page's OG tags and render a
-//     PERSONALIZED, tappable preview card that opens pharm-job-compare.vercel.app
+//     PERSONALIZED, tappable preview card that opens pharmfate.vercel.app
 //     (see page.tsx generateMetadata + /og). We deliberately do NOT attach an
 //     image here: on LINE a shared file is just a photo — not a link — and the
 //     URL gets dropped alongside it (w3c/web-share#279).
@@ -36,10 +36,13 @@ export function ShareButton({ job, archetype: forced }: { job: Job; archetype?: 
   // The public link, personalized via SHORT ASCII params (`?j=<job code>&a=<slug>`)
   // so it stays tidy in chat apps — page.tsx's generateMetadata resolves them
   // back to the real names for the preview card. Always the production domain
-  // (even from the dev server) so recipients get pharm-job-compare.vercel.app,
-  // not a LAN IP. Update if the production domain changes.
+  // (even from the dev server) so recipients get pharmfate.vercel.app, not a LAN
+  // IP. Sourced from NEXT_PUBLIC_SITE_URL (set in Vercel) with the production
+  // domain as fallback, so the canonical host lives in one place and the dev
+  // server still hands out the real domain. Update the fallback if it changes.
   const linkParams = new URLSearchParams({ j: jobCode(job.id), a: ARCHETYPE_SLUG[archetype] });
-  const siteLink = `https://pharm-job-compare.vercel.app/?${linkParams.toString()}`;
+  const siteOrigin = (process.env.NEXT_PUBLIC_SITE_URL || 'https://pharmfate.vercel.app').replace(/\/$/, '');
+  const siteLink = `${siteOrigin}/?${linkParams.toString()}`;
   const shareMessage = `我有機會成為${archetype}，命運醫院是${header}！你呢？快來測測看！`;
 
   // Prime the landscape OG image so the receiving app's first scrape of the

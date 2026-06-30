@@ -254,9 +254,10 @@ const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
 // bar (薪資 / 輪班 / 宿舍 / 特色) picks ONE attribute; all hospitals are then listed
 // as rows showing just that value — every hospital fits in one view, no scroll.
 // Each row shows the hospital name with its 104 link underneath. 輔大附醫 is always
-// one of the rows (appended upstream when it isn't a result); its NAME is the
-// tappable link to its contact-form card. Per CLAUDE.md it is never labelled as
-// the maker.
+// one of the rows (appended upstream when it isn't a result); its WHOLE ROW is a
+// tappable button (hover highlight) that jumps to its contact-form card — the
+// inner 104 link stops propagation so it still opens independently. Per CLAUDE.md
+// it is never labelled as the maker.
 function ComparisonCard({
   columns,
   onPickFjuh,
@@ -295,30 +296,35 @@ function ComparisonCard({
       <div className="mt-4">
         {columns.map((c) => {
           const { header } = hospitalDisplayName(c.job.hospitalName, c.job.hospitalBriefName);
+          const clickable = c.fjuh && onPickFjuh;
           return (
             <div
               key={c.job.id}
+              onClick={clickable ? onPickFjuh : undefined}
+              role={clickable ? 'button' : undefined}
+              tabIndex={clickable ? 0 : undefined}
+              onKeyDown={
+                clickable
+                  ? (e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onPickFjuh();
+                      }
+                    }
+                  : undefined
+              }
               className={`flex items-center justify-between gap-3 border-t border-gray-100 px-2 py-3 ${
                 c.fjuh ? 'bg-blue-50/60' : ''
-              }`}
+              } ${clickable ? 'cursor-pointer transition-colors hover:bg-blue-100' : ''}`}
             >
               <div className="min-w-0">
-                {c.fjuh && onPickFjuh ? (
-                  <button
-                    type="button"
-                    onClick={onPickFjuh}
-                    className="block text-left font-semibold text-blue-700 underline"
-                  >
-                    {header}
-                  </button>
-                ) : (
-                  <span className="font-semibold text-gray-900">{header}</span>
-                )}
+                <span className="font-semibold text-gray-900">{header}</span>
                 {c.job.sourceUrl104 && (
                   <a
                     href={c.job.sourceUrl104}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="mt-0.5 block text-[11px] font-medium text-blue-600 underline"
                   >
                     104 →

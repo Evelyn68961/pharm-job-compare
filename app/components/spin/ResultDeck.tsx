@@ -200,10 +200,12 @@ function DeckCard({
         </div>
       </div>
 
-      {(job.salaryDisplay || job.shiftDescription) && (
+      {(job.salaryDisplay || job.shiftDescription || job.dormitory || job.jobSummary) && (
         <dl className="mt-6 space-y-4 border-t border-gray-100 pt-5 text-base">
           {job.salaryDisplay && <Field label="薪資" value={job.salaryDisplay} />}
           {job.shiftDescription && <Field label="班別" value={job.shiftDescription} />}
+          {job.dormitory && <Field label="宿舍" value={job.dormitory} />}
+          {job.jobSummary && <Field label="工作內容" value={job.jobSummary} />}
         </dl>
       )}
 

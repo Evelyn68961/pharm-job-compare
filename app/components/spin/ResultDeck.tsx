@@ -13,7 +13,7 @@ import type { ArchetypeKey } from './icons/types';
 // the 命運醫院 winner, cards 2–4 are recommendations. FJUH may be seeded into
 // the recommendations upstream (resolveAlternatives) — by design it looks like
 // any other card here, never a labelled ad.
-type CompareCol = { job: Job; fjuh: boolean; benchmark?: boolean };
+type CompareCol = { job: Job; fjuh: boolean };
 
 export function ResultDeck({
   winner,
@@ -38,7 +38,7 @@ export function ResultDeck({
   // "FJUH leaked past my region filter" bug the resolver guards against.
   const compareCols: CompareCol[] = cards.map((job) => ({ job, fjuh: isFjuh(job) }));
   if (fjuh && !compareCols.some((c) => c.fjuh)) {
-    compareCols.push({ job: fjuh, fjuh: true, benchmark: true });
+    compareCols.push({ job: fjuh, fjuh: true });
   }
   const showCompare = compareCols.length >= 2;
   const totalSlides = cards.length + (showCompare ? 1 : 0);
@@ -236,12 +236,12 @@ const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
   },
 ];
 
-// The 5th deck slide: a side-by-side table of the result hospitals. The 輔大附醫
-// column (c.fjuh) is tinted and tagged 「製作單位」 so it's an honest, visible
-// benchmark, never a hidden plug. The footnote shows only when FJUH was appended
-// as a benchmark (it didn't already win/recommend on its own merits).
+// The 5th deck slide: a side-by-side table of the result hospitals. 輔大附醫 is
+// always present as a column (appended upstream when it isn't already a result),
+// but it renders IDENTICALLY to every other hospital — no tint, no label, no
+// "made by" credit. Per CLAUDE.md the FJUH credit line must never reappear in the
+// UI, so the column blends in completely.
 function ComparisonCard({ columns }: { columns: CompareCol[] }) {
-  const hasBenchmark = columns.some((c) => c.benchmark);
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">📊 一次比較</p>
@@ -257,16 +257,9 @@ function ComparisonCard({ columns }: { columns: CompareCol[] }) {
                 return (
                   <th
                     key={c.job.id}
-                    className={`min-w-[7rem] border-b border-gray-200 px-3 py-2 align-bottom font-semibold text-gray-900 ${
-                      c.fjuh ? 'bg-blue-50' : ''
-                    }`}
+                    className="min-w-[7rem] border-b border-gray-200 px-3 py-2 align-bottom font-semibold text-gray-900"
                   >
                     {header}
-                    {c.fjuh && (
-                      <span className="mt-1 block text-[10px] font-medium text-blue-600">
-                        製作單位
-                      </span>
-                    )}
                   </th>
                 );
               })}
@@ -284,9 +277,7 @@ function ComparisonCard({ columns }: { columns: CompareCol[] }) {
                 {columns.map((c) => (
                   <td
                     key={c.job.id}
-                    className={`whitespace-pre-wrap border-t border-gray-100 px-3 py-2 text-gray-800 ${
-                      c.fjuh ? 'bg-blue-50/60' : ''
-                    }`}
+                    className="whitespace-pre-wrap border-t border-gray-100 px-3 py-2 text-gray-800"
                   >
                     {row.render(c.job)}
                   </td>
@@ -296,10 +287,6 @@ function ComparisonCard({ columns }: { columns: CompareCol[] }) {
           </tbody>
         </table>
       </div>
-
-      {hasBenchmark && (
-        <p className="mt-3 text-xs text-gray-400">＊輔大附醫為本站製作單位，固定列為比較基準</p>
-      )}
     </div>
   );
 }

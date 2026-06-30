@@ -85,7 +85,7 @@ export function ResultDeck({
         ))}
       </div>
 
-      {/* Footer: restart + tiny credit (only persistent FJUH mention) */}
+      {/* Footer: restart */}
       <div className="mt-6 flex flex-col items-center gap-3">
         <button
           type="button"
@@ -94,7 +94,6 @@ export function ResultDeck({
         >
           🎲 再玩一次
         </button>
-        <p className="text-xs text-gray-400">輔大附醫藥劑部製作</p>
       </div>
     </div>
   );

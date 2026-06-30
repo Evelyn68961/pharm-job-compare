@@ -173,8 +173,6 @@ function Intro({ onStart, totalHospitals }: { onStart: () => void; totalHospital
             目前收錄 <strong className="text-gray-700">{totalHospitals}</strong> 家醫院 · 醫學中心 &amp; 區域醫院
           </p>
         </div>
-
-        <p className="text-xs text-gray-400">輔大附醫藥劑部製作</p>
       </div>
     </div>
   );

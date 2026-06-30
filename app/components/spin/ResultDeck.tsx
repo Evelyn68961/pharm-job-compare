@@ -71,13 +71,15 @@ export function ResultDeck({
     <div className="mx-auto max-w-xl">
       <div className="relative">
         {/* Swipe track */}
+        {/* items-stretch (default) + flex-1 on each card = every slide takes the
+            tallest card's height, so no dead space and the dots sit right under. */}
         <div
           ref={scrollerRef}
           onScroll={onScroll}
           className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto"
         >
           {cards.map((job, i) => (
-            <div key={job.id} className="w-full shrink-0 snap-center px-0.5">
+            <div key={job.id} className="flex w-full shrink-0 snap-center flex-col px-0.5 py-1">
               <DeckCard
                 job={job}
                 archetype={idolRank?.[i]}
@@ -86,7 +88,7 @@ export function ResultDeck({
             </div>
           ))}
           {showCompare && (
-            <div className="w-full shrink-0 snap-center px-0.5">
+            <div className="flex w-full shrink-0 snap-center flex-col px-0.5 py-1">
               <ComparisonCard
                 columns={compareCols}
                 onPickFjuh={fjuhTargetIdx >= 0 ? () => goTo(fjuhTargetIdx) : undefined}
@@ -94,7 +96,7 @@ export function ResultDeck({
             </div>
           )}
           {fjuhBenchmark && (
-            <div key={`fjuh-${fjuhBenchmark.id}`} className="w-full shrink-0 snap-center px-0.5">
+            <div key={`fjuh-${fjuhBenchmark.id}`} className="flex w-full shrink-0 snap-center flex-col px-0.5 py-1">
               <DeckCard job={fjuhBenchmark} label="也可參考" />
             </div>
           )}
@@ -109,8 +111,17 @@ export function ResultDeck({
         )}
       </div>
 
+      {/* Swipe hint — sits directly under the cards (phones hide the desktop
+          arrows: hidden sm:flex, so touch users get no cue more cards exist).
+          First card only, clears once they swipe, mobile-only. */}
+      {totalSlides > 1 && active === 0 && (
+        <p className="mt-3 animate-pulse text-center text-xs font-medium text-gray-500 sm:hidden">
+          👈 左右滑動，看推薦與比較 👉
+        </p>
+      )}
+
       {/* Pagination dots */}
-      <div className="mt-4 flex items-center justify-center gap-2">
+      <div className="mt-3 flex items-center justify-center gap-2">
         {Array.from({ length: totalSlides }).map((_, i) => (
           <button
             key={i}
@@ -123,15 +134,6 @@ export function ResultDeck({
           />
         ))}
       </div>
-
-      {/* Swipe hint — phones hide the desktop arrows (hidden sm:flex), so touch
-          users get no cue that more cards exist. Show a nudge on the first card
-          only (it clears once they swipe), mobile-only since desktop has arrows. */}
-      {totalSlides > 1 && active === 0 && (
-        <p className="mt-3 animate-pulse text-center text-xs font-medium text-gray-400 sm:hidden">
-          👈 左右滑動，看推薦與一次比較 👉
-        </p>
-      )}
 
       {/* Footer: restart */}
       <div className="mt-6 flex flex-col items-center gap-3">
@@ -161,7 +163,7 @@ function DeckCard({
   const { header, subtitle } = hospitalDisplayName(job.hospitalName, job.hospitalBriefName);
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+    <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">
         {label ?? (isWinner ? '✨ 你的命運醫院' : '也推薦給你')}
       </p>
@@ -252,9 +254,10 @@ const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
 // bar (薪資 / 輪班 / 宿舍 / 特色) picks ONE attribute; all hospitals are then listed
 // as rows showing just that value — every hospital fits in one view, no scroll.
 // Each row shows the hospital name with its 104 link underneath. 輔大附醫 is always
-// one of the rows (appended upstream when it isn't a result); its NAME is the
-// tappable link to its contact-form card. Per CLAUDE.md it is never labelled as
-// the maker.
+// one of the rows (appended upstream when it isn't a result); its WHOLE ROW is a
+// tappable button (hover highlight) that jumps to its contact-form card — the
+// inner 104 link stops propagation so it still opens independently. Per CLAUDE.md
+// it is never labelled as the maker.
 function ComparisonCard({
   columns,
   onPickFjuh,
@@ -266,7 +269,7 @@ function ComparisonCard({
   const active = COMPARE_ROWS[sel];
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
+    <div className="flex-1 rounded-2xl border border-gray-200 bg-white p-6 shadow-md">
       <p className="text-sm font-medium text-gray-500">📊 一次比較</p>
       <h2 className="mt-1 text-xl font-bold text-gray-900">幫你排排看</h2>
 
@@ -293,30 +296,35 @@ function ComparisonCard({
       <div className="mt-4">
         {columns.map((c) => {
           const { header } = hospitalDisplayName(c.job.hospitalName, c.job.hospitalBriefName);
+          const clickable = c.fjuh && onPickFjuh;
           return (
             <div
               key={c.job.id}
+              onClick={clickable ? onPickFjuh : undefined}
+              role={clickable ? 'button' : undefined}
+              tabIndex={clickable ? 0 : undefined}
+              onKeyDown={
+                clickable
+                  ? (e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onPickFjuh();
+                      }
+                    }
+                  : undefined
+              }
               className={`flex items-center justify-between gap-3 border-t border-gray-100 px-2 py-3 ${
                 c.fjuh ? 'bg-blue-50/60' : ''
-              }`}
+              } ${clickable ? 'cursor-pointer transition-colors hover:bg-blue-100' : ''}`}
             >
               <div className="min-w-0">
-                {c.fjuh && onPickFjuh ? (
-                  <button
-                    type="button"
-                    onClick={onPickFjuh}
-                    className="block text-left font-semibold text-blue-700 underline"
-                  >
-                    {header}
-                  </button>
-                ) : (
-                  <span className="font-semibold text-gray-900">{header}</span>
-                )}
+                <span className="font-semibold text-gray-900">{header}</span>
                 {c.job.sourceUrl104 && (
                   <a
                     href={c.job.sourceUrl104}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="mt-0.5 block text-[11px] font-medium text-blue-600 underline"
                   >
                     104 →

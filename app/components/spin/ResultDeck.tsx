@@ -229,37 +229,23 @@ function DeckCard({
   );
 }
 
-// The five comparison rows the owner picked. Each renders a single hospital's
-// cell for that attribute; missing data shows an em dash so columns stay aligned.
+// The selectable comparison attributes. Each renders a single hospital's value
+// for that attribute; missing data shows an em dash. The 104 link is NOT here —
+// it sits permanently under every hospital name instead (see the row markup).
 const COMPARE_ROWS: { label: string; render: (job: Job) => ReactNode }[] = [
   { label: '薪資', render: (j) => j.salaryDisplay || '—' },
   { label: '輪班', render: (j) => j.shiftDescription || '—' },
   { label: '宿舍', render: (j) => j.dormitory || '—' },
   { label: '特色', render: (j) => (j.tags.length ? j.tags.join('、') : '—') },
-  {
-    label: '連結',
-    render: (j) =>
-      j.sourceUrl104 ? (
-        <a
-          href={j.sourceUrl104}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-medium text-blue-600 underline"
-        >
-          104 →
-        </a>
-      ) : (
-        '—'
-      ),
-  },
 ];
 
 // The 5th deck slide: an attribute-at-a-time comparison. A segmented selector
-// bar (薪資 / 輪班 / 宿舍 / 特色 / 連結) picks ONE attribute; all hospitals are then
-// listed as rows showing just that value — so every hospital fits in one view
-// with no horizontal scroll. 輔大附醫 is always one of the rows (appended upstream
-// when it isn't a result), with a subtle tint + a tappable 「也可參考 →」 that jumps
-// to its contact-form card. Per CLAUDE.md it is never labelled as the maker.
+// bar (薪資 / 輪班 / 宿舍 / 特色) picks ONE attribute; all hospitals are then listed
+// as rows showing just that value — every hospital fits in one view, no scroll.
+// Each row shows the hospital name with its 104 link underneath. 輔大附醫 is always
+// one of the rows (appended upstream when it isn't a result); its NAME is the
+// tappable link to its contact-form card. Per CLAUDE.md it is never labelled as
+// the maker.
 function ComparisonCard({
   columns,
   onPickFjuh,
@@ -307,14 +293,25 @@ function ComparisonCard({
             >
               <div className="min-w-0">
                 {c.fjuh && onPickFjuh ? (
-                  <button type="button" onClick={onPickFjuh} className="block text-left">
-                    <span className="font-semibold text-gray-900">{header}</span>
-                    <span className="mt-0.5 block text-[10px] font-medium text-blue-600 underline">
-                      也可參考 →
-                    </span>
+                  <button
+                    type="button"
+                    onClick={onPickFjuh}
+                    className="block text-left font-semibold text-blue-700 underline"
+                  >
+                    {header}
                   </button>
                 ) : (
                   <span className="font-semibold text-gray-900">{header}</span>
+                )}
+                {c.job.sourceUrl104 && (
+                  <a
+                    href={c.job.sourceUrl104}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-0.5 block text-[11px] font-medium text-blue-600 underline"
+                  >
+                    104 →
+                  </a>
                 )}
               </div>
               <div className="max-w-[55%] whitespace-pre-wrap text-right text-sm text-gray-800">

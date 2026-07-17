@@ -1,4 +1,4 @@
-import type { Job } from './types';
+import type { Job, Region } from './types';
 
 // ── FJUH visibility knobs ───────────────────────────────────────────────────
 // 輔大附醫 (FJUH) is the site owner and wants more exposure. Both boosts are
@@ -33,4 +33,23 @@ export function isFjuh(job: Job): boolean {
     FJUH_KEYS.some((k) => job.hospitalName.includes(k)) ||
     FJUH_KEYS.some((k) => job.hospitalBriefName?.includes(k))
   );
+}
+
+// The always-on 輔大附醫 comparison column + trailing benchmark card in
+// ResultDeck are pulled from the FULL job list, so they can surface even when
+// the user excluded FJUH's region. In the PROMO build that's intentional
+// exposure. In the own-name build (NEUTRAL) it reads as bias-from-nowhere — an
+// FJUH column/card appearing right after the user said "not 北北基" — so we gate
+// it to region eligibility: only surface the benchmark when FJUH is actually
+// eligible for this user (no region picked, or its region among the picks).
+// Returns the FJUH job to benchmark, or null to show none. The winner/
+// alternatives are already region-filtered upstream, so this is the only
+// non-region-gated FJUH surface.
+export function fjuhBenchmark(jobs: Job[], regions: Region[]): Job | null {
+  const f = jobs.find(isFjuh) ?? null;
+  if (!f) return null;
+  if (NEUTRAL && regions.length > 0 && f.region != null && !regions.includes(f.region)) {
+    return null;
+  }
+  return f;
 }

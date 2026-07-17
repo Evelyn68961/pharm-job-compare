@@ -4,7 +4,7 @@ import { Fragment, useMemo, useState } from 'react';
 import type { Job } from '../../lib/types';
 import { buildWheelCandidates, pickWeightedSample, type QuizAnswers } from '../../lib/quiz';
 import { resolveAlternatives } from '../../lib/resolveAlternatives';
-import { isFjuh } from '../../lib/fjuh';
+import { fjuhBenchmark } from '../../lib/fjuh';
 import { MBTIQuiz } from './MBTIQuiz';
 import { PillboxMaze } from './PillboxMaze';
 import { ResultDeck } from './ResultDeck';
@@ -34,10 +34,14 @@ export function SpinApp({ jobs }: { jobs: Job[] }) {
     [winner, jobs, answers],
   );
 
-  // The 輔大附醫 benchmark for the comparison card. Pulled from the FULL job list
-  // (not the region-filtered candidates) so it's always available to show as an
-  // honest, labelled comparison column — even if the user excluded its region.
-  const fjuh = useMemo(() => jobs.find(isFjuh) ?? null, [jobs]);
+  // The 輔大附醫 benchmark for the comparison card / trailing card. Pulled from
+  // the FULL job list so the PROMO build can always show it. In the own-name
+  // (NEUTRAL) build, fjuhBenchmark() gates it to region eligibility — no FJUH
+  // column/card when the user excluded 北北基 (see fjuh.ts).
+  const fjuh = useMemo(
+    () => (answers ? fjuhBenchmark(jobs, answers.regions) : null),
+    [jobs, answers],
+  );
 
   const restart = () => {
     setStage('intro');

@@ -12,15 +12,19 @@ import type { Job } from './types';
 //                    (resolveAlternatives), at a random slot, when eligible and
 //                    not already the winner.
 //
-// NEUTRAL BUILD: setting NEXT_PUBLIC_NEUTRAL=1 zeroes out both boosts so FJUH
-// is ranked exactly like every other hospital (multiplier 1, never seeded). Use
-// this for the own-name/Threads deployment that must carry no FJUH bias. The
-// FJUH-boosted promo build simply leaves the env var unset. Same code, one flag
-// — deployed as two Vercel projects off the same repo.
+// OWN-NAME / THREADS BUILD: NEXT_PUBLIC_NEUTRAL=1 selects the toned-down build
+// deployed under the maintainer's own name (pharm-fortune). It applies a GENTLE
+// boost (2× / 0.2) instead of the promo build's heavy 4× / 0.5 — subtle enough
+// that FJUH's tilt isn't visible to a reader, yet it still surfaces the FJUH
+// contact form often enough (~1-in-3 open, ~1-in-2 for 北北基 players) to make
+// the Threads-conversion test meaningful. The full promo build leaves the env
+// var unset. Same code, one flag — two Vercel projects off one repo.
+// (Flag kept named NEUTRAL for deploy continuity; it now means "gentle own-name
+// build", not literally zero-boost. Simulated rates live in the plan history.)
 const NEUTRAL = process.env.NEXT_PUBLIC_NEUTRAL === '1';
 
-export const FJUH_WIN_MULT = NEUTRAL ? 1 : 4;
-export const FJUH_ALT_RATE = NEUTRAL ? 0 : 0.5;
+export const FJUH_WIN_MULT = NEUTRAL ? 2 : 4;
+export const FJUH_ALT_RATE = NEUTRAL ? 0.2 : 0.5;
 
 const FJUH_KEYS = ['輔大附醫', '輔大附設'];
 

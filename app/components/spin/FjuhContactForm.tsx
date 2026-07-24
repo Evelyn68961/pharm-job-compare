@@ -15,6 +15,12 @@ import type { Job } from '../../lib/types';
 const ACCESS_KEY =
   process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || '2ed2ed94-6dab-4f2e-90e8-c3b1b6dbc38c';
 
+// Default 連結來源 (lead source) for THIS build, set per Vercel project via
+// NEXT_PUBLIC_SOURCE_TAG: the promo build (pharmfate) → "official", the own-name
+// build (pharm-fortune) → "threads". A ?ref= in the URL still overrides it for
+// finer per-link tracking. Unset → "direct".
+const DEFAULT_SOURCE = process.env.NEXT_PUBLIC_SOURCE_TAG || 'direct';
+
 const TIME_OPTIONS = ['平日上午 (9-12點)', '平日下午 (13-17點)'];
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';

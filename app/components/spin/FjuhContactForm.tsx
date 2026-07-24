@@ -29,12 +29,12 @@ export function FjuhContactForm({ job }: { job: Job }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
 
-  // Which shared link this visitor arrived through: the `?ref=` tag (e.g.
-  // ?ref=evelyn vs ?ref=official) lets us tell whose link a submission came from.
-  // Captured once on mount — the spin flow never navigates, so the tag persists,
-  // but reading it here is robust even if the address bar later changes. No tag
-  // → "direct" (typed the URL, organic share, etc.).
-  const source = useRef('direct');
+  // Which shared link this visitor arrived through. Defaults to this build's
+  // source tag (DEFAULT_SOURCE — pharmfate "official", pharm-fortune "threads");
+  // a `?ref=` in the URL overrides it for finer per-link tracking. Captured once
+  // on mount — the spin flow never navigates, so the tag persists, but reading it
+  // here is robust even if the address bar later changes.
+  const source = useRef(DEFAULT_SOURCE);
   useEffect(() => {
     const r = new URLSearchParams(window.location.search).get('ref');
     if (r) source.current = r.trim().slice(0, 40);

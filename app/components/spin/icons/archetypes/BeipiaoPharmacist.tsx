@@ -20,9 +20,9 @@ export function BeipiaoPharmacist({ size, accentColor, secondaryColor }: Archety
 
       <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92" />
 
-      <circle cx="50" cy="34" r="17" fill="#F8D2AC" />
       <circle cx="33.5" cy="35" r="3.2" fill="#F0BE92" />
       <circle cx="66.5" cy="35" r="3.2" fill="#F0BE92" />
+      <circle cx="50" cy="34" r="17" fill="#F8D2AC" />
 
       <path d="M33 33 Q33 15 50 15 Q67 15 67 33 Q63 25 55 24 Q57 20 51 19 Q52 24 46 24 Q39 25 33 33 Z" fill="#4A372A" />
 

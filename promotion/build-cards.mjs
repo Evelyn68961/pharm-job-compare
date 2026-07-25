@@ -1754,8 +1754,9 @@ const SERIES = [
       '🎒 北漂：離家追高薪 + 宿舍，先卡位', '',
       '你落在哪個象限？留言告訴我 👇'].join('\n') },
   { wk: 7, no: '19', date: 'Tue Sep 8', type: 'cmp', a: '學霸', b: '鐵腕',
-    aLine: '學霸：醫學中心衝一波，光環拉滿', bLine: '鐵腕：公職鐵飯碗，工時工作有保障',
-    metrics: ['成長資源', '工時保障', '升遷天花板'] },
+    aLine: '學霸：醫學中心衝一波，光環拉滿', bLine: '鐵腕：公職鐵飯碗，保障穩穩的',
+    metrics: ['成長資源', '工作保障', '職涯步調'],
+    valA: ['大院資源多', '重視發展', '積極衝刺'], valB: ['制度完整', '保障踏實', '穩紮穩打'] },
   { wk: 7, no: '20', date: 'Thu Sep 10', type: 'cmp', a: '佛系', b: '北漂',
     aLine: '佛系：待在熟悉的地方，錢夠用就好', bLine: '北漂：離鄉背井，先卡到好位子',
     metrics: ['是否離鄉', '生活步調', '宿舍需求'] },
@@ -1881,6 +1882,13 @@ const cmp17Cards = cmpCards(p17);
 const out17 = build('post-17-jiaohun-vs-jinniu', cmp17Cards, { title: '教魂 vs 金牛 — 第 17 篇', slug: 'jiaohun-vs-jinniu' });
 assertCmpAligned('教魂vs金牛', cmp17Cards, p17);
 console.log('Wrote 教魂vs金牛 →', out17);
+
+// Comparison post 19 — 學霸 vs 鐵腕 (growth/prestige vs stability; both positive).
+const p19 = SERIES.find((p) => p.no === '19');
+const cmp19Cards = cmpCards(p19);
+const out19 = build('post-19-ace-vs-iron', cmp19Cards, { title: '學霸 vs 鐵腕 — 第 19 篇', slug: 'ace-vs-iron' });
+assertCmpAligned('學霸vs鐵腕', cmp19Cards, p19);
+console.log('Wrote 學霸vs鐵腕 →', out19);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

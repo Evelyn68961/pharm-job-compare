@@ -1,4 +1,4 @@
-# Post 08 · 北漂藥師 (Week 3 Wed, 2026-08-12)
+# Post 08 · 北漂藥師 (Week 3 Thu, 2026-08-13)
 
 5-card idol deep-dive. Character = the **real** `BeipiaoPharmacist` SVG (open
 smile, no glasses, suitcase — ears drawn behind the head). Blue theme. Scene

@@ -1,4 +1,4 @@
-# Post 02 · 佛系藥師 (Week 1 Wed, 2026-07-29)
+# Post 02 · 佛系藥師 (Week 1 Thu, 2026-07-30)
 
 5-card idol deep-dive. Character = the **real** `ZenPharmacist` SVG (long hair,
 green side ribbons, pill bottle — zero drift). Emerald theme. Same scene

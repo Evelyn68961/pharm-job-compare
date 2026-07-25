@@ -1,4 +1,4 @@
-# Post 01 · 夜貓藥師 (Week 1 Mon, 2026-07-27)
+# Post 01 · 夜貓藥師 (Week 1 Tue, 2026-07-28)
 
 5-card idol deep-dive. Character = the **real** `NightOwlPharmacist` SVG (zero
 drift), scenes + Traditional-Chinese copy composed in SVG.

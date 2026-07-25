@@ -1,4 +1,4 @@
-# Post 04 · 金牛藥師 (Week 2 Mon, 2026-08-03)
+# Post 04 · 金牛藥師 (Week 2 Tue, 2026-08-04)
 
 5-card idol deep-dive. Character = the **real** `JinniuPharmacist` SVG (winking
 grin, gold 元寶/ingot — zero drift). Gold theme. Scene signature: a **golden-hour

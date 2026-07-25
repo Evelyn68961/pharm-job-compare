@@ -1,4 +1,4 @@
-# Post 05 · 鐵腕藥師 (Week 2 Wed, 2026-08-05)
+# Post 05 · 鐵腕藥師 (Week 2 Thu, 2026-08-06)
 
 5-card idol deep-dive. Character = the **real** `IronArmPharmacist` SVG (female,
 pulled-back bun, official seal 印章, 政府 shield-star pin — ears drawn behind the

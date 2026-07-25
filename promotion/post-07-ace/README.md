@@ -1,4 +1,4 @@
-# Post 07 · 學霸藥師 (Week 3 Mon, 2026-08-10)
+# Post 07 · 學霸藥師 (Week 3 Tue, 2026-08-11)
 
 5-card idol deep-dive. Character = the **real** `AcademicAcePharmacist` SVG
 (glasses, focused brows, clipboard — ears drawn behind the head). Deep-teal

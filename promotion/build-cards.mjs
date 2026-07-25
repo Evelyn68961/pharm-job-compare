@@ -1758,8 +1758,9 @@ const SERIES = [
     metrics: ['成長資源', '工作保障', '職涯步調'],
     valA: ['大院資源多', '重視發展', '積極衝刺'], valB: ['制度完整', '保障踏實', '穩紮穩打'] },
   { wk: 7, no: '20', date: 'Thu Sep 10', type: 'cmp', a: '佛系', b: '北漂',
-    aLine: '佛系：待在熟悉的地方，錢夠用就好', bLine: '北漂：離鄉背井，先卡到好位子',
-    metrics: ['是否離鄉', '生活步調', '宿舍需求'] },
+    aLine: '佛系：待在熟悉的地方，安穩自在', bLine: '北漂：到嚮往的城市，闖出一片天',
+    metrics: ['生活圈', '生活步調', '最看重'],
+    valA: ['熟悉又安穩', '從容自在', '生活平衡'], valB: ['新鮮有挑戰', '積極闖蕩', '機會成長'] },
   { wk: 7, no: '21', date: 'Sun Sep 13', type: 'grid',
     body: ['藥師命運轉盤 · 完結篇', '', '7 週、21 篇、7 種藥師人格。', '你，找到自己了嗎？', '',
       '還沒測過的 —', '30 秒測出你的命運醫院，連結在留言 👇', '',
@@ -1889,6 +1890,13 @@ const cmp19Cards = cmpCards(p19);
 const out19 = build('post-19-ace-vs-iron', cmp19Cards, { title: '學霸 vs 鐵腕 — 第 19 篇', slug: 'ace-vs-iron' });
 assertCmpAligned('學霸vs鐵腕', cmp19Cards, p19);
 console.log('Wrote 學霸vs鐵腕 →', out19);
+
+// Comparison post 20 — 佛系 vs 北漂 (stay-content vs venture-out; both positive).
+const p20 = SERIES.find((p) => p.no === '20');
+const cmp20Cards = cmpCards(p20);
+const out20 = build('post-20-foxi-vs-beipiao', cmp20Cards, { title: '佛系 vs 北漂 — 第 20 篇', slug: 'foxi-vs-beipiao' });
+assertCmpAligned('佛系vs北漂', cmp20Cards, p20);
+console.log('Wrote 佛系vs北漂 →', out20);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

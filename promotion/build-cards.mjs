@@ -1704,12 +1704,13 @@ const SERIES = [
   { wk: 3, no: '09', date: 'Sun Aug 16', type: 'idol', k: '教魂',
     scen: ['帶學生比自己上班還累', '但看他們成長就充電'], recog: '⋯這是你的日常嗎？',
     factors: ['教學醫院資源', '帶教制度與時數', '進修・研討公假公費'], fate: '你的命運醫院是哪間教學醫院？' },
-  { wk: 4, no: '10', date: 'Tue Aug 18', type: 'cmp', a: '教魂', b: '學霸',
-    aLine: '教魂：帶學生，看他們發光', bLine: '學霸：拚研究，看自己發表',
-    metrics: ['教學制度', '研究資源', '進修公假'] },
-  { wk: 4, no: '11', date: 'Thu Aug 20', type: 'cmp', a: '佛系', b: '金牛',
-    aLine: '佛系：錢夠用就好，心不累最重要', bLine: '金牛：拚一波，年薪百萬是信仰',
-    metrics: ['月薪帶', '加班程度', '生活品質'] },
+  { wk: 4, no: '10', date: 'Tue Aug 18', type: 'cmp', a: '教魂', b: '佛系',
+    aLine: '教魂：多花時間帶學生，看他們成長最值得', bLine: '佛系：準時下班顧生活，知足常樂心不累',
+    metrics: ['工作動力', '成就感來源', '工作風格'],
+    valA: ['傳承與教學', '學生的成長', '樂於多付出'], valB: ['穩定與平衡', '生活的餘裕', '準時有效率'] },
+  { wk: 4, no: '11', date: 'Thu Aug 20', type: 'cmp', a: '學霸', b: '金牛',
+    aLine: '學霸：資源拉滿，拚成長與光環', bLine: '金牛：精算每一分，讓收入最大化',
+    metrics: ['追求目標', '成長資源', '薪水態度'] },
   { wk: 4, no: '12', date: 'Sun Aug 23', type: 'grid',
     body: ['藥師命運轉盤 · 全員集合', '', '7 種藥師人格，你是幾號？', '',
       '1. 學霸 · 醫學中心衝一波', '2. 教魂 · 帶學生比自己還累', '3. 北漂 · 一卡皮箱闖天涯',
@@ -1833,6 +1834,13 @@ const cmp06Cards = cmpCards(p06);
 const out6 = build('post-06-jinniu-vs-iron', cmp06Cards, { title: '金牛 vs 鐵腕 — 第 6 篇', slug: 'jinniu-vs-iron' });
 assertCmpAligned('金牛vs鐵腕', cmp06Cards, p06);
 console.log('Wrote 金牛vs鐵腕 →', out6);
+
+// Comparison post 10 — 教魂 vs 佛系 (devotion vs balance; both framed positively).
+const p10 = SERIES.find((p) => p.no === '10');
+const cmp10Cards = cmpCards(p10);
+const out10 = build('post-10-jiaohun-vs-foxi', cmp10Cards, { title: '教魂 vs 佛系 — 第 10 篇', slug: 'jiaohun-vs-foxi' });
+assertCmpAligned('教魂vs佛系', cmp10Cards, p10);
+console.log('Wrote 教魂vs佛系 →', out10);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

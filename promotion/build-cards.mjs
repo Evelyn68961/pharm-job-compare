@@ -1718,8 +1718,9 @@ const SERIES = [
       '4. 鐵腕 · 公職鐵飯碗', '5. 夜貓 · 大夜換高薪', '6. 佛系 · 準時下班就是勝利',
       '7. 金牛 · 年薪百萬是信仰', '', '留言你的號碼，我猜下一位 👇'].join('\n') },
   { wk: 5, no: '13', date: 'Tue Aug 25', type: 'cmp', a: '夜貓', b: '鐵腕',
-    aLine: '夜貓：靠大夜衝收入，日夜顛倒', bLine: '鐵腕：公職少輪班，作息穩穩的',
-    metrics: ['輪班強度', '作息', '保障制度'] },
+    aLine: '夜貓：扛得住大夜，收入衝更高', bLine: '鐵腕：作息穩定，保障最踏實',
+    metrics: ['收入來源', '作息型態', '適合的人'],
+    valA: ['夜班加給高', '夜型有精神', '愛拚愛自由'], valB: ['月薪穩穩領', '日夜較規律', '求穩重保障'] },
   { wk: 5, no: '14', date: 'Thu Aug 27', type: 'cmp', a: '教魂', b: '北漂',
     aLine: '教魂：留下來，把學生帶起來', bLine: '北漂：離鄉背井，先卡到位子',
     metrics: ['選院動機', '是否離鄉', '成就感來源'] },
@@ -1849,6 +1850,13 @@ const cmp11Cards = cmpCards(p11);
 const out11 = build('post-11-ace-vs-jinniu', cmp11Cards, { title: '學霸 vs 金牛 — 第 11 篇', slug: 'ace-vs-jinniu' });
 assertCmpAligned('學霸vs金牛', cmp11Cards, p11);
 console.log('Wrote 學霸vs金牛 →', out11);
+
+// Comparison post 13 — 夜貓 vs 鐵腕 (night-pay hustle vs stable protection; both positive).
+const p13 = SERIES.find((p) => p.no === '13');
+const cmp13Cards = cmpCards(p13);
+const out13 = build('post-13-yemao-vs-iron', cmp13Cards, { title: '夜貓 vs 鐵腕 — 第 13 篇', slug: 'yemao-vs-iron' });
+assertCmpAligned('夜貓vs鐵腕', cmp13Cards, p13);
+console.log('Wrote 夜貓vs鐵腕 →', out13);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

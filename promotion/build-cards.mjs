@@ -221,6 +221,42 @@ const BEIPIAO = `
   <circle cx="26" cy="66" r="3.8" fill="#F8D2AC"/>
 `;
 
+// 教魂藥師 — accent #ea580c (warm orange, teaching passion), secondary #2563eb
+// (blue whiteboard marker). Female, long hair, open enthusiastic smile, holding
+// a marker at waist height. Adapted from TeachingSoulPharmacist.tsx — ears drawn
+// behind the head.
+const JIAOHUN_ACCENT = '#ea580c';
+const JIAOHUN_SECONDARY = '#2563eb';
+const JIAOHUN = `
+  <path d="M30 51 Q29 16 50 14 Q71 16 70 51 Q70 56 66 60 Q67 48 65 41 Q58 31 50 31 Q42 31 35 41 Q33 48 34 60 Q30 56 30 51 Z" fill="#3A2A1C"/>
+  <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" stroke-width="1.6"/>
+  <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" stroke-width="1.4" fill="none"/>
+  <path d="M50 55 L44 67 L50 73 L56 67 Z" fill="${JIAOHUN_ACCENT}"/>
+  <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92"/>
+  <path d="M30 74 Q23 74 25 67" stroke="#D7DCE3" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M30 74 Q23 74 25 67" stroke="#FFFFFF" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <path d="M23.5 50 L26 45.5 L28.5 50 Z" fill="#475569"/>
+  <rect x="23" y="50" width="6" height="16" rx="2" fill="${JIAOHUN_SECONDARY}" fill-opacity="0.55"/>
+  <rect x="22.6" y="59" width="6.8" height="4" rx="1.2" fill="${JIAOHUN_SECONDARY}" fill-opacity="0.85"/>
+  <circle cx="26" cy="65" r="4.2" fill="#F8D2AC"/>
+  <circle cx="33.5" cy="35" r="3.2" fill="#F0BE92"/>
+  <circle cx="66.5" cy="35" r="3.2" fill="#F0BE92"/>
+  <circle cx="50" cy="34" r="17" fill="#F8D2AC"/>
+  <path d="M34 34 Q34 17 50 16 Q66 17 66 34 Q61 25 53 25 Q56 21 49 21 Q42 22 40 27 Q37 28 34 34 Z" fill="#3A2A1C"/>
+  <path d="M39 31 Q43 27.5 47 31" fill="none" stroke="#3A2A1C" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M53 31 Q57 27.5 61 31" fill="none" stroke="#3A2A1C" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M40 35 L38.5 33.5 M43 34.5 L42.5 33" stroke="#3A2A1C" stroke-width="1.1" stroke-linecap="round"/>
+  <path d="M60 35 L61.5 33.5 M57 34.5 L57.5 33" stroke="#3A2A1C" stroke-width="1.1" stroke-linecap="round"/>
+  <circle cx="43" cy="37.5" r="2.5" fill="#2B3440"/>
+  <circle cx="43.9" cy="36.6" r="0.85" fill="#FFFFFF"/>
+  <circle cx="57" cy="37.5" r="2.5" fill="#2B3440"/>
+  <circle cx="57.9" cy="36.6" r="0.85" fill="#FFFFFF"/>
+  <circle cx="39.5" cy="43" r="2.2" fill="#F4A8A0" fill-opacity="0.7"/>
+  <circle cx="60.5" cy="43" r="2.2" fill="#F4A8A0" fill-opacity="0.7"/>
+  <path d="M45 44 Q50 51 55 44 Z" fill="#C2685B"/>
+  <path d="M46.3 44.4 Q50 46 53.7 44.4" fill="#FFFFFF"/>
+`;
+
 // ── Theme ────────────────────────────────────────────────────────────────────
 // Per-post palette. `accent` = idol colour (brand mark, pills, chips, icons);
 // `hint` = soft swipe-hint tint; `deep` = darker accent for sub-copy text.
@@ -241,6 +277,9 @@ const THEMES = {
   ace: { accent: '#0e7490', hint: '#22d3ee', deep: '#155e75' },
   // Blue for 北漂 (relocation). Distinct from 學霸 teal; reads on the cream bg.
   beipiao: { accent: '#2563eb', hint: '#60a5fa', deep: '#1e40af' },
+  // Warm orange for 教魂 (teaching passion / 教學魂). Distinct from 金牛 gold and
+  // 鐵腕 red; reads on the cream bg.
+  jiaohun: { accent: '#ea580c', hint: '#fb923c', deep: '#9a3412' },
   // Neutral slate for comparison-card furniture (the duotone lives in the
   // panels/characters, so the brand mark / counter stay neutral).
   cmp: { accent: '#475569', hint: '#94a3b8', deep: '#334155' },
@@ -248,8 +287,8 @@ const THEMES = {
 let TH = THEMES.yemao;
 
 // Idol → character art + theme (extend as more characters are drawn).
-const CHAR_OF = { 夜貓: YEMAO, 佛系: ZEN, 金牛: JINNIU, 鐵腕: IRONARM, 學霸: ACE, 北漂: BEIPIAO };
-const THEME_OF = { 夜貓: THEMES.yemao, 佛系: THEMES.foxi, 金牛: THEMES.jinniu, 鐵腕: THEMES.iron, 學霸: THEMES.ace, 北漂: THEMES.beipiao };
+const CHAR_OF = { 夜貓: YEMAO, 佛系: ZEN, 金牛: JINNIU, 鐵腕: IRONARM, 學霸: ACE, 北漂: BEIPIAO, 教魂: JIAOHUN };
+const THEME_OF = { 夜貓: THEMES.yemao, 佛系: THEMES.foxi, 金牛: THEMES.jinniu, 鐵腕: THEMES.iron, 學霸: THEMES.ace, 北漂: THEMES.beipiao, 教魂: THEMES.jiaohun };
 
 // ── Primitives ──────────────────────────────────────────────────────────────
 const A = YEMAO_ACCENT;
@@ -473,6 +512,40 @@ function iconTrain(cx, cy, r = 40) {
     + `<rect x="${x0.toFixed(1)}" y="${(y0 + h * 0.56).toFixed(1)}" width="${w.toFixed(1)}" height="${(r * 0.14).toFixed(1)}" fill="#1e3a8a"/>`
     + `<circle cx="${(x0 + r * 0.32).toFixed(1)}" cy="${(y0 + h * 0.78).toFixed(1)}" r="${(r * 0.15).toFixed(1)}" fill="#1e3a8a"/>`
     + `<circle cx="${(x0 + w - r * 0.32).toFixed(1)}" cy="${(y0 + h * 0.78).toFixed(1)}" r="${(r * 0.15).toFixed(1)}" fill="#1e3a8a"/>`;
+}
+function iconChalkboard(cx, cy, r = 40) {
+  // whiteboard on a stand with writing = 教學醫院資源
+  const c = TH.accent, w = r * 1.7, h = r * 1.12, x0 = cx - w / 2, y0 = cy - h / 2 - r * 0.12;
+  let g = `<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="5" fill="${c}"/>`;
+  for (let i = 0; i < 3; i++) {
+    const ly = y0 + h * (0.3 + i * 0.22), lw = w * (i === 2 ? 0.4 : 0.62);
+    g += `<line x1="${(x0 + w * 0.16).toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(x0 + w * 0.16 + lw).toFixed(1)}" y2="${ly.toFixed(1)}" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>`;
+  }
+  g += `<line x1="${(cx - r * 0.5).toFixed(1)}" y1="${(y0 + h).toFixed(1)}" x2="${(cx - r * 0.64).toFixed(1)}" y2="${(y0 + h + r * 0.36).toFixed(1)}" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`;
+  g += `<line x1="${(cx + r * 0.5).toFixed(1)}" y1="${(y0 + h).toFixed(1)}" x2="${(cx + r * 0.64).toFixed(1)}" y2="${(y0 + h + r * 0.36).toFixed(1)}" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`;
+  return g;
+}
+function iconMentor(cx, cy, r = 40) {
+  // a taller teacher + a shorter student = 帶教制度與時數
+  const c = TH.accent;
+  const fig = (fx, headY, headR, bodyBot, op) =>
+    `<circle cx="${fx.toFixed(1)}" cy="${headY.toFixed(1)}" r="${headR.toFixed(1)}" fill="${c}" fill-opacity="${op}"/>` +
+    `<path d="M${(fx - headR * 1.3).toFixed(1)} ${bodyBot.toFixed(1)} Q${(fx - headR * 1.3).toFixed(1)} ${(headY + headR * 1.1).toFixed(1)} ${fx.toFixed(1)} ${(headY + headR * 1.1).toFixed(1)} Q${(fx + headR * 1.3).toFixed(1)} ${(headY + headR * 1.1).toFixed(1)} ${(fx + headR * 1.3).toFixed(1)} ${bodyBot.toFixed(1)} Z" fill="${c}" fill-opacity="${op}"/>`;
+  return fig(cx - r * 0.42, cy - r * 0.5, r * 0.3, cy + r * 0.62, '1')
+    + fig(cx + r * 0.52, cy - r * 0.1, r * 0.24, cy + r * 0.62, '0.55');
+}
+function iconCert(cx, cy, r = 40) {
+  // a certificate with a ribbon seal = 進修・研討公假公費
+  const c = TH.accent, w = r * 1.16, h = r * 1.5, x0 = cx - w / 2, y0 = cy - h / 2 - r * 0.1;
+  let g = `<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="4" fill="#ffffff" stroke="${c}" stroke-width="4"/>`;
+  for (let i = 0; i < 3; i++) {
+    const ly = y0 + h * (0.24 + i * 0.15);
+    g += `<line x1="${(x0 + w * 0.2).toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(x0 + w * 0.8).toFixed(1)}" y2="${ly.toFixed(1)}" stroke="${c}" stroke-width="3" stroke-opacity="0.5" stroke-linecap="round"/>`;
+  }
+  const sy = y0 + h * 0.66;
+  g += `<circle cx="${cx.toFixed(1)}" cy="${sy.toFixed(1)}" r="${(r * 0.24).toFixed(1)}" fill="${c}"/>`;
+  g += `<path d="M${(cx - r * 0.16).toFixed(1)} ${(sy + r * 0.1).toFixed(1)} L${(cx - r * 0.24).toFixed(1)} ${(sy + r * 0.56).toFixed(1)} L${cx.toFixed(1)} ${(sy + r * 0.4).toFixed(1)} L${(cx + r * 0.24).toFixed(1)} ${(sy + r * 0.56).toFixed(1)} L${(cx + r * 0.16).toFixed(1)} ${(sy + r * 0.1).toFixed(1)} Z" fill="${c}"/>`;
+  return g;
 }
 
 // ── 夜貓 scenes ──────────────────────────────────────────────────────────────
@@ -1277,6 +1350,133 @@ function beipiaoCard5() {
   return frame(defs, body);
 }
 
+// ── 教魂藥師 scenes (warm orange; a classroom whiteboard — the "帶學生" beat) ───
+function jiaohunCard1() {
+  const defs = haloDefs('h1', TH.accent);
+  const body =
+    furniture(1, 5) +
+    character(JIAOHUN, 260, 520, 5.6, { haloId: 'h1', shadow: true }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 300, 58, '你，也是', { anchor: 'middle', weight: 800, fill: '#334155' }) +
+    text(W / 2, 420, 94, '教魂藥師 嗎？', { anchor: 'middle', weight: 800, fill: TH.accent }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+// Classroom whiteboard with a lesson written up — 教魂's signature scene.
+function teachingScene() {
+  const by = 360, bh = 380;
+  const wbX = 545, wbY = by + 70, wbW = 430, wbH = 205;
+  let g = `<rect x="90" y="${by}" width="900" height="${bh}" fill="url(#class)"/>`;
+  g += `<rect x="${wbX}" y="${wbY}" width="${wbW}" height="${wbH}" rx="12" fill="#ffffff" stroke="${TH.accent}" stroke-width="6"/>`;
+  g += text(wbX + 36, wbY + 68, 46, 'Rx', { fill: TH.accent, weight: 800 });
+  g += `<line x1="${wbX + 36}" y1="${wbY + 84}" x2="${wbX + 156}" y2="${wbY + 84}" stroke="${TH.accent}" stroke-width="5" stroke-linecap="round"/>`;
+  for (let i = 0; i < 3; i++) {
+    const ly = wbY + 120 + i * 34;
+    g += `<circle cx="${wbX + 48}" cy="${ly - 6}" r="5" fill="${TH.accent}" fill-opacity="0.6"/>`;
+    g += `<line x1="${wbX + 70}" y1="${ly - 6}" x2="${wbX + wbW - 70 - (i % 2) * 70}" y2="${ly - 6}" stroke="#94a3b8" stroke-width="5" stroke-linecap="round"/>`;
+  }
+  g += `<g transform="translate(${wbX + wbW - 84} ${wbY + 150}) rotate(32)"><rect x="-30" y="-13" width="60" height="26" rx="13" fill="${TH.accent}" fill-opacity="0.85"/><line x1="0" y1="-13" x2="0" y2="13" stroke="#fff" stroke-width="4"/></g>`;
+  return `<g clip-path="url(#cp)">` + g + `</g>` + iconMentor(205, 460, 40);
+}
+
+function jiaohunCard2() {
+  const defs = haloDefs('h2', TH.accent)
+    + `<clipPath id="cp"><rect x="90" y="360" width="900" height="380" rx="28"/></clipPath>`
+    + `<linearGradient id="class" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffedd5"/>`
+    + `<stop offset="100%" stop-color="#fff7ed"/></linearGradient>`;
+  const body =
+    furniture(2, 5) +
+    teachingScene() +
+    `<g transform="translate(90 150)">${chip(0, 0, '這就是你')}</g>` +
+    character(JIAOHUN, 130, 430, 4.4, { haloId: 'h2' }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 900, 52, '帶學生比自己上班還累', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 985, 56, '但看他們成長就充電', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 1075, 40, '⋯這是你的日常嗎？', { anchor: 'middle', weight: 600, fill: '#64748b' }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function jiaohunCard3() {
+  const defs = haloDefs('h3', TH.accent);
+  // Font 34 so the longest label 「進修・研討公假公費」 stays inside the box.
+  const tile = (y, icon, label) =>
+    `<rect x="540" y="${y}" width="470" height="150" rx="24" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>` +
+    icon(615, y + 75) +
+    text(686, y + 90, 34, label, { weight: 800, fill: '#1f2937' });
+  const body =
+    furniture(3, 5) +
+    `<g transform="translate(70 150)">${chip(0, 0, '你該在意的')}</g>` +
+    character(JIAOHUN, 70, 500, 4.6, { haloId: 'h3', shadow: true }) +
+    tile(440, iconChalkboard, '教學醫院資源') +
+    tile(620, iconMentor, '帶教制度與時數') +
+    tile(800, iconCert, '進修・研討公假公費') +
+    `<g id="text-overlay">` +
+    text(540, 400, 42, '面試前，先問這三件 👇', { weight: 800, fill: '#334155' }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function jiaohunCard4() {
+  const defs = haloDefs('h4', TH.accent) +
+    `<radialGradient id="wheelglow" cx="50%" cy="50%" r="50%">` +
+    `<stop offset="0%" stop-color="${TH.accent}" stop-opacity="0.35"/>` +
+    `<stop offset="100%" stop-color="${TH.accent}" stop-opacity="0"/></radialGradient>`;
+  const cx = 700, cy = 600, r = 210;
+  const polar = (deg, rad) => [cx + rad * Math.cos((deg * Math.PI) / 180), cy + rad * Math.sin((deg * Math.PI) / 180)];
+  const shades = ['#ffedd5', '#fed7aa'];
+  const slices = [];
+  for (let i = 0; i < 8; i++) {
+    const [x0, y0] = polar(i * 45, r);
+    const [x1, y1] = polar(i * 45 + 45, r);
+    slices.push(`<path d="M${cx} ${cy} L${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${shades[i % 2]}"/>`);
+  }
+  const marks = [];
+  for (let i = 0; i < 8; i++) {
+    const [mx, my] = polar(i * 45 + 22.5, r * 0.72);
+    marks.push(`<g transform="translate(${mx.toFixed(1)} ${my.toFixed(1)})">`
+      + `<rect x="-18" y="-18" width="36" height="36" rx="7" fill="#fff" stroke="#fdba74" stroke-width="2"/>`
+      + `<rect x="-3" y="-11" width="6" height="22" fill="#ef4444"/><rect x="-11" y="-3" width="22" height="6" fill="#ef4444"/></g>`);
+  }
+  const wheel =
+    `<circle cx="${cx}" cy="${cy}" r="${r + 60}" fill="url(#wheelglow)"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="${r + 10}" fill="#fff"/>` +
+    slices.join('') +
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${TH.accent}" stroke-width="8"/>` +
+    marks.join('') +
+    `<circle cx="${cx}" cy="${cy}" r="42" fill="${TH.accent}"/>` +
+    `<rect x="${cx - 9}" y="${cy - 26}" width="18" height="52" rx="9" fill="#fff"/>` +
+    `<line x1="${cx - 9}" y1="${cy}" x2="${cx + 9}" y2="${cy}" stroke="${TH.accent}" stroke-width="4"/>` +
+    `<path d="M${cx + r + 18} ${cy} l 34 -20 l 0 40 z" fill="#f59e0b"/>`;
+  const body =
+    furniture(4, 5) +
+    `<g transform="translate(70 150)">${chip(0, 0, '命運醫院')}</g>` +
+    wheel +
+    character(JIAOHUN, 90, 690, 3.4, { haloId: 'h4' }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 1035, 48, '你的命運醫院是哪間教學醫院？', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 1110, 44, '50+ 家醫院，抽出命定那一間', { anchor: 'middle', weight: 600, fill: TH.deep }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function jiaohunCard5() {
+  const defs = haloDefs('h5', TH.accent);
+  const btnX = 165, btnY = 900, btnW = 750, btnH = 140;
+  const body =
+    furniture(5, 5, { swipe: false }) +
+    character(JIAOHUN, 290, 190, 5.0, { haloId: 'h5', shadow: true }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 800, 50, '換你了 👇', { anchor: 'middle', weight: 700, fill: '#334155' }) +
+    `<rect x="${btnX}" y="${btnY}" width="${btnW}" height="${btnH}" rx="70" fill="${TH.accent}"/>` +
+    text(W / 2 - 26, btnY + btnH / 2 + 20, 54, '30 秒測出你的命運醫院', { anchor: 'middle', weight: 800, fill: '#fff' }) +
+    text(btnX + btnW - 70, btnY + btnH / 2 + 20, 56, '→', { anchor: 'middle', weight: 800, fill: '#fff' }) +
+    text(W / 2, 1130, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: TH.deep }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
 // ── Comparison cards (4-card duotone: Hook / 兩種人生 / 硬指標 / CTA) ──────────
 // Rendered under TH = THEMES.cmp (neutral furniture); the duotone comes from
 // each idol's own theme. Reusable for any comparison post via CHAR_OF/THEME_OF.
@@ -1447,12 +1647,17 @@ TH = THEMES.beipiao;
 const beipiaoCards = [beipiaoCard1(), beipiaoCard2(), beipiaoCard3(), beipiaoCard4(), beipiaoCard5()];
 const out8 = build('post-08-beipiao', beipiaoCards, { title: '北漂藥師 — 第 8 篇', slug: 'beipiao' });
 
+TH = THEMES.jiaohun;
+const jiaohunCards = [jiaohunCard1(), jiaohunCard2(), jiaohunCard3(), jiaohunCard4(), jiaohunCard5()];
+const out9 = build('post-09-jiaohun', jiaohunCards, { title: '教魂藥師 — 第 9 篇', slug: 'jiaohun' });
+
 console.log('Wrote 夜貓 →', out1);
 console.log('Wrote 佛系 →', out2);
 console.log('Wrote 金牛 →', out4);
 console.log('Wrote 鐵腕 →', out5);
 console.log('Wrote 學霸 →', out7);
 console.log('Wrote 北漂 →', out8);
+console.log('Wrote 教魂 →', out9);
 
 // ── Full-series caption deck (SINGLE SOURCE OF TRUTH = the SERIES table) ──────
 // Captions are generated from the same strings the cards render. For the two
@@ -1602,6 +1807,7 @@ assertAligned('金牛', jinniuCards, SERIES.find((p) => p.no === '04'));
 assertAligned('鐵腕', ironCards, SERIES.find((p) => p.no === '05'));
 assertAligned('學霸', aceCards, SERIES.find((p) => p.no === '07'));
 assertAligned('北漂', beipiaoCards, SERIES.find((p) => p.no === '08'));
+assertAligned('教魂', jiaohunCards, SERIES.find((p) => p.no === '09'));
 
 // Comparison post 03 — cards rendered from the same SERIES entry as its caption.
 TH = THEMES.cmp;

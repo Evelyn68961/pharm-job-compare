@@ -910,8 +910,17 @@ function cmpCard1(p) {
   return frame(defs, body);
 }
 
+// Derive the two card-2 scenario lines from an `aLine`/`bLine` ("名：X，Y"):
+// strip the "名：" prefix, split on the Chinese comma. Posts with explicit
+// aParts/bParts (e.g. 03) bypass this.
+function cmpParts(line) {
+  const body = line.includes('：') ? line.slice(line.indexOf('：') + 1) : line;
+  return body.split('，');
+}
 function cmpCard2(p) {
   const A = THEME_OF[p.a], B = THEME_OF[p.b];
+  const aParts = p.aParts || cmpParts(p.aLine);
+  const bParts = p.bParts || cmpParts(p.bLine);
   const defs = haloDefs('hA', A.accent) + haloDefs('hB', B.accent);
   const body =
     furniture(2, 4) +
@@ -919,13 +928,13 @@ function cmpCard2(p) {
     `<rect x="60" y="250" width="960" height="450" rx="28" fill="${A.accent}" fill-opacity="0.08"/>` +
     character(CHAR_OF[p.a], 90, 300, 3.4, { haloId: 'hA' }) +
     text(470, 400, 54, p.a, { weight: 800, fill: A.accent }) +
-    text(470, 492, 44, p.aParts[0], { weight: 700, fill: '#1f2937' }) +
-    text(470, 560, 44, p.aParts[1], { weight: 700, fill: '#1f2937' }) +
+    text(470, 492, 44, aParts[0], { weight: 700, fill: '#1f2937' }) +
+    (aParts[1] ? text(470, 560, 44, aParts[1], { weight: 700, fill: '#1f2937' }) : '') +
     `<rect x="60" y="730" width="960" height="450" rx="28" fill="${B.accent}" fill-opacity="0.10"/>` +
     character(CHAR_OF[p.b], 90, 780, 3.4, { haloId: 'hB' }) +
     text(470, 880, 54, p.b, { weight: 800, fill: B.accent }) +
-    text(470, 972, 44, p.bParts[0], { weight: 700, fill: '#1f2937' }) +
-    text(470, 1040, 44, p.bParts[1], { weight: 700, fill: '#1f2937' });
+    text(470, 972, 44, bParts[0], { weight: 700, fill: '#1f2937' }) +
+    (bParts[1] ? text(470, 1040, 44, bParts[1], { weight: 700, fill: '#1f2937' }) : '');
   return frame(defs, body);
 }
 
@@ -1078,7 +1087,8 @@ const SERIES = [
     factors: ['公立/私立差別', '年資與退休制度', '輪班與工時保障'], fate: '你的命運醫院是哪間公立醫院？' },
   { wk: 2, no: '06', date: 'Fri Aug 7', type: 'cmp', a: '金牛', b: '鐵腕',
     aLine: '金牛：私立高薪，津貼疊好疊滿', bLine: '鐵腕：公職穩定，年資退休都有',
-    metrics: ['年薪帶', '保障制度', '加班意願'] },
+    metrics: ['年薪帶', '保障制度', '加班意願'],
+    valA: ['拚高薪', '看各院制度', '願加班換錢'], valB: ['穩定領', '公職保障佳', '守時、重保障'] },
   { wk: 3, no: '07', date: 'Mon Aug 10', type: 'idol', k: '學霸',
     scen: ['醫學中心衝一波，資源光環拉滿', '但節奏快到飛起'], recog: '⋯這畫面是不是很熟悉？',
     factors: ['PGY 訓練', '專科藥師・進階制度', '教學研究資源'], fate: '你的命運醫院是哪間醫學中心？' },
@@ -1198,7 +1208,9 @@ const cmp03Cards = cmpCards(p03);
 const out3 = build('post-03-yemao-vs-foxi', cmp03Cards, { title: '夜貓 vs 佛系 — 第 3 篇', slug: 'yemao-vs-foxi' });
 function assertCmpAligned(name, svgs, p) {
   const hay = svgs.join('');
-  const frags = [...p.aParts, ...p.bParts, ...p.metrics, '你更像誰？', '30 秒測出你的屬性'];
+  const aParts = p.aParts || cmpParts(p.aLine);
+  const bParts = p.bParts || cmpParts(p.bLine);
+  const frags = [...aParts, ...bParts, ...p.metrics, ...(p.valA || []), ...(p.valB || []), '你更像誰？', '30 秒測出你的屬性'];
   for (const f of frags) {
     if (!hay.includes(f)) throw new Error(`[align:${name}] 卡片上找不到文案片段：「${f}」`);
   }
@@ -1206,6 +1218,13 @@ function assertCmpAligned(name, svgs, p) {
 }
 assertCmpAligned('夜貓vs佛系', cmp03Cards, p03);
 console.log('Wrote 夜貓vs佛系 →', out3);
+
+// Comparison post 06 — 金牛 vs 鐵腕 (aLine/bLine shape + qualitative value table).
+const p06 = SERIES.find((p) => p.no === '06');
+const cmp06Cards = cmpCards(p06);
+const out6 = build('post-06-jinniu-vs-iron', cmp06Cards, { title: '金牛 vs 鐵腕 — 第 6 篇', slug: 'jinniu-vs-iron' });
+assertCmpAligned('金牛vs鐵腕', cmp06Cards, p06);
+console.log('Wrote 金牛vs鐵腕 →', out6);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

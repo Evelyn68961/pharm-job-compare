@@ -1736,8 +1736,9 @@ const SERIES = [
       '💰 金牛：全天算津貼・加班費也算・年終最期待', '',
       '你的日常最像哪一種？留言告訴我 👇'].join('\n') },
   { wk: 6, no: '16', date: 'Tue Sep 1', type: 'cmp', a: '學霸', b: '夜貓',
-    aLine: '學霸：資源拉滿，忙在拚研究與訓練', bLine: '夜貓：大夜衝收入，忙在熬夜輪班',
-    metrics: ['成長資源', '輪班強度', '累的原因'] },
+    aLine: '學霸：資源拉滿，衝專業頂端', bLine: '夜貓：值大夜，把收入拉高',
+    metrics: ['主要收穫', '努力方向', '適合的人'],
+    valA: ['專業與資歷', '往頂端邁進', '愛鑽研成長'], valB: ['實質高收入', '把薪水拉高', '衝勁又務實'] },
   { wk: 6, no: '17', date: 'Thu Sep 3', type: 'cmp', a: '教魂', b: '金牛',
     aLine: '教魂：帶學生的成就感，比加薪更實在', bLine: '金牛：能多賺一分是一分，年薪百萬是信仰',
     metrics: ['成就感來源', '對薪水的執著', '加班意願'] },
@@ -1865,6 +1866,13 @@ const cmp14Cards = cmpCards(p14);
 const out14 = build('post-14-jiaohun-vs-beipiao', cmp14Cards, { title: '教魂 vs 北漂 — 第 14 篇', slug: 'jiaohun-vs-beipiao' });
 assertCmpAligned('教魂vs北漂', cmp14Cards, p14);
 console.log('Wrote 教魂vs北漂 →', out14);
+
+// Comparison post 16 — 學霸 vs 夜貓 (career capital vs cash; both positive).
+const p16 = SERIES.find((p) => p.no === '16');
+const cmp16Cards = cmpCards(p16);
+const out16 = build('post-16-ace-vs-yemao', cmp16Cards, { title: '學霸 vs 夜貓 — 第 16 篇', slug: 'ace-vs-yemao' });
+assertCmpAligned('學霸vs夜貓', cmp16Cards, p16);
+console.log('Wrote 學霸vs夜貓 →', out16);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

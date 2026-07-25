@@ -1591,7 +1591,7 @@ function gridMini(e, cx, cy, s, showNum = true) {
     + character(CHAR_OF[e.k], cx - s * 50, cy - s * 52, s, { halo: false })
     + (showNum ? numBadge(cx + s * 42, cy - s * 44, e.n, th.accent, 20) : '');
 }
-function gridCoverCard(roster, page, total) {
+function gridCoverCard(roster, page, total, title = '全員集合', subtitle = '7 種藥師人格，你是幾號？') {
   const topXs = [190, 420, 660, 890], botXs = [305, 540, 775];
   let g = '';
   roster.slice(0, 4).forEach((e, i) => { g += gridMini(e, topXs[i], 770, 1.7); });
@@ -1599,10 +1599,43 @@ function gridCoverCard(roster, page, total) {
   const body =
     furniture(page, total) + g +
     `<g id="text-overlay">` +
-    text(W / 2, 350, 100, '全員集合', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
-    text(W / 2, 460, 46, '7 種藥師人格，你是幾號？', { anchor: 'middle', weight: 700, fill: '#475569' }) +
+    text(W / 2, 350, 100, title, { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 460, 46, subtitle, { anchor: 'middle', weight: 700, fill: '#475569' }) +
     `</g>`;
   return frame('', body);
+}
+// One persona's day: character left, name top, 3 time→activity rows.
+function gridDayPanel(e, y, haloId) {
+  const th = THEME_OF[e.k];
+  let rows = '';
+  e.slots.forEach((s, i) => {
+    const ry = y + 200 + i * 82;
+    rows += text(410, ry, 46, s[0], { weight: 800, fill: th.accent })
+      + text(640, ry, 42, s[1], { weight: 700, fill: '#1f2937' });
+  });
+  return `<rect x="60" y="${y}" width="960" height="430" rx="28" fill="${th.accent}" fill-opacity="0.09"/>`
+    + character(CHAR_OF[e.k], 70, y + 95, 2.6, { haloId })
+    + numBadge(410, y + 90, e.n, th.accent, 34)
+    + text(468, y + 106, 52, `${e.k}藥師`, { weight: 800, fill: th.accent }) + rows;
+}
+function gridDayCard(pair, page, total) {
+  const defs = pair.map((e, i) => haloDefs('hd' + i, THEME_OF[e.k].accent)).join('');
+  const body =
+    furniture(page, total) +
+    `<g transform="translate(70 150)">${chip(0, 0, '他們的一天')}</g>` +
+    gridDayPanel(pair[0], 250, 'hd0') + gridDayPanel(pair[1], 720, 'hd1');
+  return frame(defs, body);
+}
+function gridDaySpotlight(e, page, total) {
+  const th = THEME_OF[e.k];
+  const defs = haloDefs('hds', th.accent);
+  const body =
+    furniture(page, total) +
+    `<g transform="translate(70 150)">${chip(0, 0, '壓軸登場')}</g>` +
+    text(W / 2, 410, 56, '而這一位，滿腦子都是⋯', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    gridDayPanel(e, 540, 'hds') +
+    text(W / 2, 1140, 46, '你的日常，最像哪一位？', { anchor: 'middle', weight: 700, fill: '#475569' });
+  return frame(defs, body);
 }
 function gridPairCard(pair, page, total) {
   const defs = pair.map((e, i) => haloDefs('hg' + i, THEME_OF[e.k].accent)).join('');
@@ -1636,15 +1669,15 @@ function gridSpotlightCard(e, page, total) {
     text(W / 2, 1140, 46, '你，猜中幾位了？', { anchor: 'middle', weight: 700, fill: '#475569' });
   return frame(defs, body);
 }
-function gridCtaCard(roster, page, total) {
+function gridCtaCard(roster, page, total, title = '你是幾號？', sub = '留言你的號碼，我猜下一位 👇') {
   const xs = [120, 252, 384, 516, 648, 780, 912];
   let g = '';
   roster.forEach((e, i) => { g += gridMini(e, xs[i], 800, 1.2, false); });
   const body =
     furniture(page, total, { swipe: false }) + g +
     `<g id="text-overlay">` +
-    text(W / 2, 400, 78, '你是幾號？', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
-    text(W / 2, 500, 48, '留言你的號碼，我猜下一位 👇', { anchor: 'middle', weight: 700, fill: '#475569' }) +
+    text(W / 2, 400, 78, title, { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 500, 48, sub, { anchor: 'middle', weight: 700, fill: '#475569' }) +
     text(W / 2, 1030, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: '#475569' }) +
     `</g>`;
   return frame('', body);
@@ -1992,6 +2025,28 @@ const grid12Cards = [
 ];
 const out12 = build('post-12-all-cast', grid12Cards, { title: '全員集合 — 第 12 篇', slug: 'all-cast' });
 console.log('Wrote 全員集合 →', out12);
+
+// ── Post 15 · 7 種藥師的一天 (day-in-the-life timeline grid) ───────────────────
+TH = THEMES.cmp;
+const DAY15 = [
+  { n: 1, k: '夜貓', slots: [['22:00', '上班'], ['03:00', '咖啡續命'], ['08:00', '交班']] },
+  { n: 2, k: '佛系', slots: [['08:30', '打卡'], ['17:00', '準時下班'], ['20:00', '追劇']] },
+  { n: 3, k: '學霸', slots: [['07:30', '早查房'], ['12:00', '啃便當查文獻'], ['20:00', '還在醫院']] },
+  { n: 4, k: '教魂', slots: [['08:00', '帶學生'], ['14:00', '備課'], ['18:00', '改報告']] },
+  { n: 5, k: '北漂', slots: [['07:00', '宿舍出發'], ['18:00', '回宿舍'], ['週末', '回家']] },
+  { n: 6, k: '鐵腕', slots: [['08:00', '準時打卡'], ['12:00', '便當時間'], ['17:00', '準時下班']] },
+  { n: 7, k: '金牛', slots: [['上班', '算津貼'], ['加班', '算加班費'], ['年終', '最期待']] },
+];
+const grid15Cards = [
+  gridCoverCard(DAY15, 1, 6, '7 種藥師的一天', '同樣是藥師，一天差很多？'),
+  gridDayCard([DAY15[0], DAY15[1]], 2, 6),
+  gridDayCard([DAY15[2], DAY15[3]], 3, 6),
+  gridDayCard([DAY15[4], DAY15[5]], 4, 6),
+  gridDaySpotlight(DAY15[6], 5, 6),
+  gridCtaCard(DAY15, 6, 6, '你的日常最像哪一種？', '留言告訴我 👇'),
+];
+const out15 = build('post-15-a-day', grid15Cards, { title: '7 種藥師的一天 — 第 15 篇', slug: 'a-day' });
+console.log('Wrote 7 種藥師的一天 →', out15);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

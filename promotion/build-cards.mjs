@@ -1722,8 +1722,9 @@ const SERIES = [
     metrics: ['收入來源', '作息型態', '適合的人'],
     valA: ['夜班加給高', '夜型有精神', '愛拚愛自由'], valB: ['月薪穩穩領', '日夜較規律', '求穩重保障'] },
   { wk: 5, no: '14', date: 'Thu Aug 27', type: 'cmp', a: '教魂', b: '北漂',
-    aLine: '教魂：留下來，把學生帶起來', bLine: '北漂：離鄉背井，先卡到位子',
-    metrics: ['選院動機', '是否離鄉', '成就感來源'] },
+    aLine: '教魂：紮根一間院，把學生帶起來', bLine: '北漂：勇闖新城市，機會先卡位',
+    metrics: ['選擇風格', '主要舞台', '成就感來源'],
+    valA: ['在地深耕', '熟悉的院', '學生的成長'], valB: ['勇於外闖', '嚮往的城', '站穩腳步'] },
   { wk: 5, no: '15', date: 'Sun Aug 30', type: 'grid',
     body: ['藥師命運轉盤 · 7 種藥師的一天', '', '同樣是藥師，一天差很多？', '',
       '😴 夜貓：22:00 上班・03:00 咖啡・08:00 交班',
@@ -1857,6 +1858,13 @@ const cmp13Cards = cmpCards(p13);
 const out13 = build('post-13-yemao-vs-iron', cmp13Cards, { title: '夜貓 vs 鐵腕 — 第 13 篇', slug: 'yemao-vs-iron' });
 assertCmpAligned('夜貓vs鐵腕', cmp13Cards, p13);
 console.log('Wrote 夜貓vs鐵腕 →', out13);
+
+// Comparison post 14 — 教魂 vs 北漂 (root-and-mentor vs venture-out; both positive).
+const p14 = SERIES.find((p) => p.no === '14');
+const cmp14Cards = cmpCards(p14);
+const out14 = build('post-14-jiaohun-vs-beipiao', cmp14Cards, { title: '教魂 vs 北漂 — 第 14 篇', slug: 'jiaohun-vs-beipiao' });
+assertCmpAligned('教魂vs北漂', cmp14Cards, p14);
+console.log('Wrote 教魂vs北漂 →', out14);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

@@ -1710,7 +1710,8 @@ const SERIES = [
     valA: ['傳承與教學', '學生的成長', '樂於多付出'], valB: ['穩定與平衡', '生活的餘裕', '準時有效率'] },
   { wk: 4, no: '11', date: 'Thu Aug 20', type: 'cmp', a: '學霸', b: '金牛',
     aLine: '學霸：資源拉滿，拚成長與光環', bLine: '金牛：精算每一分，讓收入最大化',
-    metrics: ['追求目標', '成長資源', '薪水態度'] },
+    metrics: ['追求目標', '成長資源', '薪水態度'],
+    valA: ['成長與光環', '資源最拉滿', '看長期發展'], valB: ['收入最大化', '重實質回報', '精打細算'] },
   { wk: 4, no: '12', date: 'Sun Aug 23', type: 'grid',
     body: ['藥師命運轉盤 · 全員集合', '', '7 種藥師人格，你是幾號？', '',
       '1. 學霸 · 醫學中心衝一波', '2. 教魂 · 帶學生比自己還累', '3. 北漂 · 一卡皮箱闖天涯',
@@ -1841,6 +1842,13 @@ const cmp10Cards = cmpCards(p10);
 const out10 = build('post-10-jiaohun-vs-foxi', cmp10Cards, { title: '教魂 vs 佛系 — 第 10 篇', slug: 'jiaohun-vs-foxi' });
 assertCmpAligned('教魂vs佛系', cmp10Cards, p10);
 console.log('Wrote 教魂vs佛系 →', out10);
+
+// Comparison post 11 — 學霸 vs 金牛 (growth/prestige vs income; both positive).
+const p11 = SERIES.find((p) => p.no === '11');
+const cmp11Cards = cmpCards(p11);
+const out11 = build('post-11-ace-vs-jinniu', cmp11Cards, { title: '學霸 vs 金牛 — 第 11 篇', slug: 'ace-vs-jinniu' });
+assertCmpAligned('學霸vs金牛', cmp11Cards, p11);
+console.log('Wrote 學霸vs金牛 →', out11);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

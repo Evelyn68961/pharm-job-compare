@@ -24,8 +24,6 @@
 <div class="n"><span>card-3</span><button onclick="png(2)">下載 PNG</button></div></div>
 <div class="card"><img id="img3" src="card-4.svg" alt="card 4"/>
 <div class="n"><span>card-4</span><button onclick="png(3)">下載 PNG</button></div></div>
-<div class="card"><img id="img4" src="card-5.svg" alt="card 5"/>
-<div class="n"><span>card-5</span><button onclick="png(4)">下載 PNG</button></div></div>
 </div>
 <script>
 async function png(i){
@@ -39,6 +37,6 @@ async function png(i){
   const a=document.createElement('a'); a.download='finale-card-'+(i+1)+'.png';
   a.href=c.toDataURL('image/png'); a.click();
 }
-async function allPng(){for(let i=0;i<5;i++){await png(i);await new Promise(r=>setTimeout(r,300));}}
+async function allPng(){for(let i=0;i<4;i++){await png(i);await new Promise(r=>setTimeout(r,300));}}
 </script>
 </body></html>

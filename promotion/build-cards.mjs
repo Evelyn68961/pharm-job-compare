@@ -1577,6 +1577,79 @@ function cmpCard4(p) {
 }
 const cmpCards = (p) => [cmpCard1(p), cmpCard2(p), cmpCard3(p), cmpCard4(p)];
 
+// ── Grid cards (roll-call of all 7 personas; each entry {n,k,tag}) ───────────
+// A grid post reuses the real character constants + per-persona theme colours.
+// Neutral slate furniture (TH = THEMES.cmp) lets the 7 colours carry the page.
+function numBadge(cx, cy, n, color, r = 44) {
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}"/>`
+    + text(cx, cy + r * 0.38, r * 1.15, String(n), { anchor: 'middle', weight: 800, fill: '#fff' });
+}
+// A small character bust with a soft themed disc + corner number.
+function gridMini(e, cx, cy, s, showNum = true) {
+  const th = THEME_OF[e.k];
+  return `<circle cx="${cx}" cy="${cy}" r="${(s * 52).toFixed(0)}" fill="${th.accent}" opacity="0.12"/>`
+    + character(CHAR_OF[e.k], cx - s * 50, cy - s * 52, s, { halo: false })
+    + (showNum ? numBadge(cx + s * 42, cy - s * 44, e.n, th.accent, 20) : '');
+}
+function gridCoverCard(roster, page, total) {
+  const topXs = [190, 420, 660, 890], botXs = [305, 540, 775];
+  let g = '';
+  roster.slice(0, 4).forEach((e, i) => { g += gridMini(e, topXs[i], 770, 1.7); });
+  roster.slice(4).forEach((e, i) => { g += gridMini(e, botXs[i], 1020, 1.7); });
+  const body =
+    furniture(page, total) + g +
+    `<g id="text-overlay">` +
+    text(W / 2, 350, 100, '全員集合', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 460, 46, '7 種藥師人格，你是幾號？', { anchor: 'middle', weight: 700, fill: '#475569' }) +
+    `</g>`;
+  return frame('', body);
+}
+function gridPairCard(pair, page, total) {
+  const defs = pair.map((e, i) => haloDefs('hg' + i, THEME_OF[e.k].accent)).join('');
+  const panel = (e, y, haloId) => {
+    const th = THEME_OF[e.k];
+    return `<rect x="60" y="${y}" width="960" height="430" rx="28" fill="${th.accent}" fill-opacity="0.09"/>`
+      + character(CHAR_OF[e.k], 80, y + 50, 3.3, { haloId })
+      + numBadge(500, y + 135, e.n, th.accent)
+      + text(575, y + 152, 58, `${e.k}藥師`, { weight: 800, fill: th.accent })
+      + text(500, y + 278, 48, e.tag, { weight: 700, fill: '#1f2937' });
+  };
+  const body =
+    furniture(page, total) +
+    `<g transform="translate(70 150)">${chip(0, 0, '你是幾號？')}</g>` +
+    panel(pair[0], 250, 'hg0') + panel(pair[1], 720, 'hg1');
+  return frame(defs, body);
+}
+function gridSpotlightCard(e, page, total) {
+  const th = THEME_OF[e.k];
+  const defs = haloDefs('hs', th.accent);
+  const y = 540;
+  const body =
+    furniture(page, total) +
+    `<g transform="translate(70 150)">${chip(0, 0, '壓軸登場')}</g>` +
+    text(W / 2, 410, 60, '7 位藥師，最後一位！', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    `<rect x="60" y="${y}" width="960" height="430" rx="28" fill="${th.accent}" fill-opacity="0.09"/>` +
+    character(CHAR_OF[e.k], 80, y + 50, 3.3, { haloId: 'hs', shadow: true }) +
+    numBadge(500, y + 135, e.n, th.accent) +
+    text(575, y + 152, 58, `${e.k}藥師`, { weight: 800, fill: th.accent }) +
+    text(500, y + 278, 48, e.tag, { weight: 700, fill: '#1f2937' }) +
+    text(W / 2, 1140, 46, '你，猜中幾位了？', { anchor: 'middle', weight: 700, fill: '#475569' });
+  return frame(defs, body);
+}
+function gridCtaCard(roster, page, total) {
+  const xs = [120, 252, 384, 516, 648, 780, 912];
+  let g = '';
+  roster.forEach((e, i) => { g += gridMini(e, xs[i], 800, 1.2, false); });
+  const body =
+    furniture(page, total, { swipe: false }) + g +
+    `<g id="text-overlay">` +
+    text(W / 2, 400, 78, '你是幾號？', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 500, 48, '留言你的號碼，我猜下一位 👇', { anchor: 'middle', weight: 700, fill: '#475569' }) +
+    text(W / 2, 1030, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: '#475569' }) +
+    `</g>`;
+  return frame('', body);
+}
+
 // ── Build ────────────────────────────────────────────────────────────────────
 function build(dir, cards, { title, slug }) {
   const outDir = join(HERE, dir);
@@ -1897,6 +1970,28 @@ const cmp20Cards = cmpCards(p20);
 const out20 = build('post-20-foxi-vs-beipiao', cmp20Cards, { title: '佛系 vs 北漂 — 第 20 篇', slug: 'foxi-vs-beipiao' });
 assertCmpAligned('佛系vs北漂', cmp20Cards, p20);
 console.log('Wrote 佛系vs北漂 →', out20);
+
+// Grid post 12 — 全員集合 (roll-call of all 7 personas; 6 cards).
+TH = THEMES.cmp;
+const ROSTER12 = [
+  { n: 1, k: '學霸', tag: '醫學中心衝一波' },
+  { n: 2, k: '教魂', tag: '帶學生一起發光' },
+  { n: 3, k: '北漂', tag: '一卡皮箱闖天涯' },
+  { n: 4, k: '鐵腕', tag: '公職鐵飯碗' },
+  { n: 5, k: '夜貓', tag: '大夜換高薪' },
+  { n: 6, k: '佛系', tag: '準時下班就是勝利' },
+  { n: 7, k: '金牛', tag: '年薪百萬是信仰' },
+];
+const grid12Cards = [
+  gridCoverCard(ROSTER12, 1, 6),
+  gridPairCard([ROSTER12[0], ROSTER12[1]], 2, 6),
+  gridPairCard([ROSTER12[2], ROSTER12[3]], 3, 6),
+  gridPairCard([ROSTER12[4], ROSTER12[5]], 4, 6),
+  gridSpotlightCard(ROSTER12[6], 5, 6),
+  gridCtaCard(ROSTER12, 6, 6),
+];
+const out12 = build('post-12-all-cast', grid12Cards, { title: '全員集合 — 第 12 篇', slug: 'all-cast' });
+console.log('Wrote 全員集合 →', out12);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

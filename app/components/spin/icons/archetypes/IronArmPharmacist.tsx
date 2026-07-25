@@ -33,9 +33,9 @@ export function IronArmPharmacist({ size, accentColor, secondaryColor }: Archety
       <path d="M40 62.5 L44.5 64 V67.5 Q44.5 70.5 40 72 Q35.5 70.5 35.5 67.5 V64 Z" fill="#C8362F" stroke="#FBE3A1" strokeWidth="0.8" />
       <path d="M40 64.2 L40.8 66 L42.7 66 L41.1 67.2 L41.7 69 L40 67.9 L38.3 69 L38.9 67.2 L37.3 66 L39.2 66 Z" fill="#F5C84B" />
 
-      <circle cx="50" cy="34" r="17" fill="#F8D2AC" />
       <circle cx="33.5" cy="35" r="3.2" fill="#F0BE92" />
       <circle cx="66.5" cy="35" r="3.2" fill="#F0BE92" />
+      <circle cx="50" cy="34" r="17" fill="#F8D2AC" />
 
       <path d="M34 35 Q34 16 50 16 Q66 16 66 35 Q63 27 56 26 Q53 27 50 27 Q47 27 44 26 Q37 27 34 35 Z" fill="#2E2A24" />
 

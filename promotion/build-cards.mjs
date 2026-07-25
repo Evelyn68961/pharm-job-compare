@@ -93,6 +93,36 @@ const ZEN = `
   <path d="M46.5 45.5 Q50 47.8 53.5 45.5" fill="none" stroke="#B06A4F" stroke-width="1.8" stroke-linecap="round"/>
 `;
 
+// 金牛藥師 — accent #ca8a04 (gold), secondary #E8B11E. Winking grin, holding a
+// gold 元寶 (ingot). Verbatim from JinniuPharmacist.tsx (collar = accent, 元寶 =
+// secondary).
+const JINNIU_ACCENT = '#ca8a04';
+const JINNIU_SECONDARY = '#E8B11E';
+const JINNIU = `
+  <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" stroke-width="1.6"/>
+  <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" stroke-width="1.4" fill="none"/>
+  <path d="M50 55 L44 67 L50 73 L56 67 Z" fill="${JINNIU_ACCENT}"/>
+  <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92"/>
+  <path d="M14 87 Q13 80 19 79 Q25 78 31 79 Q37 80 36 87 Q25 91 14 87 Z" fill="${JINNIU_SECONDARY}" stroke="#B8860B" stroke-width="1.2"/>
+  <ellipse cx="25" cy="79.5" rx="7" ry="2.2" fill="#C8941A"/>
+  <ellipse cx="25" cy="77" rx="3.6" ry="2.4" fill="${JINNIU_SECONDARY}" stroke="#B8860B" stroke-width="0.8"/>
+  <ellipse cx="20.5" cy="84.5" rx="2.2" ry="1" fill="#F7DD86" fill-opacity="0.85"/>
+  <circle cx="34" cy="84" r="3.8" fill="#F8D2AC"/>
+  <circle cx="33.5" cy="35" r="3.2" fill="#F0BE92"/>
+  <circle cx="66.5" cy="35" r="3.2" fill="#F0BE92"/>
+  <circle cx="50" cy="34" r="17" fill="#F8D2AC"/>
+  <path d="M33 33 Q33 15 50 15 Q67 15 67 33 Q63 24 55 25 Q58 21 50 22 Q44 22 41 26 Q37 28 33 33 Z" fill="#2E2A24"/>
+  <path d="M39 30.5 Q43 28.8 47 30.5" fill="none" stroke="#2E2A24" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M53 30.5 Q57 28.8 61 30.5" fill="none" stroke="#2E2A24" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M40 38 Q43 35.3 46 38" fill="none" stroke="#2B3440" stroke-width="1.8" stroke-linecap="round"/>
+  <circle cx="57" cy="37.5" r="2.4" fill="#2B3440"/>
+  <circle cx="57.8" cy="36.7" r="0.8" fill="#FFFFFF"/>
+  <circle cx="39.5" cy="43.5" r="2.2" fill="#F4A8A0" fill-opacity="0.6"/>
+  <circle cx="60.5" cy="43.5" r="2.2" fill="#F4A8A0" fill-opacity="0.6"/>
+  <path d="M44.5 45 Q50 50.5 55.5 45 Z" fill="#C2685B"/>
+  <path d="M46 45.4 Q50 47.2 54 45.4" fill="#FFFFFF"/>
+`;
+
 // ── Theme ────────────────────────────────────────────────────────────────────
 // Per-post palette. `accent` = idol colour (brand mark, pills, chips, icons);
 // `hint` = soft swipe-hint tint; `deep` = darker accent for sub-copy text.
@@ -102,6 +132,9 @@ const THEMES = {
   // Deeper emerald so headline/button/chips read strongly on the cream bg
   // (the character art keeps its real #10b981 brand colour).
   foxi: { accent: '#059669', hint: '#34d399', deep: '#065f46' },
+  // Gold for 金牛 (money). Brand gold reads on the cream bg; deep brown-gold
+  // sub-copy (the character keeps its own #ca8a04/#E8B11E art colours).
+  jinniu: { accent: '#ca8a04', hint: '#eab308', deep: '#854d0e' },
   // Neutral slate for comparison-card furniture (the duotone lives in the
   // panels/characters, so the brand mark / counter stay neutral).
   cmp: { accent: '#475569', hint: '#94a3b8', deep: '#334155' },
@@ -109,8 +142,8 @@ const THEMES = {
 let TH = THEMES.yemao;
 
 // Idol → character art + theme (extend as more characters are drawn).
-const CHAR_OF = { 夜貓: YEMAO, 佛系: ZEN };
-const THEME_OF = { 夜貓: THEMES.yemao, 佛系: THEMES.foxi };
+const CHAR_OF = { 夜貓: YEMAO, 佛系: ZEN, 金牛: JINNIU };
+const THEME_OF = { 夜貓: THEMES.yemao, 佛系: THEMES.foxi, 金牛: THEMES.jinniu };
 
 // ── Primitives ──────────────────────────────────────────────────────────────
 const A = YEMAO_ACCENT;
@@ -218,6 +251,25 @@ function iconCheck(cx, cy, r = 40) {
   return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${TH.accent}"/>`
     + `<path d="M ${cx - r * 0.42} ${cy + r * 0.02} l ${r * 0.28} ${r * 0.32} l ${r * 0.6} ${-r * 0.62}" `
     + `fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+function iconChart(cx, cy, r = 40) {
+  // rising bar chart = salary tier climbing
+  const c = TH.accent, base = cy + r * 0.62, bw = r * 0.4, gap = r * 0.2;
+  const hs = [r * 0.5, r * 0.85, r * 1.25];
+  const bars = hs.map((h, i) => {
+    const x = cx - r * 0.72 + i * (bw + gap);
+    return `<rect x="${x.toFixed(1)}" y="${(base - h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="${c}"/>`;
+  }).join('');
+  return bars;
+}
+function iconCoinStack(cx, cy, r = 40) {
+  // three stacked coins = allowances piling up
+  let g = '';
+  for (let i = 0; i < 3; i++) {
+    const y = cy + r * 0.5 - i * (r * 0.42);
+    g += `<ellipse cx="${cx}" cy="${y.toFixed(1)}" rx="${(r * 0.9).toFixed(1)}" ry="${(r * 0.34).toFixed(1)}" fill="#fbbf24" stroke="#d97706" stroke-width="3"/>`;
+  }
+  return g;
 }
 
 // ── 夜貓 scenes ──────────────────────────────────────────────────────────────
@@ -483,6 +535,144 @@ function foxiCard5() {
   return frame(defs, body);
 }
 
+// ── 金牛藥師 scenes (gold; a rising bar chart at golden hour) ─────────────────
+function jinniuCard1() {
+  const defs = haloDefs('h1', TH.accent);
+  const body =
+    furniture(1, 5) +
+    character(JINNIU, 260, 520, 5.6, { haloId: 'h1', shadow: true }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 300, 58, '你，也是', { anchor: 'middle', weight: 800, fill: '#334155' }) +
+    text(W / 2, 420, 94, '金牛藥師 嗎？', { anchor: 'middle', weight: 800, fill: TH.accent }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+// Golden-hour panel with a rising bar chart + trend arrow — the "salary climbs"
+// beat, 金牛's scene signature (mirrors 佛系's sunset corridor).
+function goldHourChart() {
+  const bx = 90, by = 360, bw = 900, bh = 380;
+  const base = by + bh - 46; // baseline y = 694
+  const heights = [95, 150, 205, 260, 315];
+  const barW = 78, gap = 46, startX = 360;
+  const bars = heights.map((h, i) => {
+    const x = startX + i * (barW + gap);
+    return `<rect x="${x}" y="${base - h}" width="${barW}" height="${h}" rx="10" fill="#f59e0b" fill-opacity="${(0.5 + i * 0.1).toFixed(2)}"/>`;
+  }).join('');
+  const x0 = startX + barW / 2, y0 = base - heights[0] - 18;
+  const x1 = startX + 4 * (barW + gap) + barW / 2, y1 = base - heights[4] - 18;
+  const arrow = `<path d="M${x0} ${y0} L${x1} ${y1}" stroke="#b45309" stroke-width="7" stroke-linecap="round" fill="none"/>`
+    + `<path d="M${x1} ${y1} l -26 4 M${x1} ${y1} l -4 26" stroke="#b45309" stroke-width="7" stroke-linecap="round" fill="none"/>`;
+  return `<g clip-path="url(#gp)">`
+    + `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="url(#goldhour)"/>`
+    + `<ellipse cx="815" cy="470" rx="170" ry="130" fill="url(#gsun)"/>`
+    + `<circle cx="815" cy="475" r="46" fill="#ffdf80"/>`
+    + bars
+    + arrow
+    + `<rect x="${bx}" y="${base}" width="${bw}" height="6" fill="#c98a5e" opacity="0.4"/>`
+    + `</g>`
+    + iconCoin(200, 460, 42);
+}
+
+function jinniuCard2() {
+  const defs = haloDefs('h2', TH.accent)
+    + `<clipPath id="gp"><rect x="90" y="360" width="900" height="380" rx="28"/></clipPath>`
+    + `<linearGradient id="goldhour" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff0c4"/>`
+    + `<stop offset="55%" stop-color="#ffd98a"/><stop offset="100%" stop-color="#ffb877"/></linearGradient>`
+    + `<radialGradient id="gsun" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fff6d6" stop-opacity="0.95"/>`
+    + `<stop offset="100%" stop-color="#fff6d6" stop-opacity="0"/></radialGradient>`;
+  const body =
+    furniture(2, 5) +
+    goldHourChart() +
+    `<g transform="translate(90 150)">${chip(0, 0, '這就是你')}</g>` +
+    character(JINNIU, 130, 430, 4.4, { haloId: 'h2' }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 900, 56, '年薪百萬是信仰', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 985, 52, '簽約金、夜班費一分不放過', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 1075, 40, '⋯這畫面，是不是很有共鳴？', { anchor: 'middle', weight: 600, fill: '#64748b' }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function jinniuCard3() {
+  const defs = haloDefs('h3', TH.accent);
+  // Longer factor labels than 夜貓/佛系 → font 38, label pushed left to x=686.
+  const tile = (y, icon, label) =>
+    `<rect x="540" y="${y}" width="470" height="150" rx="24" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>` +
+    icon(615, y + 75) +
+    text(686, y + 90, 38, label, { weight: 800, fill: '#1f2937' });
+  const body =
+    furniture(3, 5) +
+    `<g transform="translate(70 150)">${chip(0, 0, '你該在意的')}</g>` +
+    character(JINNIU, 70, 500, 4.6, { haloId: 'h3', shadow: true }) +
+    tile(440, iconChart, '薪資等級與年薪') +
+    tile(620, iconCoin, '簽約金・留任獎金') +
+    tile(800, iconCoinStack, '各項津貼疊加') +
+    `<g id="text-overlay">` +
+    text(540, 400, 42, '面試前，先問這三件 👇', { weight: 800, fill: '#334155' }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function jinniuCard4() {
+  const defs = haloDefs('h4', TH.accent) +
+    `<radialGradient id="wheelglow" cx="50%" cy="50%" r="50%">` +
+    `<stop offset="0%" stop-color="${TH.accent}" stop-opacity="0.35"/>` +
+    `<stop offset="100%" stop-color="${TH.accent}" stop-opacity="0"/></radialGradient>`;
+  const cx = 700, cy = 600, r = 210;
+  const polar = (deg, rad) => [cx + rad * Math.cos((deg * Math.PI) / 180), cy + rad * Math.sin((deg * Math.PI) / 180)];
+  const shades = ['#fef3c7', '#fde68a'];
+  const slices = [];
+  for (let i = 0; i < 8; i++) {
+    const [x0, y0] = polar(i * 45, r);
+    const [x1, y1] = polar(i * 45 + 45, r);
+    slices.push(`<path d="M${cx} ${cy} L${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${shades[i % 2]}"/>`);
+  }
+  const marks = [];
+  for (let i = 0; i < 8; i++) {
+    const [mx, my] = polar(i * 45 + 22.5, r * 0.72);
+    marks.push(`<g transform="translate(${mx.toFixed(1)} ${my.toFixed(1)})">`
+      + `<rect x="-18" y="-18" width="36" height="36" rx="7" fill="#fff" stroke="#fcd34d" stroke-width="2"/>`
+      + `<rect x="-3" y="-11" width="6" height="22" fill="#ef4444"/><rect x="-11" y="-3" width="22" height="6" fill="#ef4444"/></g>`);
+  }
+  const wheel =
+    `<circle cx="${cx}" cy="${cy}" r="${r + 60}" fill="url(#wheelglow)"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="${r + 10}" fill="#fff"/>` +
+    slices.join('') +
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${TH.accent}" stroke-width="8"/>` +
+    marks.join('') +
+    `<circle cx="${cx}" cy="${cy}" r="42" fill="${TH.accent}"/>` +
+    `<rect x="${cx - 9}" y="${cy - 26}" width="18" height="52" rx="9" fill="#fff"/>` +
+    `<line x1="${cx - 9}" y1="${cy}" x2="${cx + 9}" y2="${cy}" stroke="${TH.accent}" stroke-width="4"/>` +
+    `<path d="M${cx + r + 18} ${cy} l 34 -20 l 0 40 z" fill="#f59e0b"/>`;
+  const body =
+    furniture(4, 5) +
+    `<g transform="translate(70 150)">${chip(0, 0, '命運醫院')}</g>` +
+    wheel +
+    character(JINNIU, 90, 690, 3.4, { haloId: 'h4' }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 1035, 54, '哪間醫院能餵飽金牛的你？', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 1110, 44, '50+ 家醫院，抽出命定那一間', { anchor: 'middle', weight: 600, fill: TH.deep }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function jinniuCard5() {
+  const defs = haloDefs('h5', TH.accent);
+  const btnX = 165, btnY = 900, btnW = 750, btnH = 140;
+  const body =
+    furniture(5, 5, { swipe: false }) +
+    character(JINNIU, 290, 190, 5.0, { haloId: 'h5', shadow: true }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 800, 50, '換你了 👇', { anchor: 'middle', weight: 700, fill: '#334155' }) +
+    `<rect x="${btnX}" y="${btnY}" width="${btnW}" height="${btnH}" rx="70" fill="${TH.accent}"/>` +
+    text(W / 2 - 26, btnY + btnH / 2 + 20, 54, '30 秒測出你的命運醫院', { anchor: 'middle', weight: 800, fill: '#fff' }) +
+    text(btnX + btnW - 70, btnY + btnH / 2 + 20, 56, '→', { anchor: 'middle', weight: 800, fill: '#fff' }) +
+    text(W / 2, 1130, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: TH.deep }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
 // ── Comparison cards (4-card duotone: Hook / 兩種人生 / 硬指標 / CTA) ──────────
 // Rendered under TH = THEMES.cmp (neutral furniture); the duotone comes from
 // each idol's own theme. Reusable for any comparison post via CHAR_OF/THEME_OF.
@@ -628,8 +818,13 @@ TH = THEMES.foxi;
 const foxiCards = [foxiCard1(), foxiCard2(), foxiCard3(), foxiCard4(), foxiCard5()];
 const out2 = build('post-02-foxi', foxiCards, { title: '佛系藥師 — 第 2 篇', slug: 'foxi' });
 
+TH = THEMES.jinniu;
+const jinniuCards = [jinniuCard1(), jinniuCard2(), jinniuCard3(), jinniuCard4(), jinniuCard5()];
+const out4 = build('post-04-jinniu', jinniuCards, { title: '金牛藥師 — 第 4 篇', slug: 'jinniu' });
+
 console.log('Wrote 夜貓 →', out1);
 console.log('Wrote 佛系 →', out2);
+console.log('Wrote 金牛 →', out4);
 
 // ── Full-series caption deck (SINGLE SOURCE OF TRUTH = the SERIES table) ──────
 // Captions are generated from the same strings the cards render. For the two
@@ -775,6 +970,7 @@ function assertAligned(name, svgs, p) {
 }
 assertAligned('夜貓', yemaoCards, SERIES.find((p) => p.no === '01'));
 assertAligned('佛系', foxiCards, SERIES.find((p) => p.no === '02'));
+assertAligned('金牛', jinniuCards, SERIES.find((p) => p.no === '04'));
 
 // Comparison post 03 — cards rendered from the same SERIES entry as its caption.
 TH = THEMES.cmp;

@@ -1739,6 +1739,60 @@ function gridCtaCard(roster, page, total, title = '你是幾號？', sub = '留�
     `</g>`;
   return frame('', body);
 }
+// ── Post 21 finale builders ──────────────────────────────────────────────────
+function finaleStatsCard(page, total) {
+  const stats = [['7', '週連載'], ['21', '篇貼文'], ['7', '種人格'], ['50+', '家醫院']];
+  const xs = [290, 790], ys = [610, 940];
+  let g = '';
+  stats.forEach((s, i) => {
+    const cx = xs[i % 2], cy = ys[(i / 2) | 0];
+    g += `<rect x="${cx - 210}" y="${cy - 130}" width="420" height="250" rx="28" fill="#6366f1" fill-opacity="0.08"/>`
+      + text(cx, cy + 18, 108, s[0], { anchor: 'middle', weight: 800, fill: '#4f46e5' })
+      + text(cx, cy + 92, 38, s[1], { anchor: 'middle', weight: 700, fill: '#475569' });
+  });
+  const body = furniture(page, total)
+    + `<g transform="translate(70 150)">${chip(0, 0, '完結篇')}</g>`
+    + text(W / 2, 330, 60, '這 7 週，我們一起⋯', { anchor: 'middle', weight: 800, fill: '#1f2937' })
+    + g;
+  return frame('', body);
+}
+function finaleCastCard(roster, page, total) {
+  const topXs = [190, 420, 660, 890], botXs = [305, 540, 775];
+  const place = (e, cx, cy) => gridMini(e, cx, cy, 1.7, false)
+    + `<rect x="${cx - 74}" y="${cy + 96}" width="148" height="46" rx="23" fill="${THEME_OF[e.k].accent}"/>`
+    + text(cx, cy + 128, 32, `${e.k}藥師`, { anchor: 'middle', weight: 800, fill: '#fff' });
+  let g = '';
+  roster.slice(0, 4).forEach((e, i) => { g += place(e, topXs[i], 720); });
+  roster.slice(4).forEach((e, i) => { g += place(e, botXs[i], 1010); });
+  const body = furniture(page, total)
+    + `<g transform="translate(70 150)">${chip(0, 0, '7 種藥師')}</g>`
+    + text(W / 2, 330, 58, '這一路，你最像誰？', { anchor: 'middle', weight: 800, fill: '#1f2937' })
+    + g;
+  return frame('', body);
+}
+function finaleActionsCard(page, total) {
+  const panel = (y, tint, tag, big, small) =>
+    `<rect x="60" y="${y}" width="960" height="410" rx="28" fill="${tint}" fill-opacity="0.1"/>`
+    + `<g transform="translate(100 ${y + 46})">${chip(0, 0, tag, { bg: tint })}</g>`
+    + text(W / 2, y + 232, 56, big, { anchor: 'middle', weight: 800, fill: '#1f2937' })
+    + text(W / 2, y + 320, 42, small, { anchor: 'middle', weight: 700, fill: '#475569' });
+  const body = furniture(page, total)
+    + `<g transform="translate(70 150)">${chip(0, 0, '接下來')}</g>`
+    + panel(250, '#4f46e5', '還沒測過的？', '30 秒測出你的命運醫院', '🔗 連結在留言區')
+    + panel(730, '#ea580c', '已經測過的？', '標記一位藥師朋友', '告訴他：他是「◯◯藥師」🫵');
+  return frame('', body);
+}
+function finaleThanksCard(roster, page, total) {
+  const xs = [120, 252, 384, 516, 648, 780, 912];
+  let g = '';
+  roster.forEach((e, i) => { g += gridMini(e, xs[i], 860, 1.2, false); });
+  const body = furniture(page, total, { swipe: false })
+    + g
+    + text(W / 2, 450, 74, '謝謝你陪我到最後 🙏', { anchor: 'middle', weight: 800, fill: '#1f2937' })
+    + text(W / 2, 548, 46, '7 週的旅程，這裡告一段落', { anchor: 'middle', weight: 700, fill: '#475569' })
+    + text(W / 2, 1090, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: '#475569' });
+  return frame('', body);
+}
 
 // ── Build ────────────────────────────────────────────────────────────────────
 function build(dir, cards, { title, slug }) {
@@ -2134,6 +2188,18 @@ const grid18Cards = [
 ];
 const out18 = build('post-18-salary-life-map', grid18Cards, { title: '薪水 × 生活 座標圖 — 第 18 篇', slug: 'salary-life-map' });
 console.log('Wrote 薪水 × 生活 座標圖 →', out18);
+
+// ── Post 21 · 完結篇 (series finale) ──────────────────────────────────────────
+TH = THEMES.cmp;
+const grid21Cards = [
+  gridCoverCard(ROSTER12, 1, 5, '完結篇', '7 週 · 21 篇 · 你找到自己了嗎？', false),
+  finaleStatsCard(2, 5),
+  finaleCastCard(ROSTER12, 3, 5),
+  finaleActionsCard(4, 5),
+  finaleThanksCard(ROSTER12, 5, 5),
+];
+const out21 = build('post-21-finale', grid21Cards, { title: '完結篇 — 第 21 篇', slug: 'finale' });
+console.log('Wrote 完結篇 →', out21);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

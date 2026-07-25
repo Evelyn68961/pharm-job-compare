@@ -26,9 +26,9 @@ export function JinniuPharmacist({ size, accentColor, secondaryColor }: Archetyp
       <ellipse cx="20.5" cy="84.5" rx="2.2" ry="1" fill="#F7DD86" fillOpacity="0.85" />
       <circle cx="34" cy="84" r="3.8" fill="#F8D2AC" />
 
-      <circle cx="50" cy="34" r="17" fill="#F8D2AC" />
       <circle cx="33.5" cy="35" r="3.2" fill="#F0BE92" />
       <circle cx="66.5" cy="35" r="3.2" fill="#F0BE92" />
+      <circle cx="50" cy="34" r="17" fill="#F8D2AC" />
 
       <path d="M33 33 Q33 15 50 15 Q67 15 67 33 Q63 24 55 25 Q58 21 50 22 Q44 22 41 26 Q37 28 33 33 Z" fill="#2E2A24" />
 

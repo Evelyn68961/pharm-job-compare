@@ -1591,11 +1591,11 @@ function gridMini(e, cx, cy, s, showNum = true) {
     + character(CHAR_OF[e.k], cx - s * 50, cy - s * 52, s, { halo: false })
     + (showNum ? numBadge(cx + s * 42, cy - s * 44, e.n, th.accent, 20) : '');
 }
-function gridCoverCard(roster, page, total, title = '全員集合', subtitle = '7 種藥師人格，你是幾號？') {
+function gridCoverCard(roster, page, total, title = '全員集合', subtitle = '7 種藥師人格，你是幾號？', num = true) {
   const topXs = [190, 420, 660, 890], botXs = [305, 540, 775];
   let g = '';
-  roster.slice(0, 4).forEach((e, i) => { g += gridMini(e, topXs[i], 770, 1.7); });
-  roster.slice(4).forEach((e, i) => { g += gridMini(e, botXs[i], 1020, 1.7); });
+  roster.slice(0, 4).forEach((e, i) => { g += gridMini(e, topXs[i], 770, 1.7, num); });
+  roster.slice(4).forEach((e, i) => { g += gridMini(e, botXs[i], 1020, 1.7, num); });
   const body =
     furniture(page, total) + g +
     `<g id="text-overlay">` +
@@ -1636,6 +1636,63 @@ function gridDaySpotlight(e, page, total) {
     gridDayPanel(e, 540, 'hds') +
     text(W / 2, 1140, 46, '你的日常，最像哪一位？', { anchor: 'middle', weight: 700, fill: '#475569' });
   return frame(defs, body);
+}
+// The hero scatter: plot each persona on a 薪水(x) × 生活(y) quadrant. Positions
+// are relative/directional (no salary figures) — impressionistic placement only.
+function gridQuadrantMap(pts, page, total) {
+  const L = 150, R = 980, T = 380, B = 1180, cx = (L + R) / 2, cy = (T + B) / 2;
+  const defs = pts.map((p, i) => haloDefs('hm' + i, THEME_OF[p.k].accent)).join('');
+  const tints =
+    `<rect x="${cx}" y="${T}" width="${R - cx}" height="${cy - T}" fill="#22c55e" opacity="0.07"/>` +
+    `<rect x="${L}" y="${cy}" width="${cx - L}" height="${B - cy}" fill="#94a3b8" opacity="0.05"/>`;
+  const axes =
+    `<line x1="${L}" y1="${cy}" x2="${R}" y2="${cy}" stroke="#cbd5e1" stroke-width="3"/>` +
+    `<line x1="${cx}" y1="${T}" x2="${cx}" y2="${B}" stroke="#cbd5e1" stroke-width="3"/>`;
+  const labels =
+    text(R, cy - 20, 32, '薪水高 →', { anchor: 'end', weight: 800, fill: '#64748b' }) +
+    text(L, cy + 44, 32, '← 薪水低', { anchor: 'start', weight: 800, fill: '#64748b' }) +
+    text(cx + 14, T + 30, 32, '生活好 ↑', { weight: 800, fill: '#64748b' }) +
+    text(cx + 14, B - 10, 32, '生活累 ↓', { weight: 800, fill: '#64748b' }) +
+    text((L + cx) / 2, B - 40, 28, '這裡沒有人 ✌️', { anchor: 'middle', weight: 700, fill: '#94a3b8' });
+  let g = '';
+  pts.forEach((p, i) => {
+    const px = L + p.x / 100 * (R - L), py = B - p.y / 100 * (B - T), th = THEME_OF[p.k];
+    g += `<circle cx="${px}" cy="${py}" r="62" fill="${th.accent}" opacity="0.14"/>`
+      + character(CHAR_OF[p.k], px - 58, py - 60, 1.18, { haloId: 'hm' + i, halo: false })
+      + `<rect x="${px - 52}" y="${py + 48}" width="104" height="44" rx="22" fill="${th.accent}"/>`
+      + text(px, py + 79, 30, p.k, { anchor: 'middle', weight: 800, fill: '#fff' });
+  });
+  const body = furniture(page, total)
+    + `<g transform="translate(70 150)">${chip(0, 0, '完整地圖')}</g>`
+    + text(W / 2, 300, 52, '7 種藥師，落在哪裡？', { anchor: 'middle', weight: 800, fill: '#1f2937' })
+    + tints + axes + labels + g;
+  return frame(defs, body);
+}
+// A single quadrant's residents: big label + the personas that live there.
+function gridQuadCard(quad, page, total) {
+  const { corner, title, sub, members } = quad;
+  const defs = members.map((m, i) => haloDefs('hq' + i, THEME_OF[m.k].accent)).join('');
+  const head = furniture(page, total)
+    + `<g transform="translate(70 150)">${chip(0, 0, corner)}</g>`
+    + text(W / 2, 300, 66, title, { anchor: 'middle', weight: 800, fill: '#1f2937' })
+    + text(W / 2, 372, 42, sub, { anchor: 'middle', weight: 700, fill: '#475569' });
+  let g = '';
+  if (members.length === 1) {
+    const m = members[0], th = THEME_OF[m.k];
+    g = character(CHAR_OF[m.k], 330, 540, 4.0, { haloId: 'hq0', shadow: true })
+      + text(W / 2, 1070, 62, `${m.k}藥師`, { anchor: 'middle', weight: 800, fill: th.accent })
+      + text(W / 2, 1150, 46, m.tag, { anchor: 'middle', weight: 700, fill: '#1f2937' });
+  } else {
+    const xs = [270, 540, 810];
+    members.forEach((m, i) => {
+      const th = THEME_OF[m.k], px = xs[i];
+      g += `<circle cx="${px}" cy="660" r="128" fill="${th.accent}" opacity="0.11"/>`
+        + character(CHAR_OF[m.k], px - 128, 530, 2.5, { haloId: 'hq' + i })
+        + text(px, 850, 44, `${m.k}藥師`, { anchor: 'middle', weight: 800, fill: th.accent })
+        + text(px, 918, 36, m.tag, { anchor: 'middle', weight: 700, fill: '#1f2937' });
+    });
+  }
+  return frame(defs, head + g);
 }
 function gridPairCard(pair, page, total) {
   const defs = pair.map((e, i) => haloDefs('hg' + i, THEME_OF[e.k].accent)).join('');
@@ -2047,6 +2104,36 @@ const grid15Cards = [
 ];
 const out15 = build('post-15-a-day', grid15Cards, { title: '7 種藥師的一天 — 第 15 篇', slug: 'a-day' });
 console.log('Wrote 7 種藥師的一天 →', out15);
+
+// ── Post 18 · 薪水 × 生活 座標圖 (quadrant map — relative positions, no figures) ─
+TH = THEMES.cmp;
+const MAP18 = [
+  { k: '佛系', x: 28, y: 82 },
+  { k: '金牛', x: 82, y: 72 },
+  { k: '鐵腕', x: 38, y: 66 },
+  { k: '教魂', x: 48, y: 50 },
+  { k: '北漂', x: 70, y: 42 },
+  { k: '學霸', x: 60, y: 30 },
+  { k: '夜貓', x: 85, y: 20 },
+];
+const QUADS18 = [
+  { corner: '右上象限', title: '高薪 × 顧生活', sub: '薪水漂亮，生活也沒犧牲',
+    members: [{ k: '金牛', tag: '高薪也顧生活' }] },
+  { corner: '右下象限', title: '高薪 × 拚一波', sub: '把薪水衝上去，也拚出實力',
+    members: [{ k: '夜貓', tag: '大夜換高薪' }, { k: '學霸', tag: '資源拚成長' }, { k: '北漂', tag: '追高薪卡位' }] },
+  { corner: '左上象限', title: '剛剛好 × 顧生活', sub: '錢夠用就好，生活擺前面',
+    members: [{ k: '佛系', tag: '錢夠用心安' }, { k: '鐵腕', tag: '薪穩保障強' }, { k: '教魂', tag: '回報在學生' }] },
+];
+const grid18Cards = [
+  gridCoverCard(MAP18, 1, 6, '薪水 × 生活 座標圖', '7 種藥師，各站哪個象限？', false),
+  gridQuadrantMap(MAP18, 2, 6),
+  gridQuadCard(QUADS18[0], 3, 6),
+  gridQuadCard(QUADS18[1], 4, 6),
+  gridQuadCard(QUADS18[2], 5, 6),
+  gridCtaCard(MAP18, 6, 6, '你落在哪個象限？', '留言告訴我 👇'),
+];
+const out18 = build('post-18-salary-life-map', grid18Cards, { title: '薪水 × 生活 座標圖 — 第 18 篇', slug: 'salary-life-map' });
+console.log('Wrote 薪水 × 生活 座標圖 →', out18);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

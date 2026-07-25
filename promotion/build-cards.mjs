@@ -193,6 +193,34 @@ const ACE = `
   <circle cx="36" cy="83" r="4" fill="#F8D2AC"/>
 `;
 
+// 北漂藥師 — accent #2563eb (blue), secondary #B5703B (suitcase brown). Open
+// smile, no glasses, holding a suitcase. Adapted from BeipiaoPharmacist.tsx —
+// ears drawn behind the head.
+const BEIPIAO_ACCENT = '#2563eb';
+const BEIPIAO_SECONDARY = '#B5703B';
+const BEIPIAO = `
+  <path d="M30 60 Q50 53 70 60 L78 92 Q50 98 22 92 Z" fill="#FFFFFF" stroke="#D7DCE3" stroke-width="1.6"/>
+  <path d="M50 56 L41 92 M50 56 L59 92" stroke="#D7DCE3" stroke-width="1.4" fill="none"/>
+  <path d="M50 55 L44 67 L50 73 L56 67 Z" fill="${BEIPIAO_ACCENT}"/>
+  <rect x="45" y="47" width="10" height="11" rx="3" fill="#F0BE92"/>
+  <circle cx="33.5" cy="35" r="3.2" fill="#F0BE92"/>
+  <circle cx="66.5" cy="35" r="3.2" fill="#F0BE92"/>
+  <circle cx="50" cy="34" r="17" fill="#F8D2AC"/>
+  <path d="M33 33 Q33 15 50 15 Q67 15 67 33 Q63 25 55 24 Q57 20 51 19 Q52 24 46 24 Q39 25 33 33 Z" fill="#4A372A"/>
+  <path d="M39 35 Q43 31 47 35" fill="none" stroke="#2B3440" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M53 35 Q57 31 61 35" fill="none" stroke="#2B3440" stroke-width="1.8" stroke-linecap="round"/>
+  <circle cx="40" cy="42" r="2.4" fill="#F4A8A0" fill-opacity="0.7"/>
+  <circle cx="60" cy="42" r="2.4" fill="#F4A8A0" fill-opacity="0.7"/>
+  <path d="M44 44 Q50 50 56 44" fill="none" stroke="#B06A4F" stroke-width="1.8" stroke-linecap="round"/>
+  <g transform="rotate(-6 25 80)">
+    <rect x="14" y="72" width="24" height="18" rx="2.5" fill="${BEIPIAO_SECONDARY}" fill-opacity="0.55" stroke="${BEIPIAO_SECONDARY}" stroke-opacity="0.85" stroke-width="1.6"/>
+    <line x1="14" y1="80" x2="38" y2="80" stroke="${BEIPIAO_SECONDARY}" stroke-opacity="0.85" stroke-width="1.4"/>
+    <rect x="22" y="76" width="8" height="3" rx="1" fill="${BEIPIAO_SECONDARY}" fill-opacity="0.85"/>
+    <path d="M22 72 Q22 67 26 67 L26 67 Q30 67 30 72" fill="none" stroke="${BEIPIAO_SECONDARY}" stroke-opacity="0.85" stroke-width="1.8"/>
+  </g>
+  <circle cx="26" cy="66" r="3.8" fill="#F8D2AC"/>
+`;
+
 // ── Theme ────────────────────────────────────────────────────────────────────
 // Per-post palette. `accent` = idol colour (brand mark, pills, chips, icons);
 // `hint` = soft swipe-hint tint; `deep` = darker accent for sub-copy text.
@@ -211,6 +239,8 @@ const THEMES = {
   // Deep teal for 學霸 (醫學中心 prestige). Distinct from 佛系 emerald and
   // 北漂 blue; reads on the cream bg.
   ace: { accent: '#0e7490', hint: '#22d3ee', deep: '#155e75' },
+  // Blue for 北漂 (relocation). Distinct from 學霸 teal; reads on the cream bg.
+  beipiao: { accent: '#2563eb', hint: '#60a5fa', deep: '#1e40af' },
   // Neutral slate for comparison-card furniture (the duotone lives in the
   // panels/characters, so the brand mark / counter stay neutral).
   cmp: { accent: '#475569', hint: '#94a3b8', deep: '#334155' },
@@ -218,8 +248,8 @@ const THEMES = {
 let TH = THEMES.yemao;
 
 // Idol → character art + theme (extend as more characters are drawn).
-const CHAR_OF = { 夜貓: YEMAO, 佛系: ZEN, 金牛: JINNIU, 鐵腕: IRONARM, 學霸: ACE };
-const THEME_OF = { 夜貓: THEMES.yemao, 佛系: THEMES.foxi, 金牛: THEMES.jinniu, 鐵腕: THEMES.iron, 學霸: THEMES.ace };
+const CHAR_OF = { 夜貓: YEMAO, 佛系: ZEN, 金牛: JINNIU, 鐵腕: IRONARM, 學霸: ACE, 北漂: BEIPIAO };
+const THEME_OF = { 夜貓: THEMES.yemao, 佛系: THEMES.foxi, 金牛: THEMES.jinniu, 鐵腕: THEMES.iron, 學霸: THEMES.ace, 北漂: THEMES.beipiao };
 
 // ── Primitives ──────────────────────────────────────────────────────────────
 const A = YEMAO_ACCENT;
@@ -409,6 +439,40 @@ function iconBook(cx, cy, r = 40) {
   return `<path d="M${cx} ${(cy - h).toFixed(1)} Q${(cx - w).toFixed(1)} ${(cy - h * 1.15).toFixed(1)} ${(cx - w).toFixed(1)} ${(cy - h * 0.4).toFixed(1)} V${(cy + h).toFixed(1)} Q${(cx - w).toFixed(1)} ${(cy + h * 0.55).toFixed(1)} ${cx} ${(cy + h * 0.7).toFixed(1)} Z" fill="${c}" fill-opacity="0.85"/>`
     + `<path d="M${cx} ${(cy - h).toFixed(1)} Q${(cx + w).toFixed(1)} ${(cy - h * 1.15).toFixed(1)} ${(cx + w).toFixed(1)} ${(cy - h * 0.4).toFixed(1)} V${(cy + h).toFixed(1)} Q${(cx + w).toFixed(1)} ${(cy + h * 0.55).toFixed(1)} ${cx} ${(cy + h * 0.7).toFixed(1)} Z" fill="${c}"/>`
     + `<line x1="${cx}" y1="${(cy - h + 5).toFixed(1)}" x2="${cx}" y2="${(cy + h * 0.6).toFixed(1)}" stroke="#ffffff" stroke-width="2"/>`;
+}
+function iconHouse(cx, cy, r = 40) {
+  // house = 宿舍 / 租屋補助
+  const c = TH.accent, w = r * 1.3, eave = cy - r * 0.1, base = cy + r * 0.7;
+  return `<path d="M${(cx - w / 2 - 7).toFixed(1)} ${eave.toFixed(1)} L${cx} ${(cy - r * 0.72).toFixed(1)} L${(cx + w / 2 + 7).toFixed(1)} ${eave.toFixed(1)} Z" fill="${c}"/>`
+    + `<rect x="${(cx - w / 2).toFixed(1)}" y="${eave.toFixed(1)}" width="${w.toFixed(1)}" height="${(base - eave).toFixed(1)}" fill="${c}" fill-opacity="0.72"/>`
+    + `<rect x="${(cx - r * 0.17).toFixed(1)}" y="${(base - r * 0.44).toFixed(1)}" width="${(r * 0.34).toFixed(1)}" height="${(r * 0.44).toFixed(1)}" fill="#fff"/>`;
+}
+function iconPin(cx, cy, r = 40) {
+  // map pin = 宿舍距離
+  const c = TH.accent;
+  return `<path d="M${cx} ${(cy + r * 0.92).toFixed(1)} Q${(cx - r * 0.74).toFixed(1)} ${(cy + r * 0.05).toFixed(1)} ${(cx - r * 0.74).toFixed(1)} ${(cy - r * 0.28).toFixed(1)} A${(r * 0.74).toFixed(1)} ${(r * 0.74).toFixed(1)} 0 1 1 ${(cx + r * 0.74).toFixed(1)} ${(cy - r * 0.28).toFixed(1)} Q${(cx + r * 0.74).toFixed(1)} ${(cy + r * 0.05).toFixed(1)} ${cx} ${(cy + r * 0.92).toFixed(1)} Z" fill="${c}"/>`
+    + `<circle cx="${cx}" cy="${(cy - r * 0.28).toFixed(1)}" r="${(r * 0.26).toFixed(1)}" fill="#fff"/>`;
+}
+function iconStore(cx, cy, r = 40) {
+  // shop with striped awning = 生活機能
+  const c = TH.accent, w = r * 1.4, x0 = cx - w / 2, top = cy - r * 0.5, base = cy + r * 0.72;
+  let g = `<rect x="${x0.toFixed(1)}" y="${(top + r * 0.28).toFixed(1)}" width="${w.toFixed(1)}" height="${(base - top - r * 0.28).toFixed(1)}" fill="${c}" fill-opacity="0.72"/>`;
+  const stripes = 5, sw = w / stripes;
+  for (let i = 0; i < stripes; i++) {
+    g += `<rect x="${(x0 + i * sw).toFixed(1)}" y="${top.toFixed(1)}" width="${sw.toFixed(1)}" height="${(r * 0.28).toFixed(1)}" fill="${i % 2 ? c : '#ffffff'}"/>`;
+  }
+  g += `<rect x="${x0.toFixed(1)}" y="${top.toFixed(1)}" width="${w.toFixed(1)}" height="${(r * 0.28).toFixed(1)}" fill="none" stroke="${c}" stroke-width="2"/>`
+    + `<rect x="${(cx - r * 0.16).toFixed(1)}" y="${(base - r * 0.5).toFixed(1)}" width="${(r * 0.32).toFixed(1)}" height="${(r * 0.5).toFixed(1)}" fill="#fff"/>`;
+  return g;
+}
+function iconTrain(cx, cy, r = 40) {
+  // front-on train = 北漂's badge motif (scene corner)
+  const c = TH.accent, w = r * 1.4, h = r * 1.2, x0 = cx - w / 2, y0 = cy - h / 2;
+  return `<rect x="${x0.toFixed(1)}" y="${y0.toFixed(1)}" width="${w.toFixed(1)}" height="${(h * 0.7).toFixed(1)}" rx="${(r * 0.3).toFixed(1)}" fill="${c}"/>`
+    + `<rect x="${(x0 + r * 0.18).toFixed(1)}" y="${(y0 + r * 0.16).toFixed(1)}" width="${(w - r * 0.36).toFixed(1)}" height="${(r * 0.32).toFixed(1)}" rx="3" fill="#cfe3ff"/>`
+    + `<rect x="${x0.toFixed(1)}" y="${(y0 + h * 0.56).toFixed(1)}" width="${w.toFixed(1)}" height="${(r * 0.14).toFixed(1)}" fill="#1e3a8a"/>`
+    + `<circle cx="${(x0 + r * 0.32).toFixed(1)}" cy="${(y0 + h * 0.78).toFixed(1)}" r="${(r * 0.15).toFixed(1)}" fill="#1e3a8a"/>`
+    + `<circle cx="${(x0 + w - r * 0.32).toFixed(1)}" cy="${(y0 + h * 0.78).toFixed(1)}" r="${(r * 0.15).toFixed(1)}" fill="#1e3a8a"/>`;
 }
 
 // ── 夜貓 scenes ──────────────────────────────────────────────────────────────
@@ -1083,6 +1147,136 @@ function aceCard5() {
   return frame(defs, body);
 }
 
+// ── 北漂藥師 scenes (blue; a dusk city skyline — relocated to the big city) ────
+function beipiaoCard1() {
+  const defs = haloDefs('h1', TH.accent);
+  const body =
+    furniture(1, 5) +
+    character(BEIPIAO, 260, 520, 5.6, { haloId: 'h1', shadow: true }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 300, 58, '你，也是', { anchor: 'middle', weight: 800, fill: '#334155' }) +
+    text(W / 2, 420, 94, '北漂藥師 嗎？', { anchor: 'middle', weight: 800, fill: TH.accent }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+// Dusk city skyline — the "relocated to the big city" beat, 北漂's signature.
+function cityscape() {
+  const by = 360, bh = 380, groundY = by + bh - 50;
+  const specs = [[150, 150], [240, 220], [335, 120], [420, 260], [520, 180], [620, 290], [720, 150], [820, 230]];
+  let bld = '';
+  specs.forEach(([bx, h], i) => {
+    const w = 74, col = i % 2 ? '#3f74d6' : '#5a8fe6';
+    bld += `<rect x="${bx}" y="${groundY - h}" width="${w}" height="${h}" fill="${col}"/>`;
+    for (let wy = groundY - h + 16; wy < groundY - 20; wy += 34) {
+      bld += `<rect x="${bx + 14}" y="${wy}" width="14" height="18" fill="#fde68a" fill-opacity="0.75"/>`
+        + `<rect x="${bx + 44}" y="${wy}" width="14" height="18" fill="#fde68a" fill-opacity="0.5"/>`;
+    }
+  });
+  return `<g clip-path="url(#cp)">`
+    + `<rect x="90" y="${by}" width="900" height="${bh}" fill="url(#dusk)"/>`
+    + `<circle cx="860" cy="440" r="30" fill="#fde68a" fill-opacity="0.85"/>`
+    + bld
+    + `<rect x="90" y="${groundY}" width="900" height="8" fill="#1e3a8a"/>`
+    + `</g>` + iconTrain(205, 460, 40);
+}
+
+function beipiaoCard2() {
+  const defs = haloDefs('h2', TH.accent)
+    + `<clipPath id="cp"><rect x="90" y="360" width="900" height="380" rx="28"/></clipPath>`
+    + `<linearGradient id="dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c7dbf5"/>`
+    + `<stop offset="100%" stop-color="#e8eff9"/></linearGradient>`;
+  const body =
+    furniture(2, 5) +
+    cityscape() +
+    `<g transform="translate(90 150)">${chip(0, 0, '這就是你')}</g>` +
+    character(BEIPIAO, 130, 430, 4.4, { haloId: 'h2' }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 900, 56, '為工作離鄉背井', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 985, 56, '一卡皮箱闖天涯', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 1075, 40, '⋯這是你的日常嗎？', { anchor: 'middle', weight: 600, fill: '#64748b' }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function beipiaoCard3() {
+  const defs = haloDefs('h3', TH.accent);
+  const tile = (y, icon, label) =>
+    `<rect x="540" y="${y}" width="470" height="150" rx="24" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>` +
+    icon(615, y + 75) +
+    text(686, y + 90, 36, label, { weight: 800, fill: '#1f2937' });
+  const body =
+    furniture(3, 5) +
+    `<g transform="translate(70 150)">${chip(0, 0, '你該在意的')}</g>` +
+    character(BEIPIAO, 70, 500, 4.6, { haloId: 'h3', shadow: true }) +
+    tile(440, iconHouse, '宿舍/租屋補助') +
+    tile(620, iconPin, '宿舍距離與費用') +
+    tile(800, iconStore, '生活機能') +
+    `<g id="text-overlay">` +
+    text(540, 400, 42, '面試前，先問這三件 👇', { weight: 800, fill: '#334155' }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function beipiaoCard4() {
+  const defs = haloDefs('h4', TH.accent) +
+    `<radialGradient id="wheelglow" cx="50%" cy="50%" r="50%">` +
+    `<stop offset="0%" stop-color="${TH.accent}" stop-opacity="0.35"/>` +
+    `<stop offset="100%" stop-color="${TH.accent}" stop-opacity="0"/></radialGradient>`;
+  const cx = 700, cy = 600, r = 210;
+  const polar = (deg, rad) => [cx + rad * Math.cos((deg * Math.PI) / 180), cy + rad * Math.sin((deg * Math.PI) / 180)];
+  const shades = ['#dbeafe', '#bfdbfe'];
+  const slices = [];
+  for (let i = 0; i < 8; i++) {
+    const [x0, y0] = polar(i * 45, r);
+    const [x1, y1] = polar(i * 45 + 45, r);
+    slices.push(`<path d="M${cx} ${cy} L${x0.toFixed(1)} ${y0.toFixed(1)} A${r} ${r} 0 0 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${shades[i % 2]}"/>`);
+  }
+  const marks = [];
+  for (let i = 0; i < 8; i++) {
+    const [mx, my] = polar(i * 45 + 22.5, r * 0.72);
+    marks.push(`<g transform="translate(${mx.toFixed(1)} ${my.toFixed(1)})">`
+      + `<rect x="-18" y="-18" width="36" height="36" rx="7" fill="#fff" stroke="#93c5fd" stroke-width="2"/>`
+      + `<rect x="-3" y="-11" width="6" height="22" fill="#ef4444"/><rect x="-11" y="-3" width="22" height="6" fill="#ef4444"/></g>`);
+  }
+  const wheel =
+    `<circle cx="${cx}" cy="${cy}" r="${r + 60}" fill="url(#wheelglow)"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="${r + 10}" fill="#fff"/>` +
+    slices.join('') +
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${TH.accent}" stroke-width="8"/>` +
+    marks.join('') +
+    `<circle cx="${cx}" cy="${cy}" r="42" fill="${TH.accent}"/>` +
+    `<rect x="${cx - 9}" y="${cy - 26}" width="18" height="52" rx="9" fill="#fff"/>` +
+    `<line x1="${cx - 9}" y1="${cy}" x2="${cx + 9}" y2="${cy}" stroke="${TH.accent}" stroke-width="4"/>` +
+    `<path d="M${cx + r + 18} ${cy} l 34 -20 l 0 40 z" fill="#f59e0b"/>`;
+  const body =
+    furniture(4, 5) +
+    `<g transform="translate(70 150)">${chip(0, 0, '命運醫院')}</g>` +
+    wheel +
+    character(BEIPIAO, 90, 690, 3.4, { haloId: 'h4' }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 1035, 52, '哪間醫院有你落腳的宿舍？', { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
+    text(W / 2, 1110, 44, '50+ 家醫院，抽出命定那一間', { anchor: 'middle', weight: 600, fill: TH.deep }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
+function beipiaoCard5() {
+  const defs = haloDefs('h5', TH.accent);
+  const btnX = 165, btnY = 900, btnW = 750, btnH = 140;
+  const body =
+    furniture(5, 5, { swipe: false }) +
+    character(BEIPIAO, 290, 190, 5.0, { haloId: 'h5', shadow: true }) +
+    `<g id="text-overlay">` +
+    text(W / 2, 800, 50, '換你了 👇', { anchor: 'middle', weight: 700, fill: '#334155' }) +
+    `<rect x="${btnX}" y="${btnY}" width="${btnW}" height="${btnH}" rx="70" fill="${TH.accent}"/>` +
+    text(W / 2 - 26, btnY + btnH / 2 + 20, 54, '30 秒測出你的命運醫院', { anchor: 'middle', weight: 800, fill: '#fff' }) +
+    text(btnX + btnW - 70, btnY + btnH / 2 + 20, 56, '→', { anchor: 'middle', weight: 800, fill: '#fff' }) +
+    text(W / 2, 1130, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: TH.deep }) +
+    `</g>`;
+  return frame(defs, body);
+}
+
 // ── Comparison cards (4-card duotone: Hook / 兩種人生 / 硬指標 / CTA) ──────────
 // Rendered under TH = THEMES.cmp (neutral furniture); the duotone comes from
 // each idol's own theme. Reusable for any comparison post via CHAR_OF/THEME_OF.
@@ -1249,11 +1443,16 @@ TH = THEMES.ace;
 const aceCards = [aceCard1(), aceCard2(), aceCard3(), aceCard4(), aceCard5()];
 const out7 = build('post-07-ace', aceCards, { title: '學霸藥師 — 第 7 篇', slug: 'ace' });
 
+TH = THEMES.beipiao;
+const beipiaoCards = [beipiaoCard1(), beipiaoCard2(), beipiaoCard3(), beipiaoCard4(), beipiaoCard5()];
+const out8 = build('post-08-beipiao', beipiaoCards, { title: '北漂藥師 — 第 8 篇', slug: 'beipiao' });
+
 console.log('Wrote 夜貓 →', out1);
 console.log('Wrote 佛系 →', out2);
 console.log('Wrote 金牛 →', out4);
 console.log('Wrote 鐵腕 →', out5);
 console.log('Wrote 學霸 →', out7);
+console.log('Wrote 北漂 →', out8);
 
 // ── Full-series caption deck (SINGLE SOURCE OF TRUTH = the SERIES table) ──────
 // Captions are generated from the same strings the cards render. For the two
@@ -1296,7 +1495,7 @@ const SERIES = [
     factors: ['PGY 訓練', '專科藥師・進階制度', '教學研究資源'], fate: '你的命運醫院是哪間醫學中心？' },
   { wk: 3, no: '08', date: 'Wed Aug 12', type: 'idol', k: '北漂',
     scen: ['為工作離鄉背井', '一卡皮箱闖天涯'], recog: '⋯這是你的日常嗎？',
-    factors: ['宿舍/租屋補助', '宿舍離醫院多近、多少錢', '生活機能'], fate: '哪間醫院有你落腳的宿舍？' },
+    factors: ['宿舍/租屋補助', '宿舍距離與費用', '生活機能'], fate: '哪間醫院有你落腳的宿舍？' },
   { wk: 3, no: '09', date: 'Fri Aug 14', type: 'cmp', a: '學霸', b: '鐵腕',
     aLine: '學霸：醫學中心衝一波，光環拉滿', bLine: '鐵腕：公職鐵飯碗，工時工作有保障',
     metrics: ['成長資源', '工時保障', '升遷天花板'] },
@@ -1403,6 +1602,7 @@ assertAligned('佛系', foxiCards, SERIES.find((p) => p.no === '02'));
 assertAligned('金牛', jinniuCards, SERIES.find((p) => p.no === '04'));
 assertAligned('鐵腕', ironCards, SERIES.find((p) => p.no === '05'));
 assertAligned('學霸', aceCards, SERIES.find((p) => p.no === '07'));
+assertAligned('北漂', beipiaoCards, SERIES.find((p) => p.no === '08'));
 
 // Comparison post 03 — cards rendered from the same SERIES entry as its caption.
 TH = THEMES.cmp;

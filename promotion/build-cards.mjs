@@ -1740,8 +1740,9 @@ const SERIES = [
     metrics: ['主要收穫', '努力方向', '適合的人'],
     valA: ['專業與資歷', '往頂端邁進', '愛鑽研成長'], valB: ['實質高收入', '把薪水拉高', '衝勁又務實'] },
   { wk: 6, no: '17', date: 'Thu Sep 3', type: 'cmp', a: '教魂', b: '金牛',
-    aLine: '教魂：帶學生的成就感，比加薪更實在', bLine: '金牛：能多賺一分是一分，年薪百萬是信仰',
-    metrics: ['成就感來源', '對薪水的執著', '加班意願'] },
+    aLine: '教魂：用心帶學生，看他們發光', bLine: '金牛：認真衝收入，讓努力有回報',
+    metrics: ['努力目標', '回報形式', '工作動力'],
+    valA: ['把學生帶好', '學生的成長', '熱情與使命'], valB: ['把收入拉高', '實質的收入', '務實有目標'] },
   { wk: 6, no: '18', date: 'Sun Sep 6', type: 'grid',
     body: ['藥師命運轉盤 · 薪水 × 生活 座標圖', '', '把 7 種藥師放上「薪水 × 生活」地圖：', '',
       '💰 金牛：拿得出高薪，還想兼顧生活',
@@ -1873,6 +1874,13 @@ const cmp16Cards = cmpCards(p16);
 const out16 = build('post-16-ace-vs-yemao', cmp16Cards, { title: '學霸 vs 夜貓 — 第 16 篇', slug: 'ace-vs-yemao' });
 assertCmpAligned('學霸vs夜貓', cmp16Cards, p16);
 console.log('Wrote 學霸vs夜貓 →', out16);
+
+// Comparison post 17 — 教魂 vs 金牛 (mentoring vs income; both positive).
+const p17 = SERIES.find((p) => p.no === '17');
+const cmp17Cards = cmpCards(p17);
+const out17 = build('post-17-jiaohun-vs-jinniu', cmp17Cards, { title: '教魂 vs 金牛 — 第 17 篇', slug: 'jiaohun-vs-jinniu' });
+assertCmpAligned('教魂vs金牛', cmp17Cards, p17);
+console.log('Wrote 教魂vs金牛 →', out17);
 
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'

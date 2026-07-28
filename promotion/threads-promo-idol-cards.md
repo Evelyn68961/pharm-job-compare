@@ -107,8 +107,10 @@ happen in `SERIES`/the card builders, never by hand on the image.
 
 1. Upload the post's PNGs in order (5 for idol, 4 for comparison, 4–6 for grid).
 2. Copy the「貼文」block for that post from `threads-captions.md` — don't retype.
-3. Add the single tag `#藥師命運轉盤`.
-4. Within ~60s, drop the first comment with the CTA line + bare link.
+3. Add the single tag `#藥師命運轉盤`, publish.
+4. Drop the first comment (the「第一則留言」block sits in the same post block) —
+   timing doesn't matter, no 60-second rule. The bare link stays in the comment
+   so the site's link-preview image doesn't clash with the card carousel.
 
 ## Open questions / later
 

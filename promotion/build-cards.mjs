@@ -2179,25 +2179,28 @@ const grid21Cards = [
 const out21 = build('post-21-finale', grid21Cards, { title: '完結篇 — 第 21 篇', slug: 'finale' });
 console.log('Wrote 完結篇 →', out21);
 
+const FIRST_COMMENT = CTA + '\n👉 https://pharm-fortune.vercel.app/';
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'
   + '> 第 1、2 篇已通過「卡片 ↔ 文案」逐字比對；不要手改此檔，要改請改 `SERIES` 後重跑。\n\n'
   + '## 共用元素\n\n'
-  + '### 第一則留言（21 篇皆同，發文後 60 秒內補在留言）\n\n'
-  + '```\n' + CTA + '\n👉 https://pharm-fortune.vercel.app/\n```\n\n'
+  + '### 第一則留言（21 篇皆同）\n\n'
+  + '```\n' + FIRST_COMMENT + '\n```\n\n'
+  + '每篇下方區塊已各自附上同一則留言，貼文時不必回頭捲動複製。發布後補在第一則留言即可——時間不拘，不必趕 60 秒。\n\n'
   + `### 標籤規則\nThreads 每篇只掛一個主題標籤，全系列都用 \`${SERIES_TAG}\`（讓 藥師命運轉盤 成為每篇的標籤按鈕）。\n\n---\n`;
 let curWk = 0;
 for (const p of SERIES) {
   if (p.wk !== curWk) { curWk = p.wk; md += `\n## Week ${curWk}\n`; }
   md += `\n### Post ${p.no} · ${p.date} · ${labelOf(p)}\n\n`
     + '**貼文：**\n```\n' + captionOf(p) + '\n```\n\n'
-    + '**標籤：**\n```\n' + tagsOf(p) + '\n```\n';
+    + '**標籤：**\n```\n' + tagsOf(p) + '\n```\n\n'
+    + '**第一則留言：**\n```\n' + FIRST_COMMENT + '\n```\n';
 }
 md += '\n---\n\n## 發文流程（每篇）\n'
-  + '1. 依序上傳 5 張 1080×1350 PNG。\n'
-  + '2. 從本檔複製「貼文」貼進 Threads 內文，勿手打。\n'
-  + '3. 發布輪播。\n'
-  + '4. 60 秒內補上「第一則留言」。\n'
+  + '1. 依序上傳 PNG（idol 5 張／comparison 4 張／grid 4–6 張），1080×1350。\n'
+  + '2. 從該篇區塊複製「貼文」貼進 Threads 內文，勿手打。\n'
+  + '3. 掛上標籤 `' + SERIES_TAG + '`，發布輪播。\n'
+  + '4. 發布後補上「第一則留言」（同一篇區塊就有，時間不拘）。\n'
   + '5. 時間：台北 21:00–22:30（二／四／日）。\n\n'
   + 'Post 01 發布前：先用表單送一筆測試 lead，確認 Gmail 轉寄的「連結來源: threads」標記正確。\n';
 writeFileSync(join(HERE, 'threads-captions.md'), md);

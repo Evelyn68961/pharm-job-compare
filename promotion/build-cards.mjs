@@ -1866,11 +1866,9 @@ console.log('Wrote 教魂 →', out9);
 // present on the rendered card SVGs — so a caption can never silently drift
 // from its card. Posts 03–21 have no cards yet; when their cards are built they
 // must read from this same table, keeping them aligned by construction.
-const BASE_TAGS = ['#藥師', '#醫院藥師', '#藥師人生', '#藥師命運轉盤'];
-const IDOL_TAG = {
-  夜貓: '#夜貓藥師', 佛系: '#佛系藥師', 金牛: '#金牛藥師', 鐵腕: '#鐵腕藥師',
-  學霸: '#學霸藥師', 北漂: '#北漂藥師', 教魂: '#教魂藥師',
-};
+// Threads surfaces a single topic tag per post — keep it to one, always the
+// series tag, so 藥師命運轉盤 is the button on every post.
+const SERIES_TAG = '#藥師命運轉盤';
 const idolFull = (k) => `${k}藥師`;
 const FATE_SUB = '50+ 家醫院，抽出命定那一間';
 const CTA = '30 秒測出你的命運醫院';
@@ -1990,10 +1988,7 @@ function cmpCaption(p) {
   ].join('\n');
 }
 const captionOf = (p) => (p.type === 'idol' ? idolCaption(p) : p.type === 'cmp' ? cmpCaption(p) : p.body);
-const tagsOf = (p) =>
-  (p.type === 'idol' ? [...BASE_TAGS, IDOL_TAG[p.k]]
-    : p.type === 'cmp' ? [...BASE_TAGS, IDOL_TAG[p.a], IDOL_TAG[p.b]]
-      : BASE_TAGS).join(' ');
+const tagsOf = (_p) => SERIES_TAG;
 const labelOf = (p) =>
   p.type === 'idol' ? `${idolFull(p.k)}（idol）`
     : p.type === 'cmp' ? `${p.a} vs ${p.b}（comparison）`
@@ -2189,8 +2184,8 @@ let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 第 1、2 篇已通過「卡片 ↔ 文案」逐字比對；不要手改此檔，要改請改 `SERIES` 後重跑。\n\n'
   + '## 共用元素\n\n'
   + '### 第一則留言（21 篇皆同，發文後 60 秒內補在留言）\n\n'
-  + '```\n' + CTA + '\n👉 https://pharm-fortune.vercel.app/?ref=threads\n```\n\n'
-  + `### 標籤規則\n基礎：\`${BASE_TAGS.join(' ')}\`。idol 篇＋該偶像標籤；comparison 篇＋兩個偶像標籤；grid 篇僅基礎。\n\n---\n`;
+  + '```\n' + CTA + '\n👉 https://pharm-fortune.vercel.app/\n```\n\n'
+  + `### 標籤規則\nThreads 每篇只掛一個主題標籤，全系列都用 \`${SERIES_TAG}\`（讓 藥師命運轉盤 成為每篇的標籤按鈕）。\n\n---\n`;
 let curWk = 0;
 for (const p of SERIES) {
   if (p.wk !== curWk) { curWk = p.wk; md += `\n## Week ${curWk}\n`; }

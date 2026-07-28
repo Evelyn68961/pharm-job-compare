@@ -2179,14 +2179,19 @@ const grid21Cards = [
 const out21 = build('post-21-finale', grid21Cards, { title: '完結篇 — 第 21 篇', slug: 'finale' });
 console.log('Wrote 完結篇 →', out21);
 
-const FIRST_COMMENT = CTA + '\n👉 https://pharm-fortune.vercel.app/';
+// Comparison posts are framed 「你更像誰？」, so their CTA closes that loop
+// (測出你的屬性) rather than jumping to 命運醫院 like the idol/grid posts.
+const LINK_LINE = '👉 https://pharm-fortune.vercel.app/';
+const CTA_CMP = '30 秒測出你的屬性';
+const firstCommentOf = (p) => (p.type === 'cmp' ? CTA_CMP : CTA) + '\n' + LINK_LINE;
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'
   + '> 第 1、2 篇已通過「卡片 ↔ 文案」逐字比對；不要手改此檔，要改請改 `SERIES` 後重跑。\n\n'
   + '## 共用元素\n\n'
-  + '### 第一則留言（21 篇皆同）\n\n'
-  + '```\n' + FIRST_COMMENT + '\n```\n\n'
-  + '每篇下方區塊已各自附上同一則留言，貼文時不必回頭捲動複製。發布後補在第一則留言即可——時間不拘，不必趕 60 秒。\n\n'
+  + '### 第一則留言（依篇型，下方每篇已附對應版本）\n\n'
+  + '偶像／grid 篇：\n```\n' + CTA + '\n' + LINK_LINE + '\n```\n'
+  + '比較篇（你更像誰？）：\n```\n' + CTA_CMP + '\n' + LINK_LINE + '\n```\n\n'
+  + '每篇下方區塊已附上該篇對應的留言，貼文時不必回頭捲動複製。發布後補在第一則留言即可——時間不拘，不必趕 60 秒。\n\n'
   + `### 標籤規則\nThreads 每篇只掛一個主題標籤，全系列都用 \`${SERIES_TAG}\`（讓 藥師命運轉盤 成為每篇的標籤按鈕）。\n\n---\n`;
 let curWk = 0;
 for (const p of SERIES) {
@@ -2194,7 +2199,7 @@ for (const p of SERIES) {
   md += `\n### Post ${p.no} · ${p.date} · ${labelOf(p)}\n\n`
     + '**貼文：**\n```\n' + captionOf(p) + '\n```\n\n'
     + '**標籤：**\n```\n' + tagsOf(p) + '\n```\n\n'
-    + '**第一則留言：**\n```\n' + FIRST_COMMENT + '\n```\n';
+    + '**第一則留言：**\n```\n' + firstCommentOf(p) + '\n```\n';
 }
 md += '\n---\n\n## 發文流程（每篇）\n'
   + '1. 依序上傳 PNG（idol 5 張／comparison 4 張／grid 4–6 張），1080×1350。\n'

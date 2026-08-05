@@ -1215,7 +1215,6 @@ function aceCard5() {
     `<rect x="${btnX}" y="${btnY}" width="${btnW}" height="${btnH}" rx="70" fill="${TH.accent}"/>` +
     text(W / 2 - 26, btnY + btnH / 2 + 20, 54, '30 秒測出你的命運醫院', { anchor: 'middle', weight: 800, fill: '#fff' }) +
     text(btnX + btnW - 70, btnY + btnH / 2 + 20, 56, '→', { anchor: 'middle', weight: 800, fill: '#fff' }) +
-    text(W / 2, 1130, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: TH.deep }) +
     `</g>`;
   return frame(defs, body);
 }
@@ -1345,7 +1344,6 @@ function beipiaoCard5() {
     `<rect x="${btnX}" y="${btnY}" width="${btnW}" height="${btnH}" rx="70" fill="${TH.accent}"/>` +
     text(W / 2 - 26, btnY + btnH / 2 + 20, 54, '30 秒測出你的命運醫院', { anchor: 'middle', weight: 800, fill: '#fff' }) +
     text(btnX + btnW - 70, btnY + btnH / 2 + 20, 56, '→', { anchor: 'middle', weight: 800, fill: '#fff' }) +
-    text(W / 2, 1130, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: TH.deep }) +
     `</g>`;
   return frame(defs, body);
 }
@@ -1472,7 +1470,6 @@ function jiaohunCard5() {
     `<rect x="${btnX}" y="${btnY}" width="${btnW}" height="${btnH}" rx="70" fill="${TH.accent}"/>` +
     text(W / 2 - 26, btnY + btnH / 2 + 20, 54, '30 秒測出你的命運醫院', { anchor: 'middle', weight: 800, fill: '#fff' }) +
     text(btnX + btnW - 70, btnY + btnH / 2 + 20, 56, '→', { anchor: 'middle', weight: 800, fill: '#fff' }) +
-    text(W / 2, 1130, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: TH.deep }) +
     `</g>`;
   return frame(defs, body);
 }
@@ -1571,7 +1568,8 @@ function cmpCard4(p) {
     `<rect x="${btnX}" y="${btnY}" width="${btnW}" height="${btnH}" rx="70" fill="url(#cta)"/>` +
     text(540 - 26, btnY + btnH / 2 + 20, 52, '30 秒測出你的屬性', { anchor: 'middle', weight: 800, fill: '#fff' }) +
     text(btnX + btnW - 70, btnY + btnH / 2 + 20, 56, '→', { anchor: 'middle', weight: 800, fill: '#fff' }) +
-    text(540, 1130, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: '#475569' }) +
+    // Posts 01–06 are already scheduled with this line; drop it from 07 onward.
+    (Number(p.no) < 7 ? text(540, 1130, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: '#475569' }) : '') +
     `</g>`;
   return frame(defs, body);
 }
@@ -1735,7 +1733,6 @@ function gridCtaCard(roster, page, total, title = '你是幾號？', sub = '留�
     `<g id="text-overlay">` +
     text(W / 2, 400, 78, title, { anchor: 'middle', weight: 800, fill: '#1f2937' }) +
     text(W / 2, 500, 48, sub, { anchor: 'middle', weight: 700, fill: '#475569' }) +
-    text(W / 2, 1030, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: '#475569' }) +
     `</g>`;
   return frame('', body);
 }
@@ -1758,11 +1755,11 @@ function finaleActionsCard(page, total) {
   const panel = (y, tint, tag, big, small) =>
     `<rect x="60" y="${y}" width="960" height="410" rx="28" fill="${tint}" fill-opacity="0.1"/>`
     + `<g transform="translate(100 ${y + 46})">${chip(0, 0, tag, { bg: tint })}</g>`
-    + text(W / 2, y + 232, 56, big, { anchor: 'middle', weight: 800, fill: '#1f2937' })
-    + text(W / 2, y + 320, 42, small, { anchor: 'middle', weight: 700, fill: '#475569' });
+    + text(W / 2, y + (small ? 232 : 262), 56, big, { anchor: 'middle', weight: 800, fill: '#1f2937' })
+    + (small ? text(W / 2, y + 320, 42, small, { anchor: 'middle', weight: 700, fill: '#475569' }) : '');
   const body = furniture(page, total)
     + `<g transform="translate(70 150)">${chip(0, 0, '接下來')}</g>`
-    + panel(250, '#4f46e5', '還沒測過的？', '30 秒測出你的命運醫院', '🔗 連結在留言區')
+    + panel(250, '#4f46e5', '還沒測過的？', '30 秒測出你的命運醫院', '')
     + panel(730, '#ea580c', '已經測過的？', '標記一位藥師朋友', '告訴他：他是「◯◯藥師」🫵');
   return frame('', body);
 }
@@ -1773,8 +1770,7 @@ function finaleThanksCard(roster, page, total) {
   const body = furniture(page, total, { swipe: false })
     + g
     + text(W / 2, 450, 74, '謝謝你看到這裡 🙏', { anchor: 'middle', weight: 800, fill: '#1f2937' })
-    + text(W / 2, 548, 46, '還沒測的，30 秒就知道 👇', { anchor: 'middle', weight: 700, fill: '#475569' })
-    + text(W / 2, 1090, 46, '🔗 連結在留言區', { anchor: 'middle', weight: 700, fill: '#475569' });
+    + text(W / 2, 548, 46, '還沒測的，30 秒就知道 👇', { anchor: 'middle', weight: 700, fill: '#475569' });
   return frame('', body);
 }
 

@@ -1868,6 +1868,9 @@ const SERIES_TAG = '#藥師命運轉盤';
 const idolFull = (k) => `${k}藥師`;
 const FATE_SUB = '50+ 家醫院，抽出命定那一間';
 const CTA = '30 秒測出你的命運醫院';
+// Comparison posts close the 「你更像誰？」 loop with 屬性, not 命運醫院.
+const CTA_CMP = '30 秒測出你的屬性';
+const LINK_LINE = '👉 https://pharm-fortune.vercel.app/';
 
 const SERIES = [
   { wk: 1, no: '01', date: 'Tue Jul 28', type: 'idol', k: '夜貓',
@@ -1958,32 +1961,43 @@ const SERIES = [
     valA: ['熟悉又安穩', '從容自在', '生活平衡'], valB: ['新鮮有挑戰', '積極闖蕩', '探索新環境'] },
   { wk: 7, no: '21', date: 'Sun Sep 13', type: 'grid',
     body: ['藥師命運轉盤 · 完結篇', '', '7 種藥師人格，你是哪一種？', '',
-      '還沒測過的 —', '30 秒測出你的命運醫院，連結在留言 👇', '',
+      '還沒測過的 —', '30 秒測出你的命運醫院', '👉 https://pharm-fortune.vercel.app/', '',
       '已經測過的 —', '標記一位藥師朋友，告訴他你覺得他是「___藥師」🫵', '',
       '謝謝陪我看到這裡 🙏'].join('\n') },
 ];
 
+// From post 07 on the link lives in the body (cards dropped the 連結在留言區
+// label to match); posts 01–06 are already scheduled link-in-comment, so they
+// keep the 「換你了 👇」 closer instead.
+const linkInBody = (p) => Number(p.no) >= 7;
 function idolCaption(p) {
+  const tail = linkInBody(p) ? [CTA, LINK_LINE] : ['換你了 👇'];
   return [
     `你，也是${idolFull(p.k)}嗎？`, '',
     p.scen[0], p.scen[1], p.recog, '',
     '面試前，先問這三件：', p.factors.join(' / '), '',
     p.fate, FATE_SUB, '',
-    '換你了 👇',
+    ...tail,
   ].join('\n');
 }
 function cmpCaption(p) {
   const aLine = p.aLine || `${p.a}：${p.aParts.join('，')}`;
   const bLine = p.bLine || `${p.b}：${p.bParts.join('，')}`;
+  const tail = linkInBody(p) ? [CTA_CMP, LINK_LINE] : [CTA_CMP, '', '換你了 👇'];
   return [
     p.title || `${p.a} vs ${p.b}：你更像誰？`, '',
     aLine, bLine, '',
     '關鍵差異：', p.metrics.join(' / '), '',
-    '30 秒測出你的屬性', '',
-    '換你了 👇',
+    ...tail,
   ].join('\n');
 }
-const captionOf = (p) => (p.type === 'idol' ? idolCaption(p) : p.type === 'cmp' ? cmpCaption(p) : p.body);
+// Grids 12/15/18 append the CTA+link; the finale (21) already carries its own
+// in-body link, so it passes through unchanged.
+const captionOf = (p) =>
+  p.type === 'idol' ? idolCaption(p)
+    : p.type === 'cmp' ? cmpCaption(p)
+      : p.no === '21' ? p.body
+        : p.body + '\n\n' + CTA + '\n' + LINK_LINE;
 const tagsOf = (_p) => SERIES_TAG;
 const labelOf = (p) =>
   p.type === 'idol' ? `${idolFull(p.k)}（idol）`
@@ -2175,33 +2189,30 @@ const grid21Cards = [
 const out21 = build('post-21-finale', grid21Cards, { title: '完結篇 — 第 21 篇', slug: 'finale' });
 console.log('Wrote 完結篇 →', out21);
 
-// Comparison posts are framed 「你更像誰？」, so their CTA closes that loop
-// (測出你的屬性) rather than jumping to 命運醫院 like the idol/grid posts.
-const LINK_LINE = '👉 https://pharm-fortune.vercel.app/';
-const CTA_CMP = '30 秒測出你的屬性';
+// Only posts 01–06 need a separate first comment (they were scheduled
+// link-in-comment); 07+ carry the link in the body.
 const firstCommentOf = (p) => (p.type === 'cmp' ? CTA_CMP : CTA) + '\n' + LINK_LINE;
 let md = '# 藥師命運轉盤 · 全 21 篇貼文文案\n\n'
   + '> 由 `build-cards.mjs` 自動產生，單一來源＝`SERIES` 資料表（與卡片共用同一份文字）。\n'
   + '> 第 1、2 篇已通過「卡片 ↔ 文案」逐字比對；不要手改此檔，要改請改 `SERIES` 後重跑。\n\n'
   + '## 共用元素\n\n'
-  + '### 第一則留言（依篇型，下方每篇已附對應版本）\n\n'
-  + '偶像／grid 篇：\n```\n' + CTA + '\n' + LINK_LINE + '\n```\n'
-  + '比較篇（你更像誰？）：\n```\n' + CTA_CMP + '\n' + LINK_LINE + '\n```\n\n'
-  + '每篇下方區塊已附上該篇對應的留言，貼文時不必回頭捲動複製。發布後補在第一則留言即可——時間不拘，不必趕 60 秒。\n\n'
+  + '### 連結放法\n'
+  + '- **第 07 篇起**：連結直接放在貼文最後（每篇「貼文」區塊已含），發布後不必再補留言。\n'
+  + '- **第 01–06 篇（已排程）**：連結放第一則留言（下方各篇附）。\n\n'
   + `### 標籤規則\nThreads 每篇只掛一個主題標籤，全系列都用 \`${SERIES_TAG}\`（讓 藥師命運轉盤 成為每篇的標籤按鈕）。\n\n---\n`;
 let curWk = 0;
 for (const p of SERIES) {
   if (p.wk !== curWk) { curWk = p.wk; md += `\n## Week ${curWk}\n`; }
   md += `\n### Post ${p.no} · ${p.date} · ${labelOf(p)}\n\n`
     + '**貼文：**\n```\n' + captionOf(p) + '\n```\n\n'
-    + '**標籤：**\n```\n' + tagsOf(p) + '\n```\n\n'
-    + '**第一則留言：**\n```\n' + firstCommentOf(p) + '\n```\n';
+    + '**標籤：**\n```\n' + tagsOf(p) + '\n```\n'
+    + (linkInBody(p) ? '' : '\n**第一則留言：**\n```\n' + firstCommentOf(p) + '\n```\n');
 }
 md += '\n---\n\n## 發文流程（每篇）\n'
   + '1. 依序上傳 PNG（idol 5 張／comparison 4 張／grid 4–6 張），1080×1350。\n'
-  + '2. 從該篇區塊複製「貼文」貼進 Threads 內文，勿手打。\n'
+  + '2. 從該篇區塊複製「貼文」貼進 Threads 內文，勿手打（第 07 篇起連結已含在內文最後）。\n'
   + '3. 掛上標籤 `' + SERIES_TAG + '`，發布輪播。\n'
-  + '4. 發布後補上「第一則留言」（同一篇區塊就有，時間不拘）。\n'
+  + '4. 僅第 01–06 篇（已排程）需另補「第一則留言」；07 篇起免。\n'
   + '5. 時間：台北 21:00–22:30（二／四／日）。\n\n'
   + 'Post 01 發布前：先用表單送一筆測試 lead，確認 Gmail 轉寄的「連結來源: threads」標記正確。\n';
 writeFileSync(join(HERE, 'threads-captions.md'), md);
